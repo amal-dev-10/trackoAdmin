@@ -33,3 +33,12 @@ export type actionInterface = {
     type: string,
     payload: any
 }
+
+export type memberShipProps = {
+    name: string,
+    tier: string,
+    validFrom: Date,
+    validThru: Date,
+    phoneNumber: string,
+    id: string
+}
