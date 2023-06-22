@@ -1,26 +1,77 @@
-import { createBottomTabNavigator } from '@react-navigation/bottom-tabs'
-import Clients from "../screens/Clients";
-import Home from "../screens/Home";
-import Insights from "../screens/Insights";
-import Packages from "../screens/Packages";
-import Requests from "../screens/Requests";
-import { Text, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { container, tabBarHeight } from '../utils/helper';
+import MainHeader from '../components/Common/MainHeader';
+import BottomTab from '../components/Common/BottomTab';
+import { primaryColor } from '../styles/colors';
+import { useEffect, useState } from 'react';
+import {tabDataInterface } from '../interfaces/common';
+import { connect } from 'react-redux';
+import Home from '../screens/Home';
+import Clients from '../screens/Clients';
+import Requests from '../screens/Requests';
+import Insights from '../screens/Insights';
+import Packages from '../screens/Packages';
 
-const bottomTab = createBottomTabNavigator();
+type bottomTabPropsInt = {
+  bottomTabData: tabDataInterface,
+  tabIconClicked: Function
+}
 
-const BottomNavigator = () => {
+const BottomNavigator = ({bottomTabData, tabIconClicked}: bottomTabPropsInt) => {
+
   return (
-    <>
-      <View><Text>Hi</Text></View>
-      <bottomTab.Navigator screenOptions={{headerShown:false}} initialRouteName="Home">
-          <bottomTab.Screen name="Home" component={Home} options={{}}/>
-          <bottomTab.Screen name="Clients" component={Clients}/>
-          <bottomTab.Screen name="Requests" component={Requests}/>
-          <bottomTab.Screen name="Insights" component={Insights}/>
-          <bottomTab.Screen name="Packages" component={Packages}/>
-      </bottomTab.Navigator>
-    </>
+    <View style={[container,styles.main]}>
+      <View style={styles.headerBottomView}>
+        <MainHeader/>
+      </View>
+      <View style={styles.screenRenderView}>
+        {
+          bottomTabData.activeComponentId === 0 && <Home/>
+        }
+        {
+          bottomTabData.activeComponentId === 1 && <Clients/>
+        }
+        {
+          bottomTabData.activeComponentId === 2 && <Requests/>
+        }
+        {
+          bottomTabData.activeComponentId === 3 && <Insights/>
+        }
+        {
+          bottomTabData.activeComponentId === 4 && <Packages/>
+        }
+      </View>
+      <View style={styles.headerBottomView}>
+        <BottomTab tabData={bottomTabData}/>
+      </View>
+    </View>
   )
 }
 
-export default BottomNavigator
+const mapStateToProps = (state: any)=>({
+  bottomTabData: state.bottomTab
+});
+
+export default connect(mapStateToProps)(BottomNavigator);
+
+const styles = StyleSheet.create({
+  main:{
+    display: "flex",
+    flexDirection: "column",
+    gap: 10,
+    flex: 1,
+    justifyContent: "space-between",
+    padding: 15,
+    backgroundColor: primaryColor
+  },
+  screenRenderView:{
+    display: "flex",
+    flex: 1,
+  },
+  headerBottomView:{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: tabBarHeight,
+  }
+})

@@ -16,3 +16,20 @@ export type orgProps = {
     orgName: string,
     id: string
 }
+
+export type bottomTabProps = {
+    id: number,
+    name: string,
+    icon: string,
+    active: boolean
+}
+
+export type tabDataInterface = {
+    activeComponentId: number,
+    allTabs: bottomTabProps[]
+}
+
+export type actionInterface = {
+    type: string,
+    payload: any
+}

@@ -1,13 +1,8 @@
-// src/redux/actions/index.ts
+// Bottom navigation actions
 
-export const increment = () => {
+export const tabIconClicked = (payload: any)=>{
   return {
-    type: 'INCREMENT',
-  };
-};
-
-export const decrement = () => {
-  return {
-    type: 'DECREMENT',
+    type: "TAB_ICON_CLICKED",
+    payload: payload
   };
 };

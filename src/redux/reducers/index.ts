@@ -1,24 +1,10 @@
 // src/redux/reducers/index.ts
 
-const initialState = {
-  counter: 0,
-};
+import { combineReducers } from 'redux';
+import { bottomTabReducer } from './tabReducer';
 
-const rootReducer = (state = initialState, action: any) => {
-  switch (action.type) {
-    case 'INCREMENT':
-      return {
-        ...state,
-        counter: state.counter + 1,
-      };
-    case 'DECREMENT':
-      return {
-        ...state,
-        counter: state.counter - 1,
-      };
-    default:
-      return state;
-  }
-};
+const rootReducer = combineReducers({
+  bottomTab: bottomTabReducer
+});
 
 export default rootReducer;
