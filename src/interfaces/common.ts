@@ -42,3 +42,12 @@ export type memberShipProps = {
     phoneNumber: string,
     id: string
 }
+
+export type requestsProps = {
+    name: string,
+    image: string,
+    date: Date,
+    age: string,
+    phoneNumber: string,
+    id: string
+}

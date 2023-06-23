@@ -39,7 +39,7 @@ const MembershipCard = ({membershipData}: cardPackProps) => {
         colors={colorPack}
         start={{ x: 0, y: 0.5 }}
         end={{ x: 1, y: 0.5 }}
-        style={[styles.memberShipCard]}
+        style={[styles.memberShipCard, shadowGenerator()]}
     >
         <View style={styles.nameView}>
             <Text style={[styles.text, {fontWeight: "500"}]}>{membershipData.phoneNumber}</Text>
