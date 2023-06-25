@@ -14,7 +14,8 @@ let initialState: props = {
             features: [],
             numOfYearOrMonths: "1",
             tier: "gold",
-            currency: "INR"
+            currency: "INR",
+            id: "123d1231231"
         },
         {
             active: false,
@@ -24,7 +25,8 @@ let initialState: props = {
             features: [],
             numOfYearOrMonths: "1",
             tier: "silver",
-            currency: "INR"
+            currency: "INR",
+            id: "123d1231232"
         },
         {
             active: false,
@@ -34,7 +36,8 @@ let initialState: props = {
             features: [],
             numOfYearOrMonths: "1",
             tier: "bronze",
-            currency: "INR"
+            currency: "INR",
+            id: "123d1231233"
         }
     ]
 }

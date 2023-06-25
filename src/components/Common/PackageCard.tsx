@@ -31,20 +31,53 @@ const PackageCard = ({packDetail, updatePack}: props) => {
     } as EditableProps);
     const [newFeature, setNewFeature] = useState("" as string);
     const [editMode, setEditMode] = useState(false as boolean);
+    const [def, setDefault] = useState({
+        active: packDetail?.active || false,
+        cost: packDetail?.cost || "0",
+        duration: packDetail?.duration || 0,
+        features: packDetail?.features || [],
+        numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+    } as EditableProps)
 
     const addFeature = ()=>{
-        setEditable({...editable, features: [...editable.features, newFeature]});
+        if(newFeature){
+            setEditable({...editable, features: [...editable.features, newFeature]});
+            setNewFeature("");
+        }
+    };
+
+    const featureRemoveClicked = (index: number)=>{
+        if(editable.features.length){
+            let d = editable;
+            d.features.splice(index, 1);
+            setEditable({...d});
+        }
+    }
+
+    const editCancelClicked = ()=>{
+        setEditMode(false);
+        setEditable({
+            ...def
+        });
         setNewFeature("");
     };
 
+    const activateOrUpdateClicked = (active: boolean)=>{
+        let newData: any = {...packDetail, ...editable, active: active};
+        updatePack(newData);
+        setEditable({...editable, active: active})
+        setDefault({...editable, active: active});
+        setEditMode(false)
+    }
+
     useEffect(()=>{
-        setEditable({
-            active: packDetail?.active || false,
-            cost: packDetail?.cost || "0",
-            duration: packDetail?.duration || 0,
-            features: packDetail?.features || [],
-            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
-        })
+        // setEditable({
+        //     active: packDetail?.active || false,
+        //     cost: packDetail?.cost || "0",
+        //     duration: packDetail?.duration || 0,
+        //     features: packDetail?.features || [],
+        //     numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        // });
     }, [packDetail])
 
     useEffect(()=>{
@@ -77,7 +110,8 @@ const PackageCard = ({packDetail, updatePack}: props) => {
                 <TouchableOpacity onPress={()=>{setEditMode(true)}} style={styles.editBtn}>
                     <Text style={styles.btnText}>Edit</Text>
                 </TouchableOpacity> :
-                <TouchableOpacity onPress={()=>{setEditMode(false)}} style={styles.editBtn}>
+                (editable.active) &&
+                <TouchableOpacity onPress={()=>{editCancelClicked()}} style={styles.editBtn}>
                     <Text style={styles.btnText}>Cancel</Text>
                 </TouchableOpacity>
             }
@@ -149,7 +183,7 @@ const PackageCard = ({packDetail, updatePack}: props) => {
                             <Text style={styles.f}>{data}</Text>
                             {
                                 (!editable.active || editMode) ?   
-                                <TouchableOpacity onPress={()=>{}} style={{padding: 5}}>
+                                <TouchableOpacity onPress={()=>{featureRemoveClicked(i)}} style={{padding: 5}}>
                                     <Text style={styles.remove}>{"X"}</Text>
                                 </TouchableOpacity>
                                 : <Text></Text>
@@ -179,21 +213,17 @@ const PackageCard = ({packDetail, updatePack}: props) => {
       <View style={styles.btnView}>
         {
             editable?.active &&
-            <TouchableOpacity style={[styles.btn, styles.withBorder]}>
+            <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}}>
                 <Text style={styles.btnText}>Update</Text>
             </TouchableOpacity>
         }
         {
             editable?.active ?     
-                <TouchableOpacity style={[styles.btn]}>
+                <TouchableOpacity style={[styles.btn]} onPress={()=>{activateOrUpdateClicked(false)}}>
                     <Text style={styles.btnText}>Deactivate</Text>
                 </TouchableOpacity>
             : 
-                <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{
-                    let newData: any = {...packDetail, ...editable, active: true};
-                    updatePack(newData);
-                    setEditable({...editable, active: true})
-                }}>
+                <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}}>
                     <Text style={styles.btnText}>Activate</Text>
                 </TouchableOpacity>
         }

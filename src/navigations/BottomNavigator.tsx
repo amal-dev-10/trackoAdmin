@@ -13,10 +13,9 @@ import Packages from '../screens/Packages';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
-  tabIconClicked: Function
 }
 
-const BottomNavigator = ({bottomTabData, tabIconClicked}: bottomTabPropsInt) => {
+const BottomNavigator = ({bottomTabData}: bottomTabPropsInt) => {
 
   return (
     <View style={[container,styles.main]}>

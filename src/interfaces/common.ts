@@ -60,5 +60,6 @@ export type packagesProps = {
     duration: number,
     numOfYearOrMonths: string,
     active: boolean,
-    currency: string
+    currency: string,
+    id: string
 }
