@@ -5,7 +5,7 @@ import AuthStack from '../stacks/AuthStack';
 import Splash from '../screens/Splash';
 
 const RootNavigator = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
+    const [isAuthenticated, setIsAuthenticated] = useState(false);
     const [showSplash, setShowSplash] = useState(true);
 
     useEffect(()=>{

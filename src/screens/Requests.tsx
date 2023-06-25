@@ -16,7 +16,7 @@ const Requests = ({allRequests,getRequestsData}: props) => {
     getRequestsData();
   }, [])
   return (
-    <ScrollView style={[styles.requestScreen, container]}>
+    <ScrollView style={[styles.requestScreen, container]} showsVerticalScrollIndicator={false}>
       <View style={styles.wrapper}>
         {
           allRequests.map((data, i:number)=>{

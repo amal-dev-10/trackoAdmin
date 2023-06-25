@@ -24,3 +24,19 @@ export const getRequests = (payload: any = null)=>{
     payload: payload
   };
 }
+
+// Package screen action
+
+export const getAllPackages = (payload: any = null)=>{
+  return {
+    type: "GET_ALL_PACKAGES",
+    payload: payload
+  };
+}
+
+export const updatePackage = (payload: any = null)=>{
+  return {
+    type: "UPDATE_PACKAGE",
+    payload: payload
+  }
+}

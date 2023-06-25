@@ -51,3 +51,14 @@ export type requestsProps = {
     phoneNumber: string,
     id: string
 }
+
+export type packagesProps = {
+    tier: string,
+    features: string[],
+    cost: string,
+    durationList: string[],
+    duration: number,
+    numOfYearOrMonths: string,
+    active: boolean,
+    currency: string
+}

@@ -63,7 +63,7 @@ const styles = StyleSheet.create({
   value:{
     color: textColorPrimary,
     fontSize: fontSize.xmedium,
-    fontWeight: "700"
+    fontWeight: "500"
   },
   single:{
     display: "flex",
@@ -81,7 +81,8 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 10,
     alignItems: "center",
-    justifyContent: "center"
+    justifyContent: "center",
+    flex:1
   },
   section:{
     display: "flex",
@@ -106,7 +107,7 @@ const styles = StyleSheet.create({
     gap: 10
   },
   btn:{
-    padding: 10,
+    padding: 5,
     borderRadius: 50,
     display: "flex",
     alignItems: "center",

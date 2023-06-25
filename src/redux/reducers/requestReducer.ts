@@ -29,6 +29,22 @@ let initialState: props = {
             image: "",
             name: "Midhun Jayapradeep",
             phoneNumber: "7902992447"
+        },
+        {
+            age: "23",
+            date: new Date(),
+            id: "2",
+            image: "",
+            name: "Rahul Sivan",
+            phoneNumber: "7902992447"
+        },
+        {
+            age: "23",
+            date: new Date(),
+            id: "2",
+            image: "",
+            name: "Midhun Jayapradeep",
+            phoneNumber: "7902992447"
         }
     ]
 }

@@ -56,7 +56,12 @@ const Home = () => {
               <Text style={styles.titleBtnText}>View All</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView horizontal showsHorizontalScrollIndicator={false} style={styles.scrollView}>
+          <ScrollView 
+            horizontal 
+            showsHorizontalScrollIndicator={false} 
+            style={styles.scrollView}
+            contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 1}}
+          >
             <ExpiryCard/>
             <ExpiryCard/>
             <ExpiryCard/>
