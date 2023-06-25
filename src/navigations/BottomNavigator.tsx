@@ -1,9 +1,8 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
 import { container, tabBarHeight } from '../utils/helper';
 import MainHeader from '../components/Common/MainHeader';
 import BottomTab from '../components/Common/BottomTab';
 import { primaryColor } from '../styles/colors';
-import { useEffect, useState } from 'react';
 import {tabDataInterface } from '../interfaces/common';
 import { connect } from 'react-redux';
 import Home from '../screens/Home';
@@ -14,10 +13,9 @@ import Packages from '../screens/Packages';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
-  tabIconClicked: Function
 }
 
-const BottomNavigator = ({bottomTabData, tabIconClicked}: bottomTabPropsInt) => {
+const BottomNavigator = ({bottomTabData}: bottomTabPropsInt) => {
 
   return (
     <View style={[container,styles.main]}>
