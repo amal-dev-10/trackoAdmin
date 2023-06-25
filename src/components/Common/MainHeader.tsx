@@ -4,14 +4,13 @@ import IconSet from '../../styles/icons/Icons'
 import { cardColor, iconColor, textColorPrimary } from '../../styles/colors'
 import { shadowGenerator } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
-import Icon from 'react-native-vector-icons/FontAwesome';
 
 const mainHeader = () => {
   return (
     <View style={styles.header}>
       <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]}>
         <Text style={styles.orgName}>WORLD FITNESS CENTER</Text>
-        <IconSet name='down-open' color={iconColor} size={30}/>
+        <IconSet name='left-small' color={iconColor} size={25}/>
       </TouchableOpacity>
       <View style={styles.userView}>
         <TouchableOpacity onPress={()=>{}}>

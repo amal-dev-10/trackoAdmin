@@ -24,7 +24,7 @@ const Clients = ({membershipData, getMembershipData}: props) => {
   return (
     <View style={[styles.clientScreen, container]}>
       <View style={styles.searchView}>
-        <IconSet name='home' color={iconColor} size={25}/>
+        <IconSet name='search' color={iconColor} size={25}/>
         <TextInput
           style={styles.input}
           placeholder='Search'

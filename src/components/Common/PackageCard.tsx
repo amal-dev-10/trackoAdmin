@@ -6,6 +6,7 @@ import { shadowGenerator } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { updatePackage } from '../../redux/actions'
 import { connect } from 'react-redux'
+import IconSet from '../../styles/icons/Icons'
 
 type props = {
     packDetail?: packagesProps,
@@ -108,7 +109,7 @@ const PackageCard = ({packDetail, updatePack}: props) => {
             {
                 (editable.active && !editMode) ?
                 <TouchableOpacity onPress={()=>{setEditMode(true)}} style={styles.editBtn}>
-                    <Text style={styles.btnText}>Edit</Text>
+                    <IconSet name='pencil' color={iconColor} size={15}/>
                 </TouchableOpacity> :
                 (editable.active) &&
                 <TouchableOpacity onPress={()=>{editCancelClicked()}} style={styles.editBtn}>
@@ -179,7 +180,7 @@ const PackageCard = ({packDetail, updatePack}: props) => {
                 editable?.features.map((data, i:number)=>{
                     return (
                         <View style={styles.feature} key={"feature" + i}>
-                            <Text style={styles.angle}>{">>"}</Text>
+                            <IconSet name='right-small' color={textColorPrimary} size={20}/>
                             <Text style={styles.f}>{data}</Text>
                             {
                                 (!editable.active || editMode) ?   
@@ -195,7 +196,7 @@ const PackageCard = ({packDetail, updatePack}: props) => {
             {
                 (editable?.features && editable.features.length < 5 && (!editable.active || editMode )) &&
                 <View style={styles.feature}>
-                    <Text style={styles.angle}>{">>"}</Text>
+                    <IconSet name='right-small' color={textColorPrimary} size={20}/>
                     <TextInput
                         placeholder=''
                         style={styles.textInput}
@@ -425,6 +426,7 @@ const styles = StyleSheet.create({
     editBtn:{
         position: "absolute",
         right: 0,
-        top: 0
+        top: 0,
+        padding: 5
     }
 })

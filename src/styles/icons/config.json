@@ -1,5 +1,5 @@
 {
-  "name": "IconSet",
+  "name": "home",
   "css_prefix_text": "icon-",
   "css_use_suffix": false,
   "hinting": true,
@@ -49,10 +49,16 @@
       "src": "fontawesome"
     },
     {
-      "uid": "d6944e1d9af302093d43b299bbecbbbe02",
-      "css": "home",
-      "code": 59395,
-      "src": "iconic"
+      "uid": "8704cd847a47b64265b8bb110c8b4d62",
+      "css": "down-open",
+      "code": 59399,
+      "src": "entypo"
+    },
+    {
+      "uid": "w3nzesrlbezu6f30q7ytyq919p6gdlb6",
+      "css": "home-1",
+      "code": 59400,
+      "src": "typicons"
     },
     {
       "uid": "6274e0601f2feef7eced89146e708de0",
@@ -61,16 +67,28 @@
       "src": "entypo"
     },
     {
-      "uid": "8704cd847a47b64265b8bb110c8b4d62",
-      "css": "down-open",
-      "code": 59399,
+      "uid": "7222571caa5c15f83dcfd447c58d68d9",
+      "css": "search",
+      "code": 59395,
       "src": "entypo"
     },
     {
-      "uid": "a76545bb6ea4e684505da08d26e58467",
-      "css": "left",
+      "uid": "1e77a2yvsq3owssduo2lcgsiven57iv5",
+      "css": "pencil",
+      "code": 59401,
+      "src": "typicons"
+    },
+    {
+      "uid": "877a233d7fdca8a1d82615b96ed0d7a2",
+      "css": "right-small",
+      "code": 59402,
+      "src": "typicons"
+    },
+    {
+      "uid": "58b78b6ca784d5c3db5beefcd9e18061",
+      "css": "left-small",
       "code": 59394,
-      "src": "iconic"
+      "src": "typicons"
     }
   ]
 }

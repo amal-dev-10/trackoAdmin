@@ -5,7 +5,7 @@ let initialState: tabDataInterface = {
     allTabs: [
         {
             active: true,
-            icon: "home",
+            icon: "home-1",
             id: 0,
             name: "Home"
         },

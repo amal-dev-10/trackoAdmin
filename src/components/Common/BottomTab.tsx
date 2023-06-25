@@ -14,18 +14,13 @@ type bottomTabProp = {
 }
 
 const BottomTab = ({tabData, tabIconClicked}: bottomTabProp) => {
-  useEffect(()=>{
-    tabData.allTabs.forEach((d)=>{
-      console.log(IconSet.hasIcon(d.icon));
-    })
-  },[]);
   return (
     <View style={[styles.bottomTab, shadowGenerator(2,2)]}>
       {
         tabData.allTabs.map((data, i:number)=>{
           return (
             <TouchableOpacity disabled={data.active} style={styles.tab} onPress={()=>{!data.active ? tabIconClicked(data.id) : ''}} key={"tab"+i}>
-              <IconSet name={data.icon} color={data.active ? textColorPrimary : iconColor} size={30}/>
+              <IconSet name={data.icon} color={data.active ? textColorPrimary : iconColor} size={22}/>
             </TouchableOpacity>
           )
         })
