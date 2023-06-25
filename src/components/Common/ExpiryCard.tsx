@@ -11,7 +11,7 @@ const ExpiryCard = () => {
   return (
     <View style={[styles.expiryCard, shadowGenerator(2,2)]}>
       <View style={[styles.imageSection, styles.common]}>
-        <IconSet name='user-circle-o' size={60} color={iconColor}/>
+        <IconSet name='user-o' size={60} color={iconColor}/>
         <Text style={styles.nameTag}>AMAL DEV</Text>
       </View>
       <View style={styles.spacer}></View>
@@ -45,7 +45,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     gap: 15,
-    padding: 10,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
     borderRadius: 10,
     backgroundColor: cardColor,
     width: Dimensions.get("window").width * 0.45,
@@ -60,6 +61,7 @@ const styles = StyleSheet.create({
   imageSection:{
     alignItems: "center",
     justifyContent:"center",
+    gap: 10
   },
   detailSection:{
     alignItems: "flex-start",
@@ -68,6 +70,7 @@ const styles = StyleSheet.create({
   },
   buttonSection:{
     flex: 0.2,
+    gap: 20
   },
   part:{
     display: "flex",
@@ -87,7 +90,7 @@ const styles = StyleSheet.create({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    padding: 10
+    // padding: 10
   },
   spacer:{
     height: 2,
