@@ -1,0 +1,124 @@
+import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useEffect } from 'react'
+import { requestsProps } from '../../interfaces/common'
+import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
+import { shadowGenerator } from '../../utils/helper'
+import { key } from '../../styles/constants'
+import { fontSize } from '../../styles/fonts'
+import IconSet from '../../styles/icons/Icons'
+
+type props = {
+  requestData: requestsProps
+}
+
+const RequestCard = ({requestData}: props) => {
+
+  return (
+    <View style={[styles.requestCard, shadowGenerator(2,2)]}>
+      <IconSet name='user-o' color={iconColor} size={50}/>
+      <View style={styles.spacer}></View>
+      <View style={styles.detailView}>
+        <View style={[styles.section, styles.left]}>
+          <View style={[styles.single, styles.singleLeft]}>
+            <Text style={key}>Name</Text>
+            <Text style={styles.value}>{requestData.name}</Text>
+          </View>
+          <View style={[styles.single, styles.singleLeft]}>
+            <Text style={key}>Phone Number</Text>
+            <Text style={styles.value}>{requestData.phoneNumber}</Text>
+          </View>
+        </View>
+        <View style={[styles.section]}>
+          <View style={[styles.single, styles.singleRight]}>
+            <Text style={key}>Age</Text>
+            <Text style={styles.value}>{requestData.age}</Text>
+          </View>
+        </View>
+      </View>
+      <View style={styles.btnView}>
+        <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{}}>
+          <Text style={styles.btnText}>Accept</Text>
+        </TouchableOpacity>
+        <TouchableOpacity style={[styles.btn]} onPress={()=>{}}>
+          <Text style={styles.btnText}>Decline</Text>
+        </TouchableOpacity>
+      </View>
+    </View>
+  )
+}
+
+export default RequestCard
+
+const styles = StyleSheet.create({
+  requestCard:{
+    backgroundColor: cardColor,
+    padding: 15,
+    borderRadius: 10,
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 15,
+    width: "48%"
+  },
+  value:{
+    color: textColorPrimary,
+    fontSize: fontSize.xmedium,
+    fontWeight: "700"
+  },
+  single:{
+    display: "flex",
+    flexDirection: "column",
+    width: "100%",
+  },
+  singleRight: {
+    alignItems: "flex-end"
+  },
+  singleLeft:{
+    alignItems: "flex-start"
+  },
+  detailView:{
+    display: "flex",
+    flexDirection: "row",
+    gap: 10,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  section:{
+    display: "flex",
+    flexDirection: "column",
+    justifyContent: "flex-start",
+    gap: 10,
+    height: "100%",
+  },
+  spacer:{
+    height: 2,
+    backgroundColor: primaryColor,
+    width: "100%"
+  },
+  left:{
+    flex: 1
+  },
+  btnView:{
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: 'space-between',
+    alignItems: "center",
+    gap: 10
+  },
+  btn:{
+    padding: 10,
+    borderRadius: 50,
+    display: "flex",
+    alignItems: "center",
+    justifyContent: "center",
+    flex: 1
+  },
+  withBorder:{
+    backgroundColor: textColorPrimary
+  },
+  btnText:{
+    fontSize: fontSize.small,
+    color: borderColor,
+    fontWeight: "700"
+  }
+})
