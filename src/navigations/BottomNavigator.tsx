@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { container, tabBarHeight } from '../utils/helper';
 import MainHeader from '../components/Common/MainHeader';
 import BottomTab from '../components/Common/BottomTab';
@@ -10,6 +10,7 @@ import Clients from '../screens/Clients';
 import Requests from '../screens/Requests';
 import Insights from '../screens/Insights';
 import Packages from '../screens/Packages';
+import Overlay from '../screens/Overlay';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
@@ -39,9 +40,10 @@ const BottomNavigator = ({bottomTabData}: bottomTabPropsInt) => {
           bottomTabData.activeComponentId === 4 && <Packages/>
         }
       </View>
-      <View style={styles.headerBottomView}>
+      <View style={[styles.headerBottomView, styles.bottomHeight]}>
         <BottomTab tabData={bottomTabData}/>
       </View>
+      <Overlay/>
     </View>
   )
 }
@@ -70,6 +72,8 @@ const styles = StyleSheet.create({
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  bottomHeight:{
     height: tabBarHeight,
   }
 })

@@ -4,8 +4,14 @@ import IconSet from '../../styles/icons/Icons'
 import { cardColor, iconColor, textColorPrimary } from '../../styles/colors'
 import { shadowGenerator } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
+import { setOverlayComponent } from '../../redux/actions'
+import { connect } from 'react-redux'
 
-const mainHeader = () => {
+type props = {
+  openOverlay: any
+}
+
+const mainHeader = ({openOverlay}: props) => {
   return (
     <View style={styles.header}>
       <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]}>
@@ -13,7 +19,7 @@ const mainHeader = () => {
         <IconSet name='left-small' color={iconColor} size={25}/>
       </TouchableOpacity>
       <View style={styles.userView}>
-        <TouchableOpacity onPress={()=>{}}>
+        <TouchableOpacity onPress={()=>{openOverlay(2)}}>
           <IconSet name='user-circle-o' color={textColorPrimary} size={40}/>
         </TouchableOpacity>
       </View>
@@ -21,7 +27,11 @@ const mainHeader = () => {
   )
 }
 
-export default mainHeader
+const mapDispatchToProps = (dispatch: any)=>({
+  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
+})
+
+export default connect(null, mapDispatchToProps)(mainHeader)
 
 const styles = StyleSheet.create({
   header:{

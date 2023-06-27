@@ -1,6 +1,5 @@
 import { Dimensions } from 'react-native';
 import { iconColor, primaryColor } from '../styles/colors';
-import { fontSize } from '../styles/fonts';
 
 export const container = {
     flex: 1,
@@ -46,7 +45,7 @@ export const wordSplitter = (text: string)=>{
 }
 
 // calculating height
-const TAB_BAR_HEIGHT_RATIO = 0.08; // 10%
+const TAB_BAR_HEIGHT_RATIO = 0.07; // 7%
 export const windowHeight = Dimensions.get('window').height;
 export const tabBarHeight = windowHeight * TAB_BAR_HEIGHT_RATIO;
 
