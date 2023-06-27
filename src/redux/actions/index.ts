@@ -49,3 +49,11 @@ export const setOverlayComponent = (payload: any = null)=>{
     payload: payload
   }
 }
+
+export const closeOverlayComponent = (payload: any = null)=>{
+  return {
+    type: "CLOSE_OVERLAY_COMPONENT",
+    payload: payload
+  }
+}
+

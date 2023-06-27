@@ -4,7 +4,9 @@ import React from 'react'
 const TermsAndConditions = () => {
   return (
     <View>
-      <Text>TermsAndConditions</Text>
+      <Text>
+        
+      </Text>
     </View>
   )
 }

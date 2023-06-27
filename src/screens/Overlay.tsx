@@ -6,46 +6,47 @@ import { iconColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import { connect } from 'react-redux';
 import { overlayComponent } from '../interfaces/common';
-import { setOverlayComponent } from '../redux/actions';
+import { closeOverlayComponent, setOverlayComponent } from '../redux/actions';
 import Profile from './Profile';
 import Transactions from './Transactions';
 import TermsAndConditions from './TermsAndConditions';
 import Settings from './Settings';
 
 type props={
-    component: overlayComponent,
-    openOverlay: any
+    // component: overlayComponent,
+    overlayData: overlayComponent,
+    closeOverlay: any
 }
 
-const Overlay = ({component, openOverlay}: props) => {
+const Overlay = ({overlayData, closeOverlay}: props) => {
   return (
-    <Modal visible={component.id != 0} presentationStyle='fullScreen'>
-        <View style={[styles.overlayScreen, container]} >
+    <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='fade'>
+        <View style={[styles.overlayScreen, container]}>
             <View style={styles.header}>
-                <TouchableOpacity onPress={()=>{openOverlay(0)}} style={styles.icon}>
+                <TouchableOpacity onPress={()=>{closeOverlay(overlayData.id)}} style={styles.icon}>
                     <IconSet name='left-small' color={iconColor} size={30}/>
                 </TouchableOpacity>
-                <Text style={styles.headerText}>{component.name}</Text>
+                <Text style={styles.headerText}>{overlayData.name}</Text>
             </View>
             <View style={styles.content}>
                 {
-                    component.id === 1 &&
+                    overlayData.id === 1 &&
                     <Transactions/> //individual transactions
                 }
                 {
-                    component.id === 2 &&
+                    overlayData.id === 2 &&
                     <Profile/> //profile
                 }
                 {
-                    component.id === 3 &&
+                    overlayData.id === 3 &&
                     <Transactions type="all"/> //all transactions
                 }
                 {
-                    component.id === 4 &&
+                    overlayData.id === 4 &&
                     <TermsAndConditions/> //terms and conditions
                 }
                 {
-                    component.id === 5 &&
+                    overlayData.id === 5 &&
                     <Settings/> //terms and conditions
                 }
             </View>
@@ -59,7 +60,8 @@ const mapStateToProps = (state: any)=>({
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
-    openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
+    openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
+    closeOverlay: (id: number)=>{dispatch(closeOverlayComponent(id))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Overlay)

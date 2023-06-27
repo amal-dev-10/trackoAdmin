@@ -8,5 +8,6 @@ export const borderColor = "#444444";
 export const inputFocusColor = "#343434";
 export const buttonTextColor = "#444444";
 export const memberShipTextColor = "#600000";
-export const goldColor = "#FFAC00"
+export const goldColor = "#FFAC00";
+export const amountColor = "#00C113";
 

@@ -21,6 +21,10 @@ const BottomTab = ({tabData, tabIconClicked}: bottomTabProp) => {
           return (
             <TouchableOpacity disabled={data.active} style={styles.tab} onPress={()=>{!data.active ? tabIconClicked(data.id) : ''}} key={"tab"+i}>
               <IconSet name={data.icon} color={data.active ? textColorPrimary : iconColor} size={22}/>
+              {
+                data.active &&
+                <View style={styles.indicator}></View>
+              }
             </TouchableOpacity>
           )
         })
@@ -44,9 +48,10 @@ const styles = StyleSheet.create({
     justifyContent: "space-evenly",
     gap: 10,
     width: "100%",
-    height: "100%"
+    height: "100%",
   },
   tab:{
+    borderStartColor: "red",
     flex: 1,
     padding: 5,
     display: 'flex',
@@ -54,5 +59,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     height: "100%",
     width: undefined
+  },
+  indicator:{
+    position: "absolute",
+    height: 2,
+    backgroundColor: textColorPrimary,
+    bottom: 0,
+    width: "60%",
+    borderRadius: 20
   }
 })

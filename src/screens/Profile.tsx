@@ -2,7 +2,7 @@ import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { shadowGenerator } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
-import { cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary } from '../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { profileButtonProps } from '../interfaces/common'
@@ -57,7 +57,7 @@ const Profile = ({profileBtnList, profileDetails, openOverlay}: props) => {
                 profileBtnList.map((data, i: number)=>{
                     return (
                         <TouchableOpacity 
-                            style={[styles.profileBtn, shadowGenerator()]} 
+                            style={[styles.profileBtn]} 
                             key={"profileBtn" + i}
                             onPress={()=>{openOverlay(data.id)}}
                         >
@@ -67,6 +67,9 @@ const Profile = ({profileBtnList, profileDetails, openOverlay}: props) => {
                     )
                 })
             }
+        </View>
+        <View style={styles.versionView}>
+            <Text style={styles.versionName}>TRACKO ADMIN 1.0</Text>
         </View>
     </View>
   )
@@ -90,7 +93,8 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         alignItems: "center",
         justifyContent: "flex-start",
-        gap: 35
+        gap: 35,
+        paddingVertical: 15
     },
     profileCard:{
         padding: 20,
@@ -135,10 +139,20 @@ const styles = StyleSheet.create({
         backgroundColor: cardColor,
         padding: 15,
         borderRadius: 10,
-        width: "100%"
+        width: "100%",
+        elevation: 2
+        // borderBottomWidth: 1,
+        // borderBottomColor: borderColor
     },
     btnText:{
         color: iconColor,
         fontSize: fontSize.small
+    },
+    versionView:{
+        paddingTop: 10
+    },
+    versionName:{
+        color: borderColor, 
+        fontSize: fontSize.xSmall
     }
 })

@@ -3,7 +3,7 @@ import { container, tabBarHeight } from '../utils/helper';
 import MainHeader from '../components/Common/MainHeader';
 import BottomTab from '../components/Common/BottomTab';
 import { primaryColor } from '../styles/colors';
-import {tabDataInterface } from '../interfaces/common';
+import {overlayComponent, tabDataInterface } from '../interfaces/common';
 import { connect } from 'react-redux';
 import Home from '../screens/Home';
 import Clients from '../screens/Clients';
@@ -11,12 +11,14 @@ import Requests from '../screens/Requests';
 import Insights from '../screens/Insights';
 import Packages from '../screens/Packages';
 import Overlay from '../screens/Overlay';
+import { useEffect } from 'react';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
+  allOverlays: overlayComponent[]
 }
 
-const BottomNavigator = ({bottomTabData}: bottomTabPropsInt) => {
+const BottomNavigator = ({bottomTabData, allOverlays}: bottomTabPropsInt) => {
 
   return (
     <View style={[container,styles.main]}>
@@ -43,13 +45,20 @@ const BottomNavigator = ({bottomTabData}: bottomTabPropsInt) => {
       <View style={[styles.headerBottomView, styles.bottomHeight]}>
         <BottomTab tabData={bottomTabData}/>
       </View>
-      <Overlay/>
+      {
+        allOverlays.map((data, i: number)=>{
+          return (
+            <Overlay key={"overlay" +i} overlayData={data}/>
+          )
+        })
+      }
     </View>
   )
 }
 
 const mapStateToProps = (state: any)=>({
-  bottomTabData: state.bottomTab
+  bottomTabData: state.bottomTab,
+  allOverlays: state.overlay.opendedComponents
 });
 
 export default connect(mapStateToProps)(BottomNavigator);
