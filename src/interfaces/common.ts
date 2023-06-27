@@ -63,3 +63,14 @@ export type packagesProps = {
     currency: string,
     id: string
 }
+
+export type overlayComponent = {
+    name: string,
+    id: number
+}
+
+export type profileButtonProps = {
+    icon: string,
+    name: string,
+    id: number
+}

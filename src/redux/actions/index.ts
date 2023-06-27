@@ -40,3 +40,20 @@ export const updatePackage = (payload: any = null)=>{
     payload: payload
   }
 }
+
+// Overlay
+
+export const setOverlayComponent = (payload: any = null)=>{
+  return {
+    type: "SET_OVERLAY_COMPONENT",
+    payload: payload
+  }
+}
+
+export const closeOverlayComponent = (payload: any = null)=>{
+  return {
+    type: "CLOSE_OVERLAY_COMPONENT",
+    payload: payload
+  }
+}
+

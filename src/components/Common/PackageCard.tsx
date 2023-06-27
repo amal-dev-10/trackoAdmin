@@ -1,7 +1,7 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, ImageSourcePropType } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { packagesProps } from '../../interfaces/common'
-import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import { shadowGenerator } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { updatePackage } from '../../redux/actions'
@@ -22,7 +22,6 @@ type EditableProps = {
 }
 
 const PackageCard = ({packDetail, updatePack}: props) => {
-    const [pack, setPack] = useState(null as ImageSourcePropType | null);
     const [editable, setEditable] = useState({
         active: packDetail?.active || false,
         cost: packDetail?.cost || "0",
@@ -80,32 +79,10 @@ const PackageCard = ({packDetail, updatePack}: props) => {
         //     numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
         // });
     }, [packDetail])
-
-    useEffect(()=>{
-        switch(packDetail?.tier){
-            case "gold":
-                setPack(require("../../assets/gold.png"));
-                break;
-            case "silver":
-                setPack(require("../../assets/silver.png"));
-                break;
-            case "bronze":
-                setPack(require("../../assets/bronze.png"));
-                break;
-            default:
-                setPack(require("../../assets/gold.png"))
-        }
-    }, [])
   return (
     <View style={[styles.packCard, shadowGenerator(2,2)]}>
         <View style={styles.logoView}>
-            {
-                pack &&
-                <Image
-                    source={pack}
-                    style={styles.packImage}
-                />
-            }
+            <IconSet name={packDetail?.tier+'pack'} color={goldColor} size={80}/>
             {
                 (editable.active && !editMode) ?
                 <TouchableOpacity onPress={()=>{setEditMode(true)}} style={styles.editBtn}>

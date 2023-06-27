@@ -5,8 +5,14 @@ import { fontSize } from '../styles/fonts'
 import { cardColor, iconColor, textColorPrimary } from '../styles/colors'
 import { key, subTitleStyle } from '../styles/constants'
 import ExpiryCard from '../components/Common/ExpiryCard'
+import { setOverlayComponent } from '../redux/actions'
+import { connect } from 'react-redux'
 
-const Home = () => {
+type props = {
+  openOverlay: any
+}
+
+const Home = ({openOverlay}: props) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{height: "100%"}}>
       <Text style={[styles.welcomeText, styles.child]}>{"Hi, " + "Amal Dev"}</Text>
@@ -71,7 +77,11 @@ const Home = () => {
   )
 }
 
-export default Home
+const mapDispatchToProps = (dispatch: any)=>({
+  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
+})
+
+export default connect(null, mapDispatchToProps)(Home)
 
 const styles = StyleSheet.create({
   welcomeText:{
