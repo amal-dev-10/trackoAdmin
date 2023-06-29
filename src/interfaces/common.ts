@@ -74,3 +74,8 @@ export type profileButtonProps = {
     name: string,
     id: number
 }
+
+export type dropDownProps = {
+    label: string, 
+    value: string
+}
