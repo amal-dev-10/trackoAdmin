@@ -57,3 +57,12 @@ export const closeOverlayComponent = (payload: any = null)=>{
   }
 }
 
+// loader
+
+export const setLoader = (payload: any = null)=>{
+  return {
+    type: "SHOW_LOADER",
+    payload: payload
+  }
+}
+

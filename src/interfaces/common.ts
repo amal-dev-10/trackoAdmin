@@ -79,3 +79,7 @@ export type dropDownProps = {
     label: string, 
     value: string
 }
+
+export type loaderProps = {
+    show: boolean
+}

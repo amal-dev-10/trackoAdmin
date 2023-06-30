@@ -6,15 +6,16 @@ import { shadowGenerator } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { setOverlayComponent } from '../../redux/actions'
 import { connect } from 'react-redux'
+import { navigate } from '../../navigations/NavigationService'
 
 type props = {
-  openOverlay: any
+  openOverlay: any,
 }
 
-const mainHeader = ({openOverlay}: props) => {
+const mainHeader: React.FC<props> = ({openOverlay}: props) => {
   return (
     <View style={styles.header}>
-      <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]}>
+      <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]} onPress={()=>{navigate("Dashboard")}}>
         <Text style={styles.orgName}>WORLD FITNESS CENTER</Text>
         <IconSet name='left-small' color={iconColor} size={25}/>
       </TouchableOpacity>

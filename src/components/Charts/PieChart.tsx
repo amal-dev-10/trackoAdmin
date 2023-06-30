@@ -6,15 +6,15 @@ import { fontSize } from '../../styles/fonts'
 
 const PieChart = () => {
     const [data, setData] = useState([
-        { x: `Gold Pack`, y: 25 },
-        { x: 'Silver Pack', y: 50 },
-        { x: 'Bronze Pack', y: 25 },
+        { x: ``, y: 25 },
+        { x: '', y: 50 },
+        { x: '', y: 25 },
     ] as any[]);
     useEffect(()=>{
         setData([
-            { x: `Gold Pack`, y: 50 },
-            { x: 'Silver Pack', y: 40 },
-            { x: 'Bronze Pack', y: 10 },
+            { x: `Gold Pack`, y: 40 },
+            { x: 'Silver Pack', y: 20 },
+            { x: 'Bronze Pack', y: 40 },
         ])
     }, [])
   return (

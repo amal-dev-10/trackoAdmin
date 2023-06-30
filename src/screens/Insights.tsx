@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown';
 import React, { useState } from 'react'
 import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary, unitColor } from '../styles/colors';
@@ -18,7 +18,7 @@ const Insights = ({yearData, monthData}: props) => {
   const [month, setMonth] = useState({label: "", value: ""} as dropDownProps);
 
   return (
-    <View style={styles.insightScreen}>
+    <ScrollView style={styles.insightScreen}>
       <View style={styles.membershipInsightSection}>
         <Text>MEMBERSHIP INSIGHTS</Text>
         <View style={styles.dropDownView}>
@@ -115,7 +115,7 @@ const Insights = ({yearData, monthData}: props) => {
           </View>
         </View>
       </View>
-    </View>
+    </ScrollView>
   )
 }
 
@@ -130,8 +130,8 @@ const styles = StyleSheet.create({
   insightScreen:{
     flex: 1,
     width: "100%",
-    display: "flex",
-    flexDirection: "column",
+    // display: "flex",
+    // flexDirection: "column",
     gap: 10,
     paddingTop: 20
   },

@@ -11,15 +11,25 @@ import Requests from '../screens/Requests';
 import Insights from '../screens/Insights';
 import Packages from '../screens/Packages';
 import Overlay from '../screens/Overlay';
+import MainLoader from '../components/Loader/MainLoader';
+import { setLoader } from '../redux/actions';
 import { useEffect } from 'react';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
-  allOverlays: overlayComponent[]
+  allOverlays: overlayComponent[],
+  showLoader: any
 }
 
-const BottomNavigator = ({bottomTabData, allOverlays}: bottomTabPropsInt) => {
-
+const BottomNavigator = ({bottomTabData, allOverlays, showLoader}: bottomTabPropsInt) => {
+  //for loader testing
+  // useEffect(()=>{
+  //   showLoader(true)
+  //   let t = setTimeout(()=>{
+  //     showLoader(false)
+  //     clearTimeout(t);
+  //   }, 5000)
+  // },[])
   return (
     <View style={[container,styles.main]}>
       <View style={styles.headerBottomView}>
@@ -52,6 +62,7 @@ const BottomNavigator = ({bottomTabData, allOverlays}: bottomTabPropsInt) => {
           )
         })
       }
+      <MainLoader/>
     </View>
   )
 }
@@ -61,7 +72,11 @@ const mapStateToProps = (state: any)=>({
   allOverlays: state.overlay.opendedComponents
 });
 
-export default connect(mapStateToProps)(BottomNavigator);
+const mapDispatchToProps = (dispatch: any)=>({
+  showLoader: (show: boolean)=>{dispatch(setLoader(show))}
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(BottomNavigator);
 
 const styles = StyleSheet.create({
   main:{
