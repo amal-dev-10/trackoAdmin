@@ -3,24 +3,28 @@ import { NavigationContainer } from '@react-navigation/native';
 import MainStack from '../stacks/MainStack';
 import AuthStack from '../stacks/AuthStack';
 import Splash from '../screens/Splash';
+import { navigationRef } from './NavigationService';
 
 const RootNavigator = () => {
     const [isAuthenticated, setIsAuthenticated] = useState(true);
     const [showSplash, setShowSplash] = useState(true);
 
     useEffect(()=>{
-        setTimeout(()=>{
+        let t = setTimeout(()=>{
             setShowSplash(false);
-        }, 1000)
-    },[])
+            if(t){
+                clearTimeout(t);
+            }
+        }, 1000);
+    },[]);
   return (
-    <NavigationContainer>
+    <NavigationContainer ref={navigationRef}>
         {
             showSplash 
             ?
             <Splash/>
             :
-            isAuthenticated ? <MainStack/> : <AuthStack/>
+            (isAuthenticated ? <MainStack/> : <AuthStack/>)
 
         }
     </NavigationContainer>

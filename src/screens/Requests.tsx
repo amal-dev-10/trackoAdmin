@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { getRequests } from '../redux/actions'
+import { getRequests, setOverlayComponent } from '../redux/actions'
 import { container, shadowGenerator } from '../utils/helper'
 import RequestCard from '../components/Common/RequestCard'
 import { requestsProps } from '../interfaces/common'
@@ -10,10 +10,11 @@ import IconSet from '../styles/icons/Icons'
 
 type props = {
   allRequests: requestsProps[],
-  getRequestsData: any
+  getRequestsData: any,
+  openOverlay: any
 }
 
-const Requests = ({allRequests,getRequestsData}: props) => {
+const Requests = ({allRequests,getRequestsData, openOverlay}: props) => {
   useEffect(()=>{
     getRequestsData();
   }, [])
@@ -27,7 +28,7 @@ const Requests = ({allRequests,getRequestsData}: props) => {
             )
           })
         }
-        <TouchableOpacity style={[styles.requestCard, shadowGenerator()]}>
+        <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{openOverlay(6)}}>
           <IconSet name='user-o' color={iconColor} size={30}/>
           <Text style={styles.addText}>Click here to add clients to your organization</Text>
         </TouchableOpacity>
@@ -41,7 +42,8 @@ const mapStateToProps = (state: any)=>({
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
-  getRequestsData: ()=>{dispatch(getRequests())}
+  getRequestsData: ()=>{dispatch(getRequests())},
+  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Requests) 

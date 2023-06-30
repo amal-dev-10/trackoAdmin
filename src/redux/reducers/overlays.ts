@@ -13,6 +13,7 @@ let initialState: stateInterface = {
         {id: 3, name: "ALL TRANSACTIONS"},
         {id: 4, name: "TERMS & CONDITIONS"},
         {id: 5, name: "SETTINGS"},
+        {id: 6, name: "ADD CLIENTS"},
     ],
 }
 

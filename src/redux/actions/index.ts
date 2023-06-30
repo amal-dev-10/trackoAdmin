@@ -57,3 +57,21 @@ export const closeOverlayComponent = (payload: any = null)=>{
   }
 }
 
+// profile
+
+export const toggleSubButton = (payload: any = null)=>{
+  return {
+    type: "SUB_BUTTON_TOGGLE",
+    payload: payload
+  }
+}
+
+// loader
+
+export const setLoader = (payload: any = null)=>{
+  return {
+    type: "SHOW_LOADER",
+    payload: payload
+  }
+}
+

@@ -6,15 +6,16 @@ import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textCol
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { profileButtonProps } from '../interfaces/common'
-import { setOverlayComponent } from '../redux/actions'
+import { setOverlayComponent, toggleSubButton } from '../redux/actions'
 
 type props = {
     profileBtnList: profileButtonProps[],
     profileDetails: any,
-    openOverlay: any
+    openOverlay: any,
+    toggleButton: any
 }
 
-const Profile = ({profileBtnList, profileDetails, openOverlay}: props) => {
+const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton}: props) => {
     const [rating, setRating] = useState( 4.6 as number);
     const [stars, setStars] = useState([] as any[]);
 
@@ -38,32 +39,62 @@ const Profile = ({profileBtnList, profileDetails, openOverlay}: props) => {
     useEffect(()=>{
         let starList = ratingStarGenerator();
         setStars([...starList]);
-    },[])
+    },[]);
+
   return (
     <View style={styles.profileView}>
         <View style={[styles.profileCard, shadowGenerator()]}>
-            <IconSet name='user-o' color={iconColor} size={80}/>
-            <Text style={styles.textName}>AMAL DEV</Text>
-            <Text style={styles.orgName}>WORLD FITNESS CENTER</Text>
-            <View style={styles.ratingView}>
-                {
-                    stars
-                }
-                <Text>4.6</Text>
+            <View style={styles.details}>
+                <Text style={styles.textName}>AMAL DEV</Text>
+                <Text style={styles.orgName}>WORLD FITNESS CENTER</Text>
+                <View style={styles.ratingView}>
+                    {
+                        stars
+                    }
+                    <Text>4.6</Text>
+                </View>
+                <TouchableOpacity style={styles.editBtn}>
+                    <IconSet name='pencil' size={15} color={iconColor}/>
+                    <Text style={styles.profileEdit}>Edit Profile</Text>
+                </TouchableOpacity>
             </View>
+            <IconSet name='user-circle-o' color={iconColor} size={80}/>
         </View>
         <View style={styles.btnView}>
             {
                 profileBtnList.map((data, i: number)=>{
                     return (
-                        <TouchableOpacity 
-                            style={[styles.profileBtn]} 
-                            key={"profileBtn" + i}
-                            onPress={()=>{openOverlay(data.id)}}
-                        >
-                            <IconSet name={data.icon} size={16} color={textColorPrimary}/>
-                            <Text style={styles.btnText}>{data.name}</Text>
-                        </TouchableOpacity>
+                        <View style={styles.buttonView} key={"profileBtn" + i}>
+                            <TouchableOpacity 
+                                style={[styles.profileBtn]} 
+                                onPress={()=>{!data.subButtons.length ? openOverlay(data.id) : toggleButton(data.id)}}
+                            >
+                                <View style={styles.buttonFirst}>
+                                    <IconSet name={data.icon} size={16} color={textColorPrimary}/>
+                                    <Text style={styles.btnText}>{data.name}</Text>
+                                </View>
+                                {
+                                    data.subButtons?.length ?
+                                    <IconSet name='right-small' size={20} color={iconColor}/> : <></>
+                                }
+                            </TouchableOpacity>
+                            {
+                                (data.subButtons.length && data.opened) ?
+                                    <View style={styles.subButtonView}>
+                                      {
+                                        data.subButtons.map((d, i:number)=>{
+                                            return (
+                                                <TouchableOpacity style={[styles.profileBtn, styles.subButton]} key={"subButton" + i} onPress={()=>{openOverlay(d.id)}}>
+                                                    <IconSet name={d.icon} size={16} color={textColorPrimary}/>
+                                                    <Text style={styles.btnText}>{d.name}</Text>
+                                                </TouchableOpacity>
+                                            )
+                                        })
+                                      }  
+                                    </View>
+                                : <></>
+                            }
+                        </View>
                     )
                 })
             }
@@ -81,7 +112,8 @@ const mapStateToProps = (state: any)=>({
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
-    openOverlay: (componentId: number)=>{dispatch(setOverlayComponent(componentId))}
+    openOverlay: (componentId: number)=>{dispatch(setOverlayComponent(componentId))},
+    toggleButton: (id: number)=>{dispatch(toggleSubButton(id))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
@@ -101,15 +133,16 @@ const styles = StyleSheet.create({
         backgroundColor: cardColor,
         borderRadius: 10,
         display: "flex",
-        justifyContent: "center",
+        flexDirection: "row",
+        justifyContent: "space-between",
         alignItems: "center",
         gap: 10,
-        minWidth: "50%"
+        width: "100%"
     },
     textName:{
-        fontSize: fontSize.xmedium,
+        fontSize: fontSize.medium,
         fontWeight: "700",
-        color: textColorSecondary
+        color: textColorPrimary
     },
     ratingView:{
         display: "flex",
@@ -135,7 +168,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         alignItems: "center",
         gap: 15,
-        justifyContent: "flex-start",
+        justifyContent: "space-between",
         backgroundColor: cardColor,
         padding: 15,
         borderRadius: 10,
@@ -154,5 +187,47 @@ const styles = StyleSheet.create({
     versionName:{
         color: borderColor, 
         fontSize: fontSize.xSmall
+    },
+    details:{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
+        justifyContent: 'center',
+        gap: 5
+    },
+    profileEdit:{
+        color: iconColor,
+        textDecorationStyle: "solid",
+        textDecorationLine: "underline"
+    },
+    editBtn:{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        justifyContent: "flex-start",
+        gap: 10,
+        marginTop: 15
+    },
+    buttonFirst:{
+        display: "flex",
+        flexDirection: "row",
+        gap: 15,
+        alignItems: "center"
+    },
+    buttonView:{
+        display: "flex",
+        flexDirection: "column",
+        gap: 10
+    },
+    subButtonView:{
+        display: 'flex',
+        flexDirection: "column",
+        alignItems: "flex-end",
+        justifyContent: "center",
+        gap: 10
+    },
+    subButton:{
+        width: "80%",
+        justifyContent: "flex-start"
     }
 })

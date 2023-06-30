@@ -8,6 +8,7 @@ import { packageReducer } from './packageReducer';
 import { overlayReducer } from './overlays';
 import { profileReducer } from './profileReducer';
 import { dropDownReducer } from './dropDownReducer';
+import { loaderReducer } from './loader';
 
 const rootReducer = combineReducers({
   bottomTab: bottomTabReducer,
@@ -16,7 +17,8 @@ const rootReducer = combineReducers({
   packages: packageReducer,
   overlay: overlayReducer,
   profile: profileReducer,
-  dropDown: dropDownReducer
+  dropDown: dropDownReducer,
+  loader: loaderReducer
 });
 
 export default rootReducer;
