@@ -11,6 +11,7 @@ import Profile from './Profile';
 import Transactions from './Transactions';
 import TermsAndConditions from './TermsAndConditions';
 import Settings from './Settings';
+import AddClients from './AddClients';
 
 type props={
     // component: overlayComponent,
@@ -48,6 +49,10 @@ const Overlay = ({overlayData, closeOverlay}: props) => {
                 {
                     overlayData.id === 5 &&
                     <Settings/> //terms and conditions
+                }
+                {
+                    overlayData.id === 6 &&
+                    <AddClients/> // add new client
                 }
             </View>
         </View>

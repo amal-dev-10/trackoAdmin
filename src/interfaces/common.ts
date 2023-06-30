@@ -72,7 +72,15 @@ export type overlayComponent = {
 export type profileButtonProps = {
     icon: string,
     name: string,
-    id: number
+    id: number,
+    opened: boolean,
+    subButtons: subButtonProps[]
+}
+
+export type subButtonProps = {
+    name: string, 
+    id: number, 
+    icon: string
 }
 
 export type dropDownProps = {
