@@ -7,8 +7,14 @@ import Input from '../Common/Input'
 import Button from '../Common/Button'
 import { inputProps } from '../../interfaces/common'
 import { KeyboardType } from 'react-native'
+import { connect } from 'react-redux'
+import { signInWithPhoneNumber } from '../../redux/actions/authActions'
 
-const Login = () => {
+type props = {
+  signInWithPhoneNumber: any
+}
+
+const Login = ({signInWithPhoneNumber}: props) => {
   const [inputList, setInputList] = useState(
   [
     {
@@ -38,6 +44,12 @@ const Login = () => {
       }
     });
     setInputList([...temp]);
+  }
+
+  const sendOtpClicked = ()=>{
+    if(allInputsValid){
+      signInWithPhoneNumber(inputList[0].value)
+    }
   }
 
   useEffect(()=>{
@@ -93,7 +105,7 @@ const Login = () => {
         <View style={styles.buttonView}>
           <Button
             text='GET OTP'
-            onTouch={()=>{}}
+            onTouch={()=>{sendOtpClicked()}}
             width='50%'
           />
         </View>
@@ -102,7 +114,11 @@ const Login = () => {
   )
 }
 
-export default Login
+const mapDispatchToProps = (dispatch: any) => ({
+  signInWithPhoneNumber: (phoneNumber: string) => dispatch(signInWithPhoneNumber(phoneNumber)),
+});
+
+export default connect(null, mapDispatchToProps)(Login)
 
 const styles = StyleSheet.create({
   loginView:{

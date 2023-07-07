@@ -1,4 +1,4 @@
-import {StackNavigationOptions, TransitionSpecs, createStackNavigator} from '@react-navigation/stack'
+import {StackNavigationOptions, createStackNavigator} from '@react-navigation/stack'
 import DashBoard from '../screens/DashBoard';
 import BottomNavigator from '../navigations/BottomNavigator';
 

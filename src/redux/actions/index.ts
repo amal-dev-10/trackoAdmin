@@ -75,3 +75,13 @@ export const setLoader = (payload: any = null)=>{
   }
 }
 
+// main loader
+
+export const showMainLoaderAction = (payload: boolean)=>{
+  return {
+    type: "SHOW_MAIN_LOADER",
+    payload: payload
+  }
+}
+
+

@@ -1,10 +1,13 @@
-import { StyleSheet, Text, TextInput, View, Keyboard, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, TextInput, View, Keyboard, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { container, shadowGenerator, valueBinder } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import Button from '../Common/Button'
 import TitleComponent from '../Common/TitleComponent'
+import { verfyOtpCode } from '../../redux/actions/authActions'
+import { connect } from 'react-redux'
+import { FirebaseAuthTypes } from '@react-native-firebase/auth'
 
 type optInputInterface = {
   value: string,
@@ -12,17 +15,26 @@ type optInputInterface = {
   error: boolean
 }
 
-const Otp = () => {
+type props = {
+  verifyOtp: any,
+  confirmation: FirebaseAuthTypes.ConfirmationResult,
+}
+
+const Otp = ({verifyOtp, confirmation}: props) => {
   const [inputList, setInputList] = useState([] as optInputInterface[]);
   const [timer, setTimer] = useState(5 as number);
   let interval: number;
   const textInputRefs = useRef<Array<TextInput | null>>([]);
-  const otpLength: number = 4;
+  const otpLength: number = 6;
 
-  const verifyOtp = ()=>{
+  const verifyOtpClicked = async ()=>{
     let validation: boolean = inputList.every((x)=>{return x.value.length > 0});
     if(validation){
-      console.log(interval)
+      let code: string = ""
+      inputList.forEach((x)=>{
+        code = code + x.value
+      });
+      await verifyOtp(code, confirmation);
       clearInterval(interval)
       //send otp
     }else{
@@ -123,7 +135,7 @@ const Otp = () => {
       </View>
       <View style={styles.buttonView}>
         <Button
-          onTouch={()=>{verifyOtp()}}
+          onTouch={()=>{verifyOtpClicked()}}
           text='VERIFY'
           width='50%'
           key={0}
@@ -133,7 +145,15 @@ const Otp = () => {
   )
 }
 
-export default Otp
+const mapDispatchToProps = (dispatch: any)=>({
+  verifyOtp: async (code: string, confirm: FirebaseAuthTypes.ConfirmationResult)=>{await dispatch(verfyOtpCode(code, confirm))}
+})
+
+const mapStateToProps = (state: any)=>({
+  confirmation: state.auth.data.confirmation,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Otp)
 
 const styles = StyleSheet.create({
   otpScreen:{
@@ -163,8 +183,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
     backgroundColor: cardColor,
     borderRadius: 15,
-    height: 60,
-    width: 60
+    height: Dimensions.get("window").width / 8,
+    width: Dimensions.get("window").width / 8
   },
   realInput:{
     padding: 0,

@@ -1,15 +1,23 @@
 import {StyleSheet, Text, View } from 'react-native'
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { container, valueBinder } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { iconColor, textColorSecondary } from '../../styles/colors'
 import Button from '../Common/Button'
-import { inputProps } from '../../interfaces/common'
+import { apiResponse, inputProps } from '../../interfaces/common'
 import Input from '../Common/Input'
 import { KeyboardType } from 'react-native'
 import TitleComponent from '../Common/TitleComponent'
+import { connect } from 'react-redux'
+import { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import { navigate } from '../../navigations/NavigationService'
+import { saveOwner } from '../../services/apiCalls/serviceCalls'
 
-const SignUp = () => {
+type props = {
+  user: FirebaseAuthTypes.UserCredential,
+}
+
+const SignUp = ({user}: props) => {
   const [inputList, setInputList] = useState(
     [
       {
@@ -38,14 +46,40 @@ const SignUp = () => {
       }
     ] as inputProps[]);
 
+    const [allInputTrue, setAllInputTrue] = useState(false as boolean);
+
     const validation = ()=>{
-      
+      let check: boolean = inputList.every((x)=>{return x.value != ""})
+      setAllInputTrue(check);
     }
+
+    const signUpClicked = async ()=>{
+      if(allInputTrue){
+        let data = {
+          phoneNumber: user.user.phoneNumber,
+          uid: user.user.uid,
+          name: inputList[1].value,
+          phoneVerified: true
+        }
+        let res: apiResponse | null = await saveOwner(data);
+        if(res?.status === 200){
+          navigate("MainStack")
+        }else{
+          //error
+        }
+      }
+    }
+
+    useEffect(()=>{
+      let temp = inputList;
+      temp[0].value = user.user.phoneNumber || "";
+      setInputList([...temp])
+    }, [])
   return (
     <View style={[container, styles.signUpScreen]}>
       <TitleComponent
-        title='Sign up'
-        subTitle='Please enter your details to register'
+        title='EDIT'
+        subTitle='Please enter your details'
       />
       <View style={styles.inputViews}>
       {
@@ -74,8 +108,8 @@ const SignUp = () => {
       </View>
       <View style={styles.buttonView}>
         <Button
-          onTouch={()=>{}}
-          text='VERIFY'
+          onTouch={()=>{signUpClicked()}}
+          text='SAVE'
           width='50%'
           key={0}
         />
@@ -84,7 +118,11 @@ const SignUp = () => {
   )
 }
 
-export default SignUp
+const mapStateToProps = (state: any)=>({
+  user: state.auth.data.user || "",
+});
+
+export default connect(mapStateToProps, null)(SignUp)
 
 const styles = StyleSheet.create({
   signUpScreen:{

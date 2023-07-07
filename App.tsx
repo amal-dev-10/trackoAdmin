@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   SafeAreaView,
   ScrollView,
@@ -13,7 +13,6 @@ import store from './src/redux/store';
 import RootNavigator from './src/navigations/RootNavigator';
 
 function App(): JSX.Element {
-
   return (
     <Provider store={store}> 
         <StatusBar
