@@ -38,6 +38,12 @@ let initialState = {
             id: 5,
             subButtons: []
         },
+        {
+            icon: "logout",
+            name: "LOGOUT",
+            id: 7,
+            subButtons: []
+        }
     ] as profileButtonProps[]
 }
 

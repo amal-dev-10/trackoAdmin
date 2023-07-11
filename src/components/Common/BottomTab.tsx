@@ -37,7 +37,11 @@ const mapDispatchToProps = (dispatch: any)=>({
   tabIconClicked: (id: number)=>dispatch(tabIconClicked(id))
 })
 
-export default connect(null, mapDispatchToProps)(BottomTab)
+const mapStateToProps = (state: any)=>({
+  tabData: state.bottomTab,
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(BottomTab)
 
 const styles = StyleSheet.create({
   bottomTab:{

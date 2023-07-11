@@ -20,6 +20,10 @@ type props={
 }
 
 const Overlay = ({overlayData, closeOverlay}: props) => {
+    // useEffect(()=>{
+    //     const backHandler = BackHandler.addEventListener("hardwareBackPress",()=>{return false})
+    //     return () => backHandler.remove()
+    // },[])
   return (
     <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='fade'>
         <View style={[styles.overlayScreen, container]}>

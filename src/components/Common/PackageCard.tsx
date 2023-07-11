@@ -1,16 +1,18 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, ImageSourcePropType } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { packagesProps } from '../../interfaces/common'
+import { apiResponse, packagesProps } from '../../interfaces/common'
 import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import { shadowGenerator } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { updatePackage } from '../../redux/actions'
 import { connect } from 'react-redux'
 import IconSet from '../../styles/icons/Icons'
+import { getPackages, updatePackageService } from '../../services/apiCalls/serviceCalls'
 
 type props = {
     packDetail?: packagesProps,
-    updatePack: any
+    updatePack: any,
+    businessId: string
 }
 
 type EditableProps = {
@@ -21,7 +23,7 @@ type EditableProps = {
     numOfYearOrMonths: string,
 }
 
-const PackageCard = ({packDetail, updatePack}: props) => {
+const PackageCard = ({packDetail, updatePack,businessId}: props) => {
     const [editable, setEditable] = useState({
         active: packDetail?.active || false,
         cost: packDetail?.cost || "0",
@@ -62,23 +64,33 @@ const PackageCard = ({packDetail, updatePack}: props) => {
         setNewFeature("");
     };
 
-    const activateOrUpdateClicked = (active: boolean)=>{
+    const activateOrUpdateClicked = async (active: boolean)=>{
         let newData: any = {...packDetail, ...editable, active: active};
-        updatePack(newData);
+        let resp: apiResponse = await updatePackageService(newData.tier as string, businessId, newData);
+        updatePack(resp.data);
         setEditable({...editable, active: active})
         setDefault({...editable, active: active});
         setEditMode(false)
     }
 
     useEffect(()=>{
-        // setEditable({
-        //     active: packDetail?.active || false,
-        //     cost: packDetail?.cost || "0",
-        //     duration: packDetail?.duration || 0,
-        //     features: packDetail?.features || [],
-        //     numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
-        // });
-    }, [packDetail])
+        setEditable({
+            active: packDetail?.active || false,
+            cost: packDetail?.cost || "0",
+            duration: packDetail?.duration || 0,
+            features: packDetail?.features || [],
+            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        });
+        setDefault({
+            active: packDetail?.active || false,
+            cost: packDetail?.cost || "0",
+            duration: packDetail?.duration || 0,
+            features: packDetail?.features || [],
+            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        });
+    }, [packDetail]);
+
+
   return (
     <View style={[styles.packCard, shadowGenerator(2,2)]}>
         <View style={styles.logoView}>
@@ -214,7 +226,11 @@ const mapDispatchToProps = (dispatch: any)=>({
     updatePack: (data: packagesProps)=>dispatch(updatePackage(data))
 })
 
-export default connect(null, mapDispatchToProps)(PackageCard)
+const mapStateToProps = (state: any)=>({
+    businessId: state.dashboard.selectedBusiness.uid
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PackageCard)
 
 const styles = StyleSheet.create({
     packCard:{

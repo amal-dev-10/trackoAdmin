@@ -17,11 +17,10 @@ import { useEffect } from 'react';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
-  allOverlays: overlayComponent[],
   showLoader: any
 }
 
-const BottomNavigator = ({bottomTabData, allOverlays, showLoader}: bottomTabPropsInt) => {
+const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
   //for loader testing
   // useEffect(()=>{
   //   showLoader(true)
@@ -53,15 +52,8 @@ const BottomNavigator = ({bottomTabData, allOverlays, showLoader}: bottomTabProp
         }
       </View>
       <View style={[styles.headerBottomView, styles.bottomHeight]}>
-        <BottomTab tabData={bottomTabData}/>
+        <BottomTab/>
       </View>
-      {
-        allOverlays.map((data, i: number)=>{
-          return (
-            <Overlay key={"overlay" +i} overlayData={data}/>
-          )
-        })
-      }
       <MainLoader/>
     </View>
   )

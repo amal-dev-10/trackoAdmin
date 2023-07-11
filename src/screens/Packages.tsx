@@ -5,19 +5,32 @@ import { fontSize } from '../styles/fonts'
 import { container } from '../utils/helper'
 import { ScrollView } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
-import { getAllPackages } from '../redux/actions'
-import { packagesProps } from '../interfaces/common'
+import { getAllPackages, mapPackagesToState } from '../redux/actions'
+import { apiResponse, packagesProps } from '../interfaces/common'
 import PackageCard from '../components/Common/PackageCard'
+import { getPackages } from '../services/apiCalls/serviceCalls'
 
 type props = {
   allPackages?: packagesProps[],
-  getAllPackages?: any
+  businessId: string,
+  mapPackage: any
 }
 
-const Packages = ({getAllPackages, allPackages}: props) => {
+const Packages = ({allPackages, businessId, mapPackage}: props) => {
+
+  const getSavedPackages = async ()=>{
+    let resp: apiResponse = await getPackages(businessId)
+    if(resp.status === 200){
+        mapPackage(resp.data);
+    }else{
+        // error
+    }
+  }
+
+  // useEffect(()=>{console.log("check",allPackages)}, [allPackages])
 
   useEffect(()=>{
-    getAllPackages();
+      getSavedPackages()
   }, [])
 
   return (
@@ -46,11 +59,12 @@ const Packages = ({getAllPackages, allPackages}: props) => {
 }
 
 const mapStateToProps = (state: any)=>({
-  allPackages: state.packages.allPackages
+  allPackages: state.packages.allPackages,
+  businessId: state.dashboard.selectedBusiness.uid
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
-  getAllPackages: ()=>dispatch(getAllPackages())
+  mapPackage: (data: packagesProps[])=>{dispatch(mapPackagesToState(data))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Packages)

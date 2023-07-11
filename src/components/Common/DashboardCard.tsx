@@ -1,6 +1,5 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
-import { shadowGenerator } from '../../utils/helper'
 import { orgProps } from '../../interfaces/common';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors';
@@ -10,7 +9,7 @@ import { navigate } from '../../navigations/NavigationService';
 
 const DashboardCard = (props: orgProps) => {
   return (
-    <TouchableOpacity style={[styles.card, shadowGenerator(2,2)]} onPress={()=>{navigate("Bottom")}}>
+    <TouchableOpacity style={[styles.card]} onPress={()=>{props.onPress()}}>
         <Icon size={50} name={props.icon} color={textColorPrimary}/>
         <View style={styles.details}>
             <Text style={styles.cardTitle}>{props.orgName}</Text>
@@ -19,6 +18,7 @@ const DashboardCard = (props: orgProps) => {
     </TouchableOpacity>
   )
 }
+
 
 export default DashboardCard
 
@@ -32,6 +32,7 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 20,
         backgroundColor: cardColor,
+        elevation: 2
     },
     details:{
         display: "flex",
@@ -43,7 +44,7 @@ const styles = StyleSheet.create({
     cardTitle:{
         fontSize: fontSize.xmedium,
         color: textColorSecondary,
-        fontWeight: "700"
+        fontWeight: "500"
     },
     id:{
         color: iconColor,

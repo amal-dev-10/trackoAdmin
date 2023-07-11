@@ -11,6 +11,8 @@ import { dropDownReducer } from './dropDownReducer';
 import { loaderReducer } from './loader';
 import { authReducer } from './authReducer';
 import { mainLoaderReducer } from './mainLoader';
+import { businessReducer } from './dashboardReducer';
+import { clientReducer } from './clientReducer';
 
 const rootReducer = combineReducers({
   bottomTab: bottomTabReducer,
@@ -23,6 +25,8 @@ const rootReducer = combineReducers({
   loader: loaderReducer,
   auth: authReducer,
   mainLoader: mainLoaderReducer,
+  dashboard: businessReducer,
+  client: clientReducer
 });
 
 export default rootReducer;

@@ -10,13 +10,15 @@ export type inputProps = {
     name: string,
     focus: boolean,
     editable: boolean,
-    id: number
+    id: number,
+    showVerifyBtn?: boolean
 }
 
 export type orgProps = {
     icon: string,
     orgName: string,
-    id: string
+    id: string,
+    onPress: any
 }
 
 export type bottomTabProps = {

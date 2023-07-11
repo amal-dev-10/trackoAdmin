@@ -1,5 +1,9 @@
 // Bottom navigation actions
 
+import { ibusiness } from "../../interfaces/business";
+import { packagesProps } from "../../interfaces/common";
+import { iMembership } from "../../interfaces/iClient";
+
 export const tabIconClicked = (payload: any = null)=>{
   return {
     type: "TAB_ICON_CLICKED",
@@ -80,6 +84,54 @@ export const setLoader = (payload: any = null)=>{
 export const showMainLoaderAction = (payload: boolean)=>{
   return {
     type: "SHOW_MAIN_LOADER",
+    payload: payload
+  }
+}
+
+// dashboard
+
+export const setAllBusinesses = (payload: ibusiness[])=>{
+  return {
+    type: "SET_ALL_BUSINESS_LIST",
+    payload: payload
+  }
+}
+
+export const setSelectedBusiness = (payload: ibusiness)=>{
+  return {
+    type: "SET_SELECTED_BUSINESS",
+    payload: payload
+  }
+}
+
+// clients
+
+export const setAllClients = (payload: iMembership[])=>{
+  return {
+    type: "SET_ALL_CLIENTS",
+    payload: payload
+  }
+}
+
+export const setSelectedClient = (payload: iMembership)=>{
+  return {
+    type: "SET_SELECTED_CLIENT",
+    payload: payload
+  }
+}
+
+export const resetReducerAction = (payload: string)=>{
+  return {
+    type: "RESET_REDUCER",
+    payload: payload
+  }
+}
+
+// packages
+
+export const mapPackagesToState = (payload: packagesProps[])=>{
+  return {
+    type: "MAP_SAVED_PACKAGE",
     payload: payload
   }
 }

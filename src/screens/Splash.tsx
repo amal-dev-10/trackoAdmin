@@ -14,19 +14,24 @@ type props = {
 const Splash = ({setIsAuthenticated, setToken}: props) => {
 
   const authStateChanged = async ()=>{
-    let unSubscribe = auth().onAuthStateChanged(async (user)=>{
-      let token = await user?.getIdToken();
-      if(token){
-        setIsAuthenticated(true);
-        setToken(token);
-        navigate("MainStack");
-      }else{
-        setIsAuthenticated(false);
-        setToken("");
-        navigate("AuthStack");
-      }
-      unSubscribe();
-    });
+    try{
+      let unSubscribe = auth().onAuthStateChanged(async (user)=>{
+        let token = await user?.getIdToken();
+        if(token){
+          setIsAuthenticated(true);
+          setToken(token);
+          navigate("MainStack");
+        }else{
+          setIsAuthenticated(false);
+          setToken("");
+          navigate("AuthStack");
+        }
+        unSubscribe();
+      });
+    }
+    catch(err){
+      console.log(err)  
+    }
   }
 
   useEffect(()=>{

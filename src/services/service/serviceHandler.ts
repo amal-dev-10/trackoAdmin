@@ -5,8 +5,8 @@ import store from "../../redux/store";
 
 export const getData = async (url: string) => {
     let response = null;
-    store.dispatch(setLoader(true));
     try {
+        store.dispatch(setLoader(true));
         response = await createApiInstance().get(url);
     } catch (error) {
         console.log(error);
@@ -17,8 +17,8 @@ export const getData = async (url: string) => {
 
 export const postData = async (url: string, body: any) => {
     let response = null;
-    store.dispatch(setLoader(true));
     try {
+        store.dispatch(setLoader(true));
         response = await createApiInstance().post(url, JSON.stringify(body));
     } catch (error) {
         console.log(error);
@@ -29,9 +29,9 @@ export const postData = async (url: string, body: any) => {
 
 export const patchData = async (url: string, body: any) => {
     let response = null;
-    store.dispatch(setLoader(true));
     try {
-        response = await createApiInstance().patch(url, body);
+        store.dispatch(setLoader(true));
+        response = await createApiInstance().patch(url, JSON.stringify(body));
     } catch (error) {
         console.log(error);
     }
@@ -41,8 +41,8 @@ export const patchData = async (url: string, body: any) => {
 
 export const deleteData = async (url: string) => {
     let response = null;
-    store.dispatch(setLoader(true));
     try {
+        store.dispatch(setLoader(true));
         response = await createApiInstance().delete(url);
     } catch (error) {
         console.log(error)

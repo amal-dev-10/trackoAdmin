@@ -4,10 +4,11 @@ import { shadowGenerator } from '../../utils/helper'
 import { memberShipTextColor } from '../../styles/colors'
 import LinearGradient from 'react-native-linear-gradient';
 import { fontSize } from '../../styles/fonts'
-import { memberShipProps } from '../../interfaces/common'
+import { iClient, iMembership } from '../../interfaces/iClient';
+import { Timestamp } from 'firebase/firestore';
 
 type cardPackProps = {
-    membershipData: memberShipProps
+    membershipData: iMembership
 }
 
 const MembershipCard = ({membershipData}: cardPackProps) => {
@@ -16,7 +17,7 @@ const MembershipCard = ({membershipData}: cardPackProps) => {
     const [colorPack, setColorPack] = useState(["#c6a800", "rgba(255,172,0,1)"] as string[]);
     
     useEffect(()=>{
-        switch(membershipData?.tier){
+        switch(membershipData?.memberShipDetails?.tier){
             case "gold":
                 setPack(require(`../../assets/gold.png`));
                 setColorPack(["#c6a800", "rgba(255,172,0,1)"])
@@ -30,7 +31,7 @@ const MembershipCard = ({membershipData}: cardPackProps) => {
                 setColorPack(['#A67C52', '#CD7F32'])
                 break;
             default:
-                setPack(null);
+                setColorPack(['#c3c3c3', '#ffa201'])
                 break;
         }
     }, [])
@@ -52,17 +53,21 @@ const MembershipCard = ({membershipData}: cardPackProps) => {
                         source={pack}
                         style={styles.packImage}
                     /> 
-                : <Text style={styles.tierName}>NOT FOUND</Text>
+                : <Text style={styles.tierName}>{membershipData.memberShipDetails?.expired ? "EXPIRED" : "NO MEMBERSHIP"}</Text>
             }
         </View>
         <View style={styles.stripe}>
             <View style={[styles.stripeLeftRight, styles.left]}>
                 <Text style={styles.stripeKey}>Valid From</Text>
-                <Text style={styles.stripeValue}>{membershipData.validFrom.toLocaleDateString()}</Text>
+                <Text style={styles.stripeValue}>{
+                    membershipData.memberShipDetails?.validFromString ? membershipData.memberShipDetails?.validFromString : "NA"
+                }</Text>
             </View>
             <View style={[styles.stripeLeftRight, styles.right]}>
                 <Text style={styles.stripeKey}>Valid Thru</Text>
-                <Text style={styles.stripeValue}>{membershipData.validThru.toLocaleDateString()}</Text>
+                <Text style={styles.stripeValue}>{
+                    membershipData.memberShipDetails?.validThruString ? membershipData.memberShipDetails?.validThruString : "NA"
+                }</Text>
             </View>
         </View>
     </LinearGradient>
@@ -79,7 +84,6 @@ const styles = StyleSheet.create({
         paddingBottom: 20,
         paddingTop: 10,
         borderRadius: 10,
-        backgroundColor: "#fba018",
         marginBottom: 10
     },
     nameView:{
@@ -98,12 +102,12 @@ const styles = StyleSheet.create({
         justifyContent:"center",
         alignItems: "center",
         flex:1,
-        padding: 10
     },
     tierName:{
         fontSize: fontSize.large,
         color: memberShipTextColor,
-        fontWeight: "700",
+        fontWeight: "500",
+        padding: 10
     },
     member:{
         color: memberShipTextColor,

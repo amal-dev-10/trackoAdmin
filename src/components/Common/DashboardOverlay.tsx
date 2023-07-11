@@ -1,19 +1,26 @@
 import { StyleSheet, Text, View, Modal } from 'react-native'
 import React, { useState } from 'react'
 import Button from './Button'
-import { inputProps } from '../../interfaces/common'
+import { apiResponse, inputProps } from '../../interfaces/common'
 import Input from './Input'
 import { valueBinder } from '../../utils/helper'
 import { KeyboardType } from 'react-native'
 import { BlurView } from '@react-native-community/blur'
+import { connect } from 'react-redux'
+import { ibusiness } from '../../interfaces/business'
+import { setAllBusinesses } from '../../redux/actions'
+import { addNewBusiness } from '../../services/apiCalls/serviceCalls'
 
 
 type overlayProps = {
     show: boolean,
-    close: Function
+    close: Function,
+    setBusiness: any,
+    allBusinesses: ibusiness[]
 } 
 
 const DashboardOverlay = (props:overlayProps) => {
+    const [allValid, setAllValid] = useState(false as boolean);
     const [inputList, setInputList] = useState(
         [
           {
@@ -43,7 +50,39 @@ const DashboardOverlay = (props:overlayProps) => {
         ] as inputProps[]);
         
     const validation = ()=>{
+        let updates = inputList.map((x)=>{
+            if(x.value){
+                x.valid = true;
+            }else{
+                x.valid = false;
+            }
+            return x
+        });
+        setInputList([...updates]);
+        let valid: boolean = updates.every((x)=>{return x.valid});
+        setAllValid(valid);
+    }
 
+    const addNewBusinessClicked = async ()=>{
+        if(allValid){
+            let data: ibusiness = {
+                name: inputList[0].value,
+                location: inputList[1].value,
+                verified: false,
+            }
+            try{
+                let resp: apiResponse = await addNewBusiness(data);
+                if(resp?.status === 200){
+                    let temp = props.allBusinesses;
+                    temp.push(resp.data);
+                    props.setBusiness(temp);
+                    props.close();
+                }
+            }
+            catch(err){
+                console.log(err)
+            }
+        }
     }
 
   return (
@@ -81,7 +120,7 @@ const DashboardOverlay = (props:overlayProps) => {
                 </View>
                 <View style={styles.btnView}>
                     <Button
-                        onTouch={()=>{}}
+                        onTouch={()=>{addNewBusinessClicked()}}
                         text='ADD'
                         width='35%'
                     />
@@ -98,7 +137,15 @@ const DashboardOverlay = (props:overlayProps) => {
   )
 }
 
-export default DashboardOverlay
+const mapStateToProps = (state: any)=>({
+    allBusinesses: state.dashboard.businesses
+})
+
+const mapDispatchToProps = (dispatch: any)=>({
+    setBusiness: (data: ibusiness[])=>{dispatch(setAllBusinesses(data))}
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(DashboardOverlay)
 
 const styles = StyleSheet.create({
     overlayCover:{

@@ -35,7 +35,7 @@ const RootNavigator = ({showLoader, authLoader}: props) => {
 }
 
 const mapStateToProps = (state: any)=>({
-    showLoader: state.mainLoader.show,
+    showLoader: state.loader.show,
     authLoader: state.auth.data.loading
 })
 
