@@ -1,16 +1,18 @@
 import { Dimensions, Image, StyleSheet, Text, TextInput, TouchableOpacity, View, KeyboardAvoidingView, ImageSourcePropType } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { packagesProps } from '../../interfaces/common'
+import { apiResponse, packagesProps } from '../../interfaces/common'
 import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
-import { shadowGenerator } from '../../utils/helper'
+import { shadowGenerator, showToast } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { updatePackage } from '../../redux/actions'
 import { connect } from 'react-redux'
 import IconSet from '../../styles/icons/Icons'
+import { getPackages, updatePackageService } from '../../services/apiCalls/serviceCalls'
 
 type props = {
     packDetail?: packagesProps,
-    updatePack: any
+    updatePack: any,
+    businessId: string
 }
 
 type EditableProps = {
@@ -21,7 +23,7 @@ type EditableProps = {
     numOfYearOrMonths: string,
 }
 
-const PackageCard = ({packDetail, updatePack}: props) => {
+const PackageCard = ({packDetail, updatePack,businessId}: props) => {
     const [editable, setEditable] = useState({
         active: packDetail?.active || false,
         cost: packDetail?.cost || "0",
@@ -62,34 +64,56 @@ const PackageCard = ({packDetail, updatePack}: props) => {
         setNewFeature("");
     };
 
-    const activateOrUpdateClicked = (active: boolean)=>{
-        let newData: any = {...packDetail, ...editable, active: active};
-        updatePack(newData);
-        setEditable({...editable, active: active})
-        setDefault({...editable, active: active});
-        setEditMode(false)
+    const activateOrUpdateClicked = async (active: boolean)=>{
+        let newData = {...packDetail, ...editable, active: active};
+        if(newData.cost && parseInt(newData.cost) > 0){
+            if(newData.features.length && newData.features.length > 0 ){
+                if(newData.numOfYearOrMonths && parseInt(newData.numOfYearOrMonths) > 0){
+                    let resp: apiResponse = await updatePackageService(newData.tier as string, businessId, newData);
+                    updatePack(resp.data);
+                    setEditable({...editable, active: active})
+                    setDefault({...editable, active: active});
+                    setEditMode(false)
+                }else{
+                    showToast("Number of months cant be 0");
+                }
+            }else{
+                showToast("You should atleast add 1 feature");
+            }
+        }else{
+            showToast("Cost should be greater than 0");
+        }
     }
 
     useEffect(()=>{
-        // setEditable({
-        //     active: packDetail?.active || false,
-        //     cost: packDetail?.cost || "0",
-        //     duration: packDetail?.duration || 0,
-        //     features: packDetail?.features || [],
-        //     numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
-        // });
-    }, [packDetail])
+        setEditable({
+            active: packDetail?.active || false,
+            cost: packDetail?.cost || "0",
+            duration: packDetail?.duration || 0,
+            features: packDetail?.features || [],
+            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        });
+        setDefault({
+            active: packDetail?.active || false,
+            cost: packDetail?.cost || "0",
+            duration: packDetail?.duration || 0,
+            features: packDetail?.features || [],
+            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        });
+    }, [packDetail]);
+
+
   return (
     <View style={[styles.packCard, shadowGenerator(2,2)]}>
         <View style={styles.logoView}>
             <IconSet name={packDetail?.tier+'pack'} color={goldColor} size={80}/>
             {
                 (editable.active && !editMode) ?
-                <TouchableOpacity onPress={()=>{setEditMode(true)}} style={styles.editBtn}>
+                <TouchableOpacity onPress={()=>{setEditMode(true)}} style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' color={iconColor} size={15}/>
                 </TouchableOpacity> :
                 (editable.active) &&
-                <TouchableOpacity onPress={()=>{editCancelClicked()}} style={styles.editBtn}>
+                <TouchableOpacity onPress={()=>{editCancelClicked()}} style={styles.editBtn} activeOpacity={0.7}>
                     <Text style={styles.btnText}>Cancel</Text>
                 </TouchableOpacity>
             }
@@ -191,17 +215,17 @@ const PackageCard = ({packDetail, updatePack}: props) => {
       <View style={styles.btnView}>
         {
             editable?.active &&
-            <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}}>
+            <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}} activeOpacity={0.7}>
                 <Text style={styles.btnText}>Update</Text>
             </TouchableOpacity>
         }
         {
             editable?.active ?     
-                <TouchableOpacity style={[styles.btn]} onPress={()=>{activateOrUpdateClicked(false)}}>
+                <TouchableOpacity style={[styles.btn]} onPress={()=>{activateOrUpdateClicked(false)}} activeOpacity={0.7}>
                     <Text style={styles.btnText}>Deactivate</Text>
                 </TouchableOpacity>
             : 
-                <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}}>
+                <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}} activeOpacity={0.7}>
                     <Text style={styles.btnText}>Activate</Text>
                 </TouchableOpacity>
         }
@@ -214,7 +238,11 @@ const mapDispatchToProps = (dispatch: any)=>({
     updatePack: (data: packagesProps)=>dispatch(updatePackage(data))
 })
 
-export default connect(null, mapDispatchToProps)(PackageCard)
+const mapStateToProps = (state: any)=>({
+    businessId: state.dashboard.selectedBusiness.uid
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(PackageCard)
 
 const styles = StyleSheet.create({
     packCard:{

@@ -1,6 +1,6 @@
-import { KeyboardType, StyleSheet, Text, TextInput, View } from 'react-native'
+import { KeyboardType, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { borderColor, iconColor, inputFocusColor, secondaryColor, textColorSecondary } from '../../styles/colors'
+import { borderColor, iconColor, inputFocusColor, secondaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import { shadowGenerator, toCamelCase } from '../../utils/helper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -17,10 +17,11 @@ type inputProps = {
     id: number,
     value: string,
     focus: boolean,
-    editable: boolean
+    editable: boolean,
+    showVerifyBtn?: boolean
 }
 
-const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value, focus, editable}:inputProps) => {
+const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value, focus, editable, showVerifyBtn}:inputProps) => {
     const [f, setF] = useState(focus  as boolean);
     const [placeText, setPlaceText] = useState(placeHolder as string);
     const [showValid, setShowValid] = useState(false as boolean);
@@ -66,6 +67,13 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
                     v  ?
                         <Ionic name={"md-checkmark-outline"} size={25} color={secondaryColor}/>
                     : <Ionic name={"close"} size={25} color={"crimson"}/> 
+                : <></>
+            }
+            {
+                (showVerifyBtn && v) ? 
+                    <TouchableOpacity style={styles.verifyBtn}>
+                        <Text style={styles.verifyText}>Verify</Text>
+                    </TouchableOpacity>
                 : <></>
             }
         </View>
@@ -121,4 +129,14 @@ const styles = StyleSheet.create({
         color: "crimson",
         fontSize: fontSize.xSmall
     },
+    verifyBtn:{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center"
+    },
+    verifyText:{
+        color: textColorPrimary,
+        fontSize: fontSize.small,
+        fontWeight: "500"
+    }
 })

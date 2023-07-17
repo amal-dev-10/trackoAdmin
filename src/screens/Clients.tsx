@@ -4,21 +4,36 @@ import { container } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
 import { borderColor, iconColor } from '../styles/colors'
 import MembershipCard from '../components/Common/MembershipCard'
-import { memberShipProps } from '../interfaces/common'
-import { getMembershipData } from '../redux/actions'
-import { connect, useSelector } from 'react-redux'
+import { apiResponse, memberShipProps } from '../interfaces/common'
+import { setAllClients, setSelectedClient } from '../redux/actions'
+import { connect } from 'react-redux'
+import { iClient, iMembership } from '../interfaces/iClient'
+import { getAllClients } from '../services/apiCalls/serviceCalls'
 
 type props = {
-  membershipData: memberShipProps[],
-  getMembershipData: any
+  setSelectedClient: any,
+  setClients: any,
+  clients: iMembership[],
+  businessId: string
 }
 
-const Clients = ({membershipData, getMembershipData}: props) => {
+const Clients = ({clients, setClients, setSelectedClient, businessId}: props) => {
 
   const [searchText, setSearchText] = useState("" as string);
 
+  const getAllClientsFromDb = async ()=>{
+    let resp: apiResponse = await getAllClients(businessId);
+    if(resp.status === 200){
+      setClients(resp.data)
+    }else{  
+      //error
+    }
+  }
+
   useEffect(()=>{
-    getMembershipData()
+    if(!clients.length){
+      getAllClientsFromDb()
+    }
   }, [])
 
   return (
@@ -35,7 +50,7 @@ const Clients = ({membershipData, getMembershipData}: props) => {
       </View>
       <ScrollView showsVerticalScrollIndicator={false} style={styles.clientScroll}>
         {
-          membershipData.map((data, i:number)=>{
+          clients.map((data, i:number)=>{
             return(
               <MembershipCard
                 membershipData={data}
@@ -44,23 +59,19 @@ const Clients = ({membershipData, getMembershipData}: props) => {
             )
           })
         }
-        {/* <MembershipCard
-          tier='silver'
-        />
-        <MembershipCard
-          tier='bronze'
-        /> */}
       </ScrollView>
     </View>
   )
 }
 
 const mapStateToProps = (state: any)=>({
-  membershipData: state.memberShip.memberShips
+  clients: state.client.clients,
+  businessId: state.dashboard.selectedBusiness.uid
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
-  getMembershipData: (id: number)=>dispatch(getMembershipData())
+  setClients: (data: iMembership[])=>dispatch(setAllClients(data)),
+  setSelectedClient: (data: iMembership)=>dispatch(setSelectedClient(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Clients)
@@ -69,7 +80,7 @@ const styles = StyleSheet.create({
   clientScreen:{
     display: "flex",
     flexDirection: 'column',
-    gap: 10
+    gap: 20
   },
   searchView:{
     display: "flex",

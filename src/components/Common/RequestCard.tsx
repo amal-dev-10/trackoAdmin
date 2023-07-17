@@ -36,10 +36,10 @@ const RequestCard = ({requestData}: props) => {
         </View>
       </View>
       <View style={styles.btnView}>
-        <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{}}>
+        <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{}} activeOpacity={0.7}>
           <Text style={styles.btnText}>Accept</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.btn]} onPress={()=>{}}>
+        <TouchableOpacity style={[styles.btn]} onPress={()=>{}} activeOpacity={0.7}>
           <Text style={styles.btnText}>Decline</Text>
         </TouchableOpacity>
       </View>

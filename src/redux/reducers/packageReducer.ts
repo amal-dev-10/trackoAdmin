@@ -1,7 +1,8 @@
 import { actionInterface, packagesProps } from "../../interfaces/common"
 
 type props = {
-    allPackages: packagesProps[]
+    allPackages: packagesProps[],
+    showActiveDropDown: boolean
 }
 
 let initialState: props = {
@@ -39,7 +40,8 @@ let initialState: props = {
             currency: "INR",
             id: "123d1231233"
         }
-    ]
+    ],
+    showActiveDropDown: false
 }
 
 export const packageReducer = (state: props = initialState, action: actionInterface)=>{
@@ -54,6 +56,33 @@ export const packageReducer = (state: props = initialState, action: actionInterf
                 state.allPackages.splice(index, 0, data);
             };
             return state
+        case "MAP_SAVED_PACKAGE":
+            let dbData: packagesProps[] = action.payload;
+            let mappedData = state.allPackages.map((d)=>{
+                let index:number = dbData.findIndex((x)=>{return x.tier.toLowerCase() === d.tier.toLowerCase()});
+                if(index > -1){
+                    return dbData[index]
+                }else{
+                    return d
+                }
+            });
+            return {
+                ...state,
+                allPackages: [...mappedData]
+            }
+        case "RESET_REDUCER":
+            if(action.payload === "packageReducer"){
+                return {
+                    ...initialState,
+                    allPackages: [...initialState.allPackages]
+                }
+            }
+            return state
+        case "SHOW_ACTIVATE_PACKAGE":
+            return {
+                ...state,
+                showActiveDropDown: action.payload
+            }
         default:
             return state
     }

@@ -1,34 +1,42 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect } from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import MainStack from '../stacks/MainStack';
 import AuthStack from '../stacks/AuthStack';
 import Splash from '../screens/Splash';
 import { navigationRef } from './NavigationService';
+import { connect } from 'react-redux';
+import { createStackNavigator } from '@react-navigation/stack';
+import Loading from '../components/Common/Loading';
 
-const RootNavigator = () => {
-    const [isAuthenticated, setIsAuthenticated] = useState(true);
-    const [showSplash, setShowSplash] = useState(true);
+type props = {
+    showLoader: boolean,
+    authLoader: boolean
+}
 
-    useEffect(()=>{
-        let t = setTimeout(()=>{
-            setShowSplash(false);
-            if(t){
-                clearTimeout(t);
-            }
-        }, 1000);
-    },[]);
+const stack = createStackNavigator();
+
+const RootNavigator = ({showLoader, authLoader}: props) => {
   return (
     <NavigationContainer ref={navigationRef}>
-        {
-            showSplash 
-            ?
-            <Splash/>
-            :
-            (isAuthenticated ? <MainStack/> : <AuthStack/>)
-
-        }
+        <>
+            <stack.Navigator screenOptions={{headerShown: false}}>
+                <stack.Screen name='Splash' component={Splash}/>
+                <stack.Screen name='AuthStack' component={AuthStack}/>
+                <stack.Screen name='MainStack' component={MainStack}/>
+            </stack.Navigator>
+            {
+                authLoader ? 
+                <Loading/>
+                : <></>
+            }
+        </>
     </NavigationContainer>
   )
 }
 
-export default RootNavigator
+const mapStateToProps = (state: any)=>({
+    showLoader: state.loader.show,
+    authLoader: state.auth.data.loading
+})
+
+export default connect(mapStateToProps)(RootNavigator)

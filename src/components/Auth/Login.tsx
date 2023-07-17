@@ -1,4 +1,4 @@
-import { SafeAreaView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, shadowGenerator, valueBinder } from '../../utils/helper'
 import { borderColor, cardColor, iconColor, secondaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
@@ -7,8 +7,15 @@ import Input from '../Common/Input'
 import Button from '../Common/Button'
 import { inputProps } from '../../interfaces/common'
 import { KeyboardType } from 'react-native'
+import { connect } from 'react-redux'
+import { signInWithPhoneNumber } from '../../redux/actions/authActions'
+import { Svg, Path, Defs, G } from 'react-native-svg';
 
-const Login = () => {
+type props = {
+  signInWithPhoneNumber: any
+}
+
+const Login = ({signInWithPhoneNumber}: props) => {
   const [inputList, setInputList] = useState(
   [
     {
@@ -40,6 +47,12 @@ const Login = () => {
     setInputList([...temp]);
   }
 
+  const sendOtpClicked = ()=>{
+    if(allInputsValid){
+      signInWithPhoneNumber(inputList[0].value)
+    }
+  }
+
   useEffect(()=>{
     let t: boolean = inputList.every((x)=>{return x.valid});
     setAllInputsValid(t);
@@ -62,7 +75,7 @@ const Login = () => {
           clients of your organization.
         </Text>
       </View>
-      <View style={[styles.loginCard, shadowGenerator(0, 3)]}>
+      <View style={[styles.loginCard]}>
         <View style={styles.loginTextView}>
           <Text style={styles.loginText}>Login</Text>
           <Text  style={styles.secondPara}>Please sign in using your credentials</Text>
@@ -93,16 +106,40 @@ const Login = () => {
         <View style={styles.buttonView}>
           <Button
             text='GET OTP'
-            onTouch={()=>{}}
+            onTouch={()=>{sendOtpClicked()}}
             width='50%'
           />
         </View>
       </View>
+      <Svg
+        width={Dimensions.get("window").width}
+        height={400}
+        viewBox={`0 0 ${Dimensions.get("window").width} 400`}
+        fill="none"
+        // {...props}
+        style={{ position: 'absolute', left: 0, right: 0, bottom: 0 }}
+      >
+        <G filter="url(#filter0_d_39_460)">
+          <Path
+            d="M149 53.968C97.4-13.93 29.5 62.238 2 108.81V447h408V67.026c-72.8-29.249-161.333-20.892-196.5-13.058-38.4 12.187-59 5.078-64.5 0z"
+            fill="#2C2C2C"
+          />
+          <Path
+            d="M149 53.968C97.4-13.93 29.5 62.238 2 108.81V447h408V67.026c-72.8-29.249-161.333-20.892-196.5-13.058-38.4 12.187-59 5.078-64.5 0z"
+            stroke="#444"
+          />
+        </G>
+        <Defs></Defs>
+      </Svg>
     </SafeAreaView>
   )
 }
 
-export default Login
+const mapDispatchToProps = (dispatch: any) => ({
+  signInWithPhoneNumber: (phoneNumber: string) => dispatch(signInWithPhoneNumber(phoneNumber)),
+});
+
+export default connect(null, mapDispatchToProps)(Login)
 
 const styles = StyleSheet.create({
   loginView:{
@@ -110,18 +147,20 @@ const styles = StyleSheet.create({
     flexDirection: "column",
   },
   loginCard:{
+    position: "absolute",
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
     gap: 35,
-    backgroundColor: cardColor,
     width: "100%",
     borderTopLeftRadius: 30,
     borderTopRightRadius: 30,
     paddingLeft: 30,
     paddingRight: 30,
     paddingTop: 25,
-    paddingBottom: 25
+    paddingBottom: 25,
+    bottom: 0,
+    zIndex: 99
   },
   firstPara:{
     color: textColorSecondary,

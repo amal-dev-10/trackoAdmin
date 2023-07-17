@@ -9,6 +9,12 @@ import { overlayReducer } from './overlays';
 import { profileReducer } from './profileReducer';
 import { dropDownReducer } from './dropDownReducer';
 import { loaderReducer } from './loader';
+import { authReducer } from './authReducer';
+import { mainLoaderReducer } from './mainLoader';
+import { businessReducer } from './dashboardReducer';
+import { clientReducer } from './clientReducer';
+import { transactionReducer } from './transactionReducer';
+import { statsReducer } from './statsReducer';
 
 const rootReducer = combineReducers({
   bottomTab: bottomTabReducer,
@@ -18,7 +24,13 @@ const rootReducer = combineReducers({
   overlay: overlayReducer,
   profile: profileReducer,
   dropDown: dropDownReducer,
-  loader: loaderReducer
+  loader: loaderReducer,
+  auth: authReducer,
+  mainLoader: mainLoaderReducer,
+  dashboard: businessReducer,
+  client: clientReducer,
+  transactions: transactionReducer,
+  homeStat: statsReducer
 });
 
 export default rootReducer;

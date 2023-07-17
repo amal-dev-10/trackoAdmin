@@ -1,3 +1,6 @@
+import { FirebaseAuthTypes } from "@react-native-firebase/auth"
+import { Timestamp } from "firebase/firestore"
+
 export type inputProps = {
     value: string,
     msg: string,
@@ -8,13 +11,15 @@ export type inputProps = {
     name: string,
     focus: boolean,
     editable: boolean,
-    id: number
+    id: number,
+    showVerifyBtn?: boolean
 }
 
 export type orgProps = {
     icon: string,
     orgName: string,
-    id: string
+    id: string,
+    onPress: any
 }
 
 export type bottomTabProps = {
@@ -90,4 +95,31 @@ export type dropDownProps = {
 
 export type loaderProps = {
     show: boolean
+}
+
+export type authProps = {
+    confirmation: FirebaseAuthTypes.ConfirmationResult | null,
+    isAuthenticated: boolean,
+    showSplash: boolean,
+    user: any,
+    error: string,
+    loading: boolean,
+    token: string
+}
+
+export type apiResponse = {
+    data: any,
+    status: any,
+    message: string
+}
+
+export type openOverlayParameter = {
+    id: number,
+    mode: string
+}
+
+export type iTransactions = {
+    transactionId: string,
+    dateString: string,
+    packDetails: packagesProps
 }

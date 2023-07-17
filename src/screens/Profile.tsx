@@ -5,17 +5,19 @@ import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
-import { profileButtonProps } from '../interfaces/common'
+import { openOverlayParameter, profileButtonProps } from '../interfaces/common'
 import { setOverlayComponent, toggleSubButton } from '../redux/actions'
+import { logout } from '../redux/actions/authActions'
 
 type props = {
     profileBtnList: profileButtonProps[],
     profileDetails: any,
     openOverlay: any,
-    toggleButton: any
+    toggleButton: any,
+    signOut: any
 }
 
-const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton}: props) => {
+const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, signOut}: props) => {
     const [rating, setRating] = useState( 4.6 as number);
     const [stars, setStars] = useState([] as any[]);
 
@@ -46,14 +48,13 @@ const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton}: pr
         <View style={[styles.profileCard, shadowGenerator()]}>
             <View style={styles.details}>
                 <Text style={styles.textName}>AMAL DEV</Text>
-                <Text style={styles.orgName}>WORLD FITNESS CENTER</Text>
                 <View style={styles.ratingView}>
                     {
                         stars
                     }
                     <Text>4.6</Text>
                 </View>
-                <TouchableOpacity style={styles.editBtn}>
+                <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' size={15} color={iconColor}/>
                     <Text style={styles.profileEdit}>Edit Profile</Text>
                 </TouchableOpacity>
@@ -66,8 +67,16 @@ const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton}: pr
                     return (
                         <View style={styles.buttonView} key={"profileBtn" + i}>
                             <TouchableOpacity 
-                                style={[styles.profileBtn]} 
-                                onPress={()=>{!data.subButtons.length ? openOverlay(data.id) : toggleButton(data.id)}}
+                                style={[styles.profileBtn]}
+                                activeOpacity={0.7}
+                                onPress={()=>{
+                                    if(!data.subButtons.length){
+                                        data.name === "LOGOUT" ? signOut() : openOverlay(data.id);
+                                    }else{
+                                        toggleButton(data.id);
+                                    }
+                                    // !data.subButtons.length ? openOverlay(data.id) : toggleButton(data.id)
+                                }}
                             >
                                 <View style={styles.buttonFirst}>
                                     <IconSet name={data.icon} size={16} color={textColorPrimary}/>
@@ -113,7 +122,8 @@ const mapStateToProps = (state: any)=>({
 
 const mapDispatchToProps = (dispatch: any)=>({
     openOverlay: (componentId: number)=>{dispatch(setOverlayComponent(componentId))},
-    toggleButton: (id: number)=>{dispatch(toggleSubButton(id))}
+    toggleButton: (id: number)=>{dispatch(toggleSubButton(id))},
+    signOut: ()=>{dispatch(logout())},
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)
