@@ -9,7 +9,7 @@ import { navigate } from '../../navigations/NavigationService';
 
 const DashboardCard = (props: orgProps) => {
   return (
-    <TouchableOpacity style={[styles.card]} onPress={()=>{props.onPress()}}>
+    <TouchableOpacity style={[styles.card]} onPress={()=>{props.onPress()}}  activeOpacity={0.7}>
         <Icon size={50} name={props.icon} color={textColorPrimary}/>
         <View style={styles.details}>
             <Text style={styles.cardTitle}>{props.orgName}</Text>

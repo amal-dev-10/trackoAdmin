@@ -15,11 +15,11 @@ type bottomTabProp = {
 
 const BottomTab = ({tabData, tabIconClicked}: bottomTabProp) => {
   return (
-    <View style={[styles.bottomTab, shadowGenerator(2,2)]}>
+    <View style={[styles.bottomTab]}>
       {
         tabData.allTabs.map((data, i:number)=>{
           return (
-            <TouchableOpacity disabled={data.active} style={styles.tab} onPress={()=>{!data.active ? tabIconClicked(data.id) : ''}} key={"tab"+i}>
+            <TouchableOpacity disabled={data.active} style={styles.tab} onPress={()=>{!data.active ? tabIconClicked(data.id) : ''}} key={"tab"+i} activeOpacity={0.7}>
               <IconSet name={data.icon} color={data.active ? textColorPrimary : iconColor} size={22}/>
               {
                 data.active &&
@@ -53,6 +53,7 @@ const styles = StyleSheet.create({
     gap: 10,
     width: "100%",
     height: "100%",
+    elevation: 3
   },
   tab:{
     borderStartColor: "red",

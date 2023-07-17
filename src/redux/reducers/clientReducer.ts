@@ -1,5 +1,5 @@
 import { actionInterface } from "../../interfaces/common"
-import { iClient, iMembership } from "../../interfaces/iClient"
+import { iClient, iMembership, iMembershipDetails } from "../../interfaces/iClient"
 
 type props = {
     clients: iMembership[],
@@ -28,6 +28,20 @@ export const clientReducer = (state: props = initialState, action: actionInterfa
                 return {...initialState}
             }
             return initialState
+        case "UPDATE_MEMBERSHIP":
+            let index: number = state.clients.findIndex((d)=>{return d.clientId === state.selectedClient?.clientId});
+            let temp: iMembership[] = [...state.clients];
+            if(index > -1){
+                temp[index].memberShipDetails = {...action.payload}
+            }
+            return{
+                ...state,
+                clients: new Array().concat(temp),
+                selectedClient: {
+                    ...state.selectedClient, 
+                    memberShipDetails: {...action.payload as iMembershipDetails}
+                }
+            }
         default:
             return state
     }

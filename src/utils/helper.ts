@@ -1,4 +1,4 @@
-import { Dimensions } from 'react-native';
+import { Dimensions, Linking, ToastAndroid } from 'react-native';
 import { iconColor, primaryColor } from '../styles/colors';
 
 export const container = {
@@ -50,5 +50,38 @@ export const windowHeight = Dimensions.get('window').height;
 export const tabBarHeight = windowHeight * TAB_BAR_HEIGHT_RATIO;
 
 
+export const showToast = (msg: string)=>{
+    ToastAndroid.showWithGravity(
+        msg, 
+        ToastAndroid.SHORT, 
+        ToastAndroid.CENTER,
+    );
+}
 
-  
+export const makeCall = async (phoneNumber: string) => {
+    const url = `tel:${phoneNumber}`;
+    Linking.openURL(url);
+    // await Linking.canOpenURL(url)
+    //   .then(supported => {
+    //     if (!supported) {
+    //       console.log("Phone call not supported");
+    //     } else {
+    //       Linking.openURL(url);
+    //     }
+    //   })
+    //   .catch(error => console.log("Error:", error));
+};
+
+export const openWhatsapp = async (phoneNumber: string) => {
+    const url = `whatsapp://send?phone=${phoneNumber}`;
+    Linking.openURL(url);
+    // await Linking.canOpenURL(url)
+    //   .then(supported => {
+    //     if (!supported) {
+    //       console.log("Phone call not supported");
+    //     } else {
+    //       Linking.openURL(url);
+    //     }
+    //   })
+    //   .catch(error => console.log("Error:", error));
+};

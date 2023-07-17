@@ -4,7 +4,7 @@ import { connect } from 'react-redux'
 import { getRequests, setOverlayComponent } from '../redux/actions'
 import { container, shadowGenerator } from '../utils/helper'
 import RequestCard from '../components/Common/RequestCard'
-import { requestsProps } from '../interfaces/common'
+import { openOverlayParameter, requestsProps } from '../interfaces/common'
 import { borderColor, cardColor, iconColor } from '../styles/colors'
 import IconSet from '../styles/icons/Icons'
 

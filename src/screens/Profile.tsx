@@ -5,7 +5,7 @@ import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
-import { profileButtonProps } from '../interfaces/common'
+import { openOverlayParameter, profileButtonProps } from '../interfaces/common'
 import { setOverlayComponent, toggleSubButton } from '../redux/actions'
 import { logout } from '../redux/actions/authActions'
 
@@ -54,7 +54,7 @@ const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, sig
                     }
                     <Text>4.6</Text>
                 </View>
-                <TouchableOpacity style={styles.editBtn}>
+                <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' size={15} color={iconColor}/>
                     <Text style={styles.profileEdit}>Edit Profile</Text>
                 </TouchableOpacity>
@@ -68,6 +68,7 @@ const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, sig
                         <View style={styles.buttonView} key={"profileBtn" + i}>
                             <TouchableOpacity 
                                 style={[styles.profileBtn]}
+                                activeOpacity={0.7}
                                 onPress={()=>{
                                     if(!data.subButtons.length){
                                         data.name === "LOGOUT" ? signOut() : openOverlay(data.id);

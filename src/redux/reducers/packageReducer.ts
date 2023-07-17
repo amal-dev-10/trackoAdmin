@@ -1,7 +1,8 @@
 import { actionInterface, packagesProps } from "../../interfaces/common"
 
 type props = {
-    allPackages: packagesProps[]
+    allPackages: packagesProps[],
+    showActiveDropDown: boolean
 }
 
 let initialState: props = {
@@ -39,7 +40,8 @@ let initialState: props = {
             currency: "INR",
             id: "123d1231233"
         }
-    ]
+    ],
+    showActiveDropDown: false
 }
 
 export const packageReducer = (state: props = initialState, action: actionInterface)=>{
@@ -76,6 +78,11 @@ export const packageReducer = (state: props = initialState, action: actionInterf
                 }
             }
             return state
+        case "SHOW_ACTIVATE_PACKAGE":
+            return {
+                ...state,
+                showActiveDropDown: action.payload
+            }
         default:
             return state
     }

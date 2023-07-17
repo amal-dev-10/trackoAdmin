@@ -6,7 +6,7 @@ import AntDesign from 'react-native-vector-icons/AntDesign'
 import { textColorPrimary } from '../styles/colors'
 import { TouchableOpacity } from 'react-native'
 import DashboardCard from '../components/Common/DashboardCard'
-import { apiResponse, orgProps } from '../interfaces/common'
+import { apiResponse } from '../interfaces/common'
 import DashboardOverlay from '../components/Common/DashboardOverlay'
 import { ScrollView } from 'react-native-gesture-handler'
 import { logout, resetStateAction } from '../redux/actions/authActions'
@@ -37,10 +37,10 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
     setShowOverlay(!showOverlay);
   };
 
-  const tester = async ()=>{
-    let res = await getOwnerById("7bcd340f-1ad5-44f9-baa1-d85280b190ab");
-    console.log(res)
-  }
+  // const tester = async ()=>{
+  //   let res = await getOwnerById("7bcd340f-1ad5-44f9-baa1-d85280b190ab");
+  //   console.log(res)
+  // }
 
   const gotoDashboard = (businessData: ibusiness)=>{
     selectBusiness(businessData);
@@ -101,7 +101,6 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
     </View>
   )
 }
-
 
 const mapDispatchToProps = (dispatch: any)=>({
   resetAuthState: ()=>{dispatch(resetStateAction())},

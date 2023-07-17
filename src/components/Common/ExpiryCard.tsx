@@ -26,10 +26,10 @@ const ExpiryCard = () => {
         </View>
       </View>
       <View style={[styles.buttonSection, styles.common]}>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn}  activeOpacity={0.7}>
           <Text style={styles.btnText}>Whatsapp</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}>
+        <TouchableOpacity style={styles.btn}  activeOpacity={0.7}>
           <Text style={styles.btnText}>View Transaction</Text>
         </TouchableOpacity>
       </View>

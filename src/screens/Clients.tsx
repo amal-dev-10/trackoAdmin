@@ -6,7 +6,7 @@ import { borderColor, iconColor } from '../styles/colors'
 import MembershipCard from '../components/Common/MembershipCard'
 import { apiResponse, memberShipProps } from '../interfaces/common'
 import { setAllClients, setSelectedClient } from '../redux/actions'
-import { connect, useSelector } from 'react-redux'
+import { connect } from 'react-redux'
 import { iClient, iMembership } from '../interfaces/iClient'
 import { getAllClients } from '../services/apiCalls/serviceCalls'
 
@@ -80,7 +80,7 @@ const styles = StyleSheet.create({
   clientScreen:{
     display: "flex",
     flexDirection: 'column',
-    gap: 10
+    gap: 20
   },
   searchView:{
     display: "flex",

@@ -1,18 +1,34 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React from 'react'
+import React, { useEffect, useState } from 'react'
 import { container, shadowGenerator, wordSplitter } from '../utils/helper'
 import { fontSize } from '../styles/fonts'
 import { cardColor, iconColor, textColorPrimary } from '../styles/colors'
 import { key, subTitleStyle } from '../styles/constants'
 import ExpiryCard from '../components/Common/ExpiryCard'
-import { setOverlayComponent } from '../redux/actions'
+import { setHomeStatsAction, setOverlayComponent } from '../redux/actions'
 import { connect } from 'react-redux'
+import { apiResponse } from '../interfaces/common'
+import { getHomeStats } from '../services/apiCalls/serviceCalls'
+import { mainStat } from '../interfaces/business'
 
 type props = {
-  openOverlay: any
+  openOverlay: any,
+  setHomeStat: any,
+  stat: mainStat
 }
 
-const Home = ({openOverlay}: props) => {
+const Home = ({openOverlay, setHomeStat, stat}: props) => {
+
+  const getHomeStatsService = async ()=>{
+    let resp: apiResponse = await getHomeStats();
+    if(resp.status === 200){
+      setHomeStat(resp.data);
+    }
+  }
+
+  useEffect(()=>{
+    getHomeStatsService();
+  }, [])
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{height: "100%"}}>
       <Text style={[styles.welcomeText, styles.child]}>{"Hi, " + "Amal Dev"}</Text>
@@ -20,12 +36,12 @@ const Home = ({openOverlay}: props) => {
         <View style={[styles.balanceView, styles.child]}> 
           <View style={[styles.leftRight, styles.left]}>
             <Text style={[key]}>TOTAL COLLECTED</Text>
-            <Text style={styles.value}>$ 23,400</Text>
-            <Text style={styles.month}>JUNE</Text>
+            <Text style={styles.value}>₹ {parseInt(stat.totalAmount).toLocaleString()}</Text>
+            <Text style={styles.month}>{stat?.month?.toUpperCase() || "MONTH"}</Text>
           </View>
           <View style={[styles.leftRight, styles.right]}>
             <Text style={[key]}>TODAY</Text>
-            <Text style={styles.value}>$ 1,200</Text>
+            <Text style={styles.value}>₹ {parseInt(stat.amountToday).toLocaleString()}</Text>
           </View>
         </View>
       {/* // */}
@@ -34,21 +50,21 @@ const Home = ({openOverlay}: props) => {
         <View style={[styles.statsView, shadowGenerator(2,2), styles.child]}>
           <View style={styles.statSection}>
             <Text style={[key]}>{wordSplitter("Total Members")}</Text>
-            <Text style={styles.statsValue}>201</Text>
+            <Text style={styles.statsValue}>{stat.totalMembers}</Text>
           </View>
           <View style={styles.statSection}>
             <Text style={[key]}>{wordSplitter("Total Subscribers")}</Text>
-            <Text style={styles.statsValue}>110</Text>
-            <Text style={styles.additional}>JUNE</Text>
+            <Text style={styles.statsValue}>{stat.totalSubscribers}</Text>
+            <Text style={styles.additional}>{stat?.month?.toUpperCase() || "MONTH"}</Text>
           </View>
           <View style={styles.statSection}>
             <Text style={[key]}>{wordSplitter("New Members")}</Text>
-            <Text style={styles.statsValue}>+5</Text>
-            <Text style={styles.additional}>JUNE</Text>
+            <Text style={styles.statsValue}>+{stat.newMembers}</Text>
+            <Text style={styles.additional}>{stat?.month?.toUpperCase() || "MONTH"}</Text>
           </View>
           <View style={styles.statSection}>
             <Text style={[key]}>{wordSplitter("Expired Subscription")}</Text>
-            <Text style={styles.statsValue}>15</Text>
+            <Text style={styles.statsValue}>{stat.expiredSubs}</Text>
             <Text style={styles.additional}>TODAY</Text>
           </View>
         </View>
@@ -78,10 +94,15 @@ const Home = ({openOverlay}: props) => {
 }
 
 const mapDispatchToProps = (dispatch: any)=>({
-  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
+  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
+  setHomeStat: (data: mainStat)=>{dispatch(setHomeStatsAction(data))}
 })
 
-export default connect(null, mapDispatchToProps)(Home)
+const mapStateToProps = (state: any)=>({
+  stat: state.homeStat
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const styles = StyleSheet.create({
   welcomeText:{

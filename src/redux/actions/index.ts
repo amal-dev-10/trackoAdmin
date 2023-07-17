@@ -1,8 +1,8 @@
 // Bottom navigation actions
 
-import { ibusiness } from "../../interfaces/business";
-import { packagesProps } from "../../interfaces/common";
-import { iMembership } from "../../interfaces/iClient";
+import { ibusiness, mainStat } from "../../interfaces/business";
+import { iTransactions, packagesProps } from "../../interfaces/common";
+import { iMembership, iMembershipDetails } from "../../interfaces/iClient";
 
 export const tabIconClicked = (payload: any = null)=>{
   return {
@@ -16,6 +16,13 @@ export const tabIconClicked = (payload: any = null)=>{
 export const getMembershipData = (payload: any = null)=>{
   return {
     type: "GET_MEMBERSHIP_DATA",
+    payload: payload
+  };
+}
+
+export const updateMembershipState = (payload: iMembershipDetails)=>{
+  return {
+    type: "UPDATE_MEMBERSHIP",
     payload: payload
   };
 }
@@ -41,6 +48,13 @@ export const getAllPackages = (payload: any = null)=>{
 export const updatePackage = (payload: any = null)=>{
   return {
     type: "UPDATE_PACKAGE",
+    payload: payload
+  }
+}
+
+export const showActivatePackage = (payload: boolean)=>{
+  return {
+    type: "SHOW_ACTIVATE_PACKAGE",
     payload: payload
   }
 }
@@ -132,6 +146,36 @@ export const resetReducerAction = (payload: string)=>{
 export const mapPackagesToState = (payload: packagesProps[])=>{
   return {
     type: "MAP_SAVED_PACKAGE",
+    payload: payload
+  }
+}
+
+export const setIdTransactions = (payload: string)=>{
+  return {
+    type: "SET_ID",
+    payload: payload
+  }
+}
+
+export const setTransactions = (payload: iTransactions[])=>{
+  return {
+    type: "SET_TRANSACTIONS",
+    payload: payload
+  }
+}
+
+export const setTransactionMode = (payload: string)=>{
+  return {
+    type: "SET_MODE",
+    payload: payload
+  }
+}
+
+// home
+
+export const setHomeStatsAction = (payload: mainStat)=>{
+  return {
+    type: "SET_HOME_STAT",
     payload: payload
   }
 }

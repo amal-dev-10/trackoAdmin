@@ -1,4 +1,5 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth"
+import { Timestamp } from "firebase/firestore"
 
 export type inputProps = {
     value: string,
@@ -110,4 +111,15 @@ export type apiResponse = {
     data: any,
     status: any,
     message: string
+}
+
+export type openOverlayParameter = {
+    id: number,
+    mode: string
+}
+
+export type iTransactions = {
+    transactionId: string,
+    dateString: string,
+    packDetails: packagesProps
 }

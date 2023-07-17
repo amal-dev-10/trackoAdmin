@@ -25,7 +25,7 @@ const RootNavigator = ({showLoader, authLoader}: props) => {
                 <stack.Screen name='MainStack' component={MainStack}/>
             </stack.Navigator>
             {
-                (showLoader || authLoader) ? 
+                authLoader ? 
                 <Loading/>
                 : <></>
             }

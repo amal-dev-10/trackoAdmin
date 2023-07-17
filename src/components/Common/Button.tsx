@@ -12,7 +12,7 @@ type buttonProps = {
 
 const Button = (props: buttonProps) => {
   return (
-    <TouchableOpacity style={[styles.button, props?.borderLess === undefined ? styles.border : {} ,{width: props.width}]} onPress={()=>{props.onTouch()}}>
+    <TouchableOpacity style={[styles.button, props?.borderLess === undefined ? styles.border : {} ,{width: props.width}]} onPress={()=>{props.onTouch()}} activeOpacity={0.7}>
       <Text style={styles.btnText}>{props.text}</Text>
     </TouchableOpacity>
   )

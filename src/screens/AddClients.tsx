@@ -100,7 +100,6 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
     }else if(resp.status === 406){
 
     }
-    console.log(resp)
   }
 
   return (
@@ -131,7 +130,7 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
           })
         }
         <View style={styles.calenderView}>
-          <TouchableOpacity style={styles.dobView} onPress={()=>{setShowCalender(true)}}>
+          <TouchableOpacity style={styles.dobView} onPress={()=>{setShowCalender(true)}} activeOpacity={0.7}>
             <IconSet name='user-o' color={iconColor} size={20}/>
             <Text style={styles.dobText}>{selectedDate.toLocaleDateString()}</Text>
           </TouchableOpacity>

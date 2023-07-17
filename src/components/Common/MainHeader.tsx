@@ -9,7 +9,7 @@ import { connect } from 'react-redux'
 import { navigate } from '../../navigations/NavigationService'
 import { ibusiness } from '../../interfaces/business'
 import store from '../../redux/store'
-import { bottomTabProps } from '../../interfaces/common'
+import { bottomTabProps, overlayComponent } from '../../interfaces/common'
 
 type props = {
   openOverlay: any,
@@ -30,10 +30,10 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
   return (
     <View style={styles.header}>
       <View style={styles.mainHeaderText}>
-        <TouchableOpacity style={styles.orgLogo}>
+        <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7}>
           <IconSet name='building' size={20} color={iconColor}/>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]} onPress={()=>{gotoDashboard()}}>
+        <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]} onPress={()=>{gotoDashboard()}} activeOpacity={0.7}>
           <View style={styles.businessNameView}>
             <Text style={styles.orgName}>{selectedBusiness.name.toUpperCase()}</Text>
             <Text style={styles.location}>{", " + selectedBusiness.location.toLowerCase()}</Text>

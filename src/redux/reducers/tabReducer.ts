@@ -41,7 +41,7 @@ export const bottomTabReducer = (state = initialState, action: actionInterface)=
         case "TAB_ICON_CLICKED":
             let tabId = parseInt(action.payload);
             let selectedComponentId: number = 0;
-            state.allTabs = state.allTabs.map((tab)=>{
+            let t = state.allTabs.map((tab)=>{
                 if(tab.id === tabId){
                     tab.active = true;
                     selectedComponentId = tabId;
@@ -53,12 +53,13 @@ export const bottomTabReducer = (state = initialState, action: actionInterface)=
             return {
                 ...state,
                 activeComponentId: selectedComponentId,
+                allTabs: [...t]
             } as tabDataInterface
         case "RESET_REDUCER":
             if(action.payload === "tabReducer"){
-                return {...initialState, allTabs: [...initialState.allTabs]}
+                return initialState
             }
-            return initialState
+            return state
         default:
             return state;
     }

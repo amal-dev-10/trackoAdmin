@@ -2,12 +2,18 @@ import { Modal, StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicato
 import React, { useEffect, useState } from 'react'
 import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
 import { connect } from 'react-redux';
+import { fontSize } from '../../styles/fonts';
+import { bottomTabProps, overlayComponent, tabDataInterface } from '../../interfaces/common';
+import Loading from '../Common/Loading';
 
 type props = {
-    showLoader: boolean
+    showLoader: boolean,
+    selectedTab: number,
+    allTabs: bottomTabProps[],
+    overlays: overlayComponent[]
 }
 
-const MainLoader = ({showLoader}: props) => {
+const MainLoader = ({showLoader, allTabs, selectedTab, overlays}: props) => {
     // const [translate, setTranslate] = useState(0 as number);
     // useEffect(()=>{
     //     let t = 0;
@@ -26,27 +32,29 @@ const MainLoader = ({showLoader}: props) => {
     //     }
     // }, [showLoader]);
   return (
-    showLoader ?
+    (showLoader && !overlays.length) ?
     <Modal>
         <View style={styles.mainLoader}>
             <View style={styles.headerLoader}>
                 <View style={styles.dashBtn}></View>
                 <View style={styles.profile}></View>
             </View>
-            <View style={styles.detailLoader}>
-                <View style={styles.detail1}></View>
-                <View style={[styles.detail, styles.detail2]}></View>
-                <View style={[styles.detail, styles.detail3]}></View>
-                <ScrollView horizontal scrollEnabled={false} style={styles.scroll} showsHorizontalScrollIndicator={false}>
-                    <View style={[styles.detail ,styles.detail4]}></View>
-                    <View style={[styles.detail ,styles.detail4]}></View>
-                    <View style={[styles.detail ,styles.detail4]}></View>
-                </ScrollView>
-                {/* {
-                    showLoader &&
-                    <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
-                } */}
-            </View>
+            {
+                allTabs[selectedTab].name === "Home" && <HomeLoader/>
+            }
+            {
+                allTabs[selectedTab].name === "Clients" && <ClientLoader/>
+            }
+            {
+                allTabs[selectedTab].name === "Packages" && <PackageLoader/>
+            }
+            {
+                (
+                    allTabs[selectedTab].name != "Home" &&
+                    allTabs[selectedTab].name != "Clients" &&
+                    allTabs[selectedTab].name != "Packages"
+                ) && <QuoteLoader/>
+            }
             <View style={styles.loaderView}>
                 <ActivityIndicator
                     size={"large"}
@@ -55,22 +63,82 @@ const MainLoader = ({showLoader}: props) => {
                 />
             </View>
             <View style={styles.bottomLoader}>
-                {/* {
-                    [1,2,3,4,5].map((d)=>{
-                        return (
-                            <View style={styles.tab} key={"tabLoader" + d}>
-                            </View>
-                            )
-                        })
-                    } */}
             </View>
         </View>
-    </Modal> : <></>
+    </Modal> : (showLoader && overlays.length) ? <Loading/> : <></>
   )
 }
 
+const HomeLoader = ()=>{
+    return (
+        <View style={styles.detailLoader}>
+            <View style={styles.detail1}></View>
+            <View style={[styles.detail, styles.detail2]}></View>
+            <View style={[styles.detail, styles.detail3]}></View>
+            <ScrollView horizontal scrollEnabled={false} style={styles.scroll} showsHorizontalScrollIndicator={false}>
+                <View style={[styles.detail ,styles.detail4]}></View>
+                <View style={[styles.detail ,styles.detail4]}></View>
+                <View style={[styles.detail ,styles.detail4]}></View>
+            </ScrollView>
+            {/* {
+                showLoader &&
+                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
+            } */}
+        </View>
+    )
+}
+
+const ClientLoader = ()=>{
+    return (
+        <View style={styles.detailLoader}>
+            <View style={styles.search}></View>
+            <View style={styles.cardView}>
+                <View style={styles.card}></View>
+                <View style={styles.card}></View>
+            </View>
+            {/* {
+                showLoader &&
+                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
+            } */}
+        </View>
+    )
+}
+
+const PackageLoader = ()=>{
+    return (
+        <View style={styles.detailLoader}>
+            <ScrollView horizontal scrollEnabled={false} style={styles.packageScroll} showsHorizontalScrollIndicator={false}>
+                <View style={[styles.detail ,styles.pack]}></View>
+                <View style={[styles.detail ,styles.pack]}></View>
+                <View style={[styles.detail ,styles.pack]}></View>
+            </ScrollView>
+            {/* {
+                showLoader &&
+                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
+            } */}
+        </View>
+    )
+}
+
+const QuoteLoader = ()=>{
+    return (
+        <View style={[styles.detailLoader, styles.quoteView]}>
+            <Text style={styles.quote}>
+                You can add clients to your business and track their subscriptions
+            </Text>
+            {/* {
+                showLoader &&
+                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
+            } */}
+        </View>
+    )
+}
+
 const mapStateToProps = (state: any)=>({
-    showLoader: state.loader?.show || false
+    showLoader: state.loader?.show || false,
+    allTabs: state.bottomTab.allTabs,
+    selectedTab: state.bottomTab.activeComponentId,
+    overlays: state.overlay.opendedComponents
 })
 
 export default connect(mapStateToProps)(MainLoader)
@@ -148,6 +216,15 @@ const styles = StyleSheet.create({
         height: "50%",
         padding: 5
     },
+    packageScroll:{
+        height: "100%",
+        padding: 5
+    },
+    pack:{
+        width: Dimensions.get("window").width * 0.65,
+        height: Dimensions.get("window").height * 0.8,
+        marginRight: 10
+    },
     loader:{
         backgroundColor: "#28282827",
         padding: 40,
@@ -166,5 +243,35 @@ const styles = StyleSheet.create({
         borderRadius: 50,
         padding: 8,
         elevation: 2
-      },
+    },
+    search:{
+        height: 45,
+        width: "100%",
+        backgroundColor: cardColor,
+        borderRadius: 20
+    },
+    cardView:{
+        flex: 1,
+        width: "100%",
+        paddingTop: 10,
+        display: "flex",
+        flexDirection: "column",
+        gap: 10
+    },
+    card:{
+        height: "40%",
+        backgroundColor: cardColor,
+        width: "100%",
+        borderRadius: 10,
+    },
+    quote:{
+        textAlign: "center",
+        color: borderColor,
+        fontSize: fontSize.xmedium,
+        width: "80%"
+    },
+    quoteView:{
+        alignItems: "center",
+        justifyContent: "center",
+    }   
 })

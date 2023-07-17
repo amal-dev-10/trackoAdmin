@@ -31,7 +31,7 @@ const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
   // },[])
   return (
     <View style={[container,styles.main]}>
-      <View style={styles.headerBottomView}>
+      <View style={[styles.headerBottomView, {marginBottom: 10}]}>
         <MainHeader/>
       </View>
       <View style={styles.screenRenderView}>
@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
   main:{
     display: "flex",
     flexDirection: "column",
-    gap: 10,
+    gap: 2,
     flex: 1,
     justifyContent: "space-between",
     padding: 15,

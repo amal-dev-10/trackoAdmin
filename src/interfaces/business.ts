@@ -10,3 +10,16 @@ export type ibusiness = {
     verified: boolean,
     location: string
 }
+
+export type mainStat = {
+    amountToday: string,
+    businessId: string,
+    expiredSubs: string
+    lastUpdated: Timestamp,
+    newMembers: string,
+    totalAmount: string,
+    totalMembers: string,
+    totalSubscribers: string,
+    day?: string,
+    month?: string
+}

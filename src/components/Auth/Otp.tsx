@@ -127,7 +127,7 @@ const Otp = ({verifyOtp, confirmation}: props) => {
           <Text style={styles.resendPara}>Didn’t receive OTP? </Text>
           {
             timer === 0 ?
-            <TouchableOpacity onPress={()=>{resendOtp()}}>
+            <TouchableOpacity onPress={()=>{resendOtp()}} activeOpacity={0.7}>
               <Text style={styles.resendBtn}>Resend</Text>
             </TouchableOpacity> : <Text style={{color: textColorPrimary}}>{"00:" + `${timer < 10 ? "0" : ""}${timer}`}</Text>
           }
