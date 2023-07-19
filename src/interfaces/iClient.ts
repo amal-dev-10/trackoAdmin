@@ -27,3 +27,13 @@ export type iMembershipDetails = {
     validThruString?: string,
     expireIn?: number
 }
+
+export type iExpiredData = {
+    ended: Timestamp,
+    endedString: string,
+    name: string,
+    tier: string,
+    clientId: string,
+    phoneNumber: string,
+    countryCode: string,
+}

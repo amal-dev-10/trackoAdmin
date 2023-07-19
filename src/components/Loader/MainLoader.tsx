@@ -10,7 +10,7 @@ type props = {
     showLoader: boolean,
     selectedTab: number,
     allTabs: bottomTabProps[],
-    overlays: overlayComponent[]
+    overlays: overlayComponent[],
 }
 
 const MainLoader = ({showLoader, allTabs, selectedTab, overlays}: props) => {
@@ -31,6 +31,7 @@ const MainLoader = ({showLoader, allTabs, selectedTab, overlays}: props) => {
     //         setTranslate(0)
     //     }
     // }, [showLoader]);
+
   return (
     (showLoader && !overlays.length) ?
     <Modal>

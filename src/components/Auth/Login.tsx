@@ -10,6 +10,7 @@ import { KeyboardType } from 'react-native'
 import { connect } from 'react-redux'
 import { signInWithPhoneNumber } from '../../redux/actions/authActions'
 import { Svg, Path, Defs, G } from 'react-native-svg';
+import IconSet from '../../styles/icons/Icons'
 
 type props = {
   signInWithPhoneNumber: any
@@ -61,7 +62,8 @@ const Login = ({signInWithPhoneNumber}: props) => {
   return (
     <SafeAreaView style={[container, styles.loginView]}>
       <View style={styles.brandHeader}>
-        <Text style={styles.logo}>TRACKO</Text>
+        <IconSet name='tracko-logo' size={23} color={textColorPrimary}/>
+        {/* <Text style={styles.logo}>TRACKO</Text> */}
       </View>
       <View style={styles.loginTexts}>
         <View>
@@ -122,11 +124,11 @@ const Login = ({signInWithPhoneNumber}: props) => {
         <G filter="url(#filter0_d_39_460)">
           <Path
             d="M149 53.968C97.4-13.93 29.5 62.238 2 108.81V447h408V67.026c-72.8-29.249-161.333-20.892-196.5-13.058-38.4 12.187-59 5.078-64.5 0z"
-            fill="#2C2C2C"
+            fill={cardColor}
           />
           <Path
             d="M149 53.968C97.4-13.93 29.5 62.238 2 108.81V447h408V67.026c-72.8-29.249-161.333-20.892-196.5-13.058-38.4 12.187-59 5.078-64.5 0z"
-            stroke="#444"
+            stroke="#212121"
           />
         </G>
         <Defs></Defs>

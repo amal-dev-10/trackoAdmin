@@ -1,6 +1,6 @@
 // Bottom navigation actions
 
-import { ibusiness, mainStat } from "../../interfaces/business";
+import { iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
 import { iTransactions, packagesProps } from "../../interfaces/common";
 import { iMembership, iMembershipDetails } from "../../interfaces/iClient";
 
@@ -176,6 +176,13 @@ export const setTransactionMode = (payload: string)=>{
 export const setHomeStatsAction = (payload: mainStat)=>{
   return {
     type: "SET_HOME_STAT",
+    payload: payload
+  }
+}
+
+export const setMembershipInsightAction = (payload: iMembershipInsight)=>{
+  return {
+    type: "SET_MEMBERSHIP_INSIGHT",
     payload: payload
   }
 }

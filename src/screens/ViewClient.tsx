@@ -28,12 +28,12 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
     const [firstRowButtons, setFirstRowButtons] = useState([
         {
             id: 0,
-            icon: "mobile",
+            icon: "phone",
             name: "Call"
         },
         {
             id: 1,
-            icon: "exchange",
+            icon: "whatsapp",
             name: "Whatsapp"
         },
         {
@@ -51,7 +51,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
         },
         {
             id: 4,
-            icon: "exchange",
+            icon: "credit-card",
             name: "Membership"
         }
     ] as buttons[]);
@@ -95,7 +95,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                 <Text style={key}>{wordSplitter("Active membership")}</Text>
                 <Text style={styles.value}>
                     {
-                        clientData?.memberShipDetails?.tier ?
+                        (clientData?.memberShipDetails?.tier && !clientData.memberShipDetails?.expired) ?
                         clientData?.memberShipDetails?.tier.toUpperCase() 
                         : "NA"
                     }
@@ -106,9 +106,9 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                 <Text style={key}>{wordSplitter("Expires In")}</Text>
                 <Text style={styles.value}>
                     { 
-                        clientData?.memberShipDetails?.expireIn ?
+                        (clientData?.memberShipDetails?.expireIn && !clientData.memberShipDetails?.expired) ?
                             clientData?.memberShipDetails?.expireIn
-                        : "NA"
+                        : clientData.memberShipDetails?.expired ? "EXPIRED" : "NA"
                     }
                 </Text>
             </View>

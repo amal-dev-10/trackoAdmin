@@ -32,7 +32,7 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
         <View style={[styles.overlayScreen, container]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={()=>{closeOverlay(overlayData.id)}} style={styles.icon} activeOpacity={0.7}>
-                    <IconSet name='left-small' color={iconColor} size={30}/>
+                    <IconSet name='angle-left' color={iconColor} size={30}/>
                 </TouchableOpacity>
                 <Text style={styles.headerText}>{overlayData.name}</Text>
             </View>
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     icon:{
         position: "absolute",
         left: 0,
-        paddingRight: 10,
+        paddingRight: 15,
     },
     headerText:{
         fontSize: fontSize.xmedium,

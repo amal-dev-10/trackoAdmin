@@ -10,10 +10,9 @@ import Clients from '../screens/Clients';
 import Requests from '../screens/Requests';
 import Insights from '../screens/Insights';
 import Packages from '../screens/Packages';
-import Overlay from '../screens/Overlay';
-import MainLoader from '../components/Loader/MainLoader';
 import { setLoader } from '../redux/actions';
 import { useEffect } from 'react';
+import MainLoader from '../components/Loader/MainLoader';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
@@ -54,7 +53,6 @@ const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
       <View style={[styles.headerBottomView, styles.bottomHeight]}>
         <BottomTab/>
       </View>
-      <MainLoader/>
     </View>
   )
 }

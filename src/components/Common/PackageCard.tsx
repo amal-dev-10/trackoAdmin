@@ -181,7 +181,7 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
                 editable?.features.map((data, i:number)=>{
                     return (
                         <View style={styles.feature} key={"feature" + i}>
-                            <IconSet name='right-small' color={textColorPrimary} size={20}/>
+                            <IconSet name='angle-left' color={textColorPrimary} size={20} style={styles.rotate}/>
                             <Text style={styles.f}>{data}</Text>
                             {
                                 (!editable.active || editMode) ?   
@@ -197,7 +197,7 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
             {
                 (editable?.features && editable.features.length < 5 && (!editable.active || editMode )) &&
                 <View style={styles.feature}>
-                    <IconSet name='right-small' color={textColorPrimary} size={20}/>
+                    <IconSet name='angle-left' color={textColorPrimary} size={20} style={styles.rotate}/>
                     <TextInput
                         placeholder=''
                         style={styles.textInput}
@@ -433,5 +433,8 @@ const styles = StyleSheet.create({
         right: 0,
         top: 0,
         padding: 5
+    },
+    rotate:{
+        transform:[{rotate: "180deg"}]
     }
 })

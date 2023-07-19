@@ -2,7 +2,7 @@ import { KeyboardType, StyleSheet, Text, TouchableOpacity, View } from 'react-na
 import React, { useEffect, useState } from 'react'
 import { apiResponse, inputProps } from '../interfaces/common';
 import Input from '../components/Common/Input';
-import { valueBinder } from '../utils/helper';
+import { showToast, valueBinder } from '../utils/helper';
 import Button from '../components/Common/Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { borderColor, cardColor, iconColor, textColorSecondary } from '../styles/colors';
@@ -98,7 +98,9 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
       let inputs = inputList.map((s)=>{s.value = ""; return s});
       setInputList([...inputs])
     }else if(resp.status === 406){
-
+      showToast("User already exists !")
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      showToast("Data fetch failed !")
     }
   }
 

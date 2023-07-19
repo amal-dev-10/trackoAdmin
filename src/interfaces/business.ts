@@ -23,3 +23,15 @@ export type mainStat = {
     day?: string,
     month?: string
 }
+
+export type iMembershipInsight = {
+    totalAmount: string,
+    goldCount: string,
+    silverCount: string,
+    bronzeCount: string,
+    goldAmount: string,
+    silverAmount: string,
+    bronzeAmount: string,
+    year: string,
+    month: string
+}

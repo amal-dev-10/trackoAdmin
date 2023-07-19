@@ -1,23 +1,31 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { VictoryContainer, VictoryPie } from 'victory-native'
-import { iconColor, textColorPrimary } from '../../styles/colors'
+import { borderColor, iconColor, textColorPrimary } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
+import { iMembershipInsight } from '../../interfaces/business'
+import { connect } from 'react-redux'
 
-const PieChart = () => {
-    const [data, setData] = useState([
-        { x: ``, y: 25 },
-        { x: '', y: 50 },
-        { x: '', y: 25 },
-    ] as any[]);
+type props = {
+    insightData: iMembershipInsight
+}
+
+const PieChart = ({insightData}: props) => {
+    const [data, setData] = useState([] as any[]);
     useEffect(()=>{
+        let temp = [
+            { x: 'Gold Pack', y: parseInt(insightData.goldCount) },
+            { x: 'Silver Pack', y: parseInt(insightData.silverCount) },
+            { x: 'Bronze Pack', y: parseInt(insightData.bronzeCount) },
+        ]
+        let t = temp.filter((x)=>{return x.y != 0});
         setData([
-            { x: `Gold Pack`, y: 40 },
-            { x: 'Silver Pack', y: 20 },
-            { x: 'Bronze Pack', y: 40 },
-        ])
-    }, [])
+            ...t
+        ]);
+    }, [insightData]);
+
   return (
+    data.length ? 
     <VictoryContainer responsive={false} 
         height={280}
         width={280}
@@ -36,12 +44,22 @@ const PieChart = () => {
             }}
             height={270}
             width={270}
-            padAngle={5}
+            padAngle={2}
         />
     </VictoryContainer>
+    : <Text style={styles.noDataText}>No Data available</Text>
   )
 }
 
-export default PieChart
+const mapStateToProps = (state: any)=>({
+    insightData: state.insight.membershipInsight
+})
 
-const styles = StyleSheet.create({})
+export default connect(mapStateToProps)(PieChart)
+
+const styles = StyleSheet.create({
+    noDataText:{
+        color: borderColor,
+        fontSize: fontSize.small
+    }
+})

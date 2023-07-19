@@ -16,6 +16,7 @@ import { setAllBusinesses, setOverlayComponent, setSelectedBusiness } from '../r
 import { ibusiness } from '../interfaces/business'
 import { navigate } from '../navigations/NavigationService'
 import IconSet from '../styles/icons/Icons'
+import NoData from '../components/Common/NoData'
 
 type props = {
   resetAuthState: any,
@@ -28,7 +29,7 @@ type props = {
 const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay}: props) => {
 
   const [showOverlay, setShowOverlay] = useState(false as boolean);
-
+  const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
   // const openOverlay = ()=>{
   //   toggleOverlay();
   // }
@@ -51,6 +52,9 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
     let resp: apiResponse | null = await getAllBusiness();
     if(resp?.status === 200){
       setAllBusiness([...resp.data]);
+      setFetchFailed(false)
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      setFetchFailed(true)
     }
   }
 
@@ -76,21 +80,34 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.cardView} showsVerticalScrollIndicator={false}>
         {
-          allBusiness.map((data: ibusiness, i:number)=>{
-            return(
-              <DashboardCard
-                icon={"building"}
-                id={data?.uid || ""}
-                orgName={data.name}
-                onPress={()=>{gotoDashboard(data)}}
-                key={i}
-              />
-            )
-          })
+          allBusiness.length ?
+          <ScrollView contentContainerStyle={styles.cardView} showsVerticalScrollIndicator={false}>
+            {
+              allBusiness.map((data: ibusiness, i:number)=>{
+                return(
+                  <DashboardCard
+                    icon={"building"}
+                    id={data?.uid || ""}
+                    orgName={data.name}
+                    onPress={()=>{gotoDashboard(data)}}
+                    key={i}
+                  />
+                )
+              })
+            }
+          </ScrollView> : <></>
         }
-      </ScrollView>
+        {
+          fetchFailed != undefined &&
+          <NoData 
+            text='No business account is added in this profile. Register your business' 
+            onTouch={(button: string)=>{button === "Register" ? toggleOverlay() : ""}} 
+            buttons={["Register"]}
+            fetchFailed={fetchFailed}
+            data={allBusiness}
+          />
+        }
       {
         showOverlay &&
         <DashboardOverlay

@@ -1,6 +1,6 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ActivityIndicator, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container, shadowGenerator, wordSplitter } from '../utils/helper'
+import { container, shadowGenerator, showToast, wordSplitter } from '../utils/helper'
 import { fontSize } from '../styles/fonts'
 import { cardColor, iconColor, textColorPrimary } from '../styles/colors'
 import { key, subTitleStyle } from '../styles/constants'
@@ -8,8 +8,9 @@ import ExpiryCard from '../components/Common/ExpiryCard'
 import { setHomeStatsAction, setOverlayComponent } from '../redux/actions'
 import { connect } from 'react-redux'
 import { apiResponse } from '../interfaces/common'
-import { getHomeStats } from '../services/apiCalls/serviceCalls'
+import { getEndedSubscriptions, getHomeStats } from '../services/apiCalls/serviceCalls'
 import { mainStat } from '../interfaces/business'
+import { iExpiredData } from '../interfaces/iClient'
 
 type props = {
   openOverlay: any,
@@ -19,15 +20,36 @@ type props = {
 
 const Home = ({openOverlay, setHomeStat, stat}: props) => {
 
+  const [endedSubs, setEndedSubs] = useState([] as iExpiredData[]);
+  const [showLoader, setShowLoader] = useState(false as boolean);
+
   const getHomeStatsService = async ()=>{
     let resp: apiResponse = await getHomeStats();
     if(resp.status === 200){
       setHomeStat(resp.data);
-    }
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      showToast("Stat fetching failed !")
+  }
+  }
+
+  const getEndedSubs = async ()=>{
+    let resp: apiResponse = await getEndedSubscriptions();
+    if(resp.status === 200){
+      setEndedSubs([...resp.data]);
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      showToast("Ended subscriptions data failed !")
+  } 
+  }
+
+  const getAllData = async ()=>{
+    getHomeStatsService();
+    setShowLoader(true);
+    await getEndedSubs();
+    setShowLoader(false);
   }
 
   useEffect(()=>{
-    getHomeStatsService();
+    getAllData()
   }, [])
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{height: "100%"}}>
@@ -78,16 +100,24 @@ const Home = ({openOverlay, setHomeStat, stat}: props) => {
               <Text style={styles.titleBtnText}>View All</Text>
             </TouchableOpacity>
           </View>
-          <ScrollView 
-            horizontal 
-            showsHorizontalScrollIndicator={false} 
-            style={styles.scrollView}
-            contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 1}}
-          >
-            <ExpiryCard/>
-            <ExpiryCard/>
-            <ExpiryCard/>
-          </ScrollView>
+          {
+            !showLoader ?   
+              <ScrollView 
+                horizontal 
+                showsHorizontalScrollIndicator={false} 
+                style={styles.scrollView}
+                contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 1}}
+              >
+                {
+                  endedSubs.map((d, i:number)=>{
+                    return (
+                      <ExpiryCard key={"expired"+i} data={d}/>
+                    )
+                  })
+                }
+              </ScrollView>
+            : <ExpiryLoader/>
+          }
         </View>
     </ScrollView>
   )
@@ -101,6 +131,45 @@ const mapDispatchToProps = (dispatch: any)=>({
 const mapStateToProps = (state: any)=>({
   stat: state.homeStat
 })
+
+const ExpiryLoader = ()=>{
+  return (
+    <ScrollView
+      horizontal 
+      showsHorizontalScrollIndicator={false} 
+      style={styles.scrollView}
+      contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 1}}
+      scrollEnabled={false}
+    >
+      {
+        [1,2].map((d,i:number)=>{
+          return (
+            <View style={styles.expiryCardLoader} key={"loader"+i}>
+              <View style={styles.imageLoader}>
+                <ActivityIndicator
+                  size={"large"}
+                  color={"#303030c8"}
+                />
+              </View>
+              <View style={styles.detailMainLoader}>
+                <View style={styles.detailLoader}>
+                  <View style={styles.keyLoader}></View>
+                  <View style={styles.valueLoader}></View>
+                </View>
+                <View style={styles.detailLoader}>
+                  <View style={styles.keyLoader}></View>
+                  <View style={styles.valueLoader}></View>
+                </View>
+              </View>
+              <View style={styles.buttonLoader}></View>
+              <View style={styles.buttonLoader}></View>
+            </View>
+          )
+        })
+      }
+    </ScrollView>
+  )
+}
 
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
@@ -198,5 +267,60 @@ const styles = StyleSheet.create({
     textDecorationLine: "underline",
     textDecorationStyle: "solid",
     fontSize: fontSize.small
+  },
+  expiryCardLoader:{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    gap: 15,
+    paddingVertical: 20,
+    paddingHorizontal: 15,
+    borderRadius: 10,
+    backgroundColor: cardColor,
+    width: Dimensions.get("window").width * 0.45,
+    flex: 1,
+    marginRight: 10,
+  },
+  imageLoader:{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    width: 70,
+    height: 70,
+    borderRadius: 40,
+    backgroundColor: "#1e1e1ec9"
+  },
+  detailLoader:{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "flex-start",
+    gap: 5,
+    width: "100%"
+  },
+  keyLoader:{
+    padding: 5,
+    width: "50%",
+    backgroundColor: "#1e1e1ec9",
+    borderRadius: 10
+  },
+  valueLoader:{
+    padding: 10,
+    width: "100%",
+    backgroundColor: "#1e1e1ec9",
+    borderRadius: 10
+  },
+  buttonLoader:{
+    padding: 15,
+    width: "80%",
+    backgroundColor: "#1e1e1ec9",
+    borderRadius: 30
+  },
+  detailMainLoader:{
+    display: "flex",
+    flexDirection: "column",
+    flex: 1,
+    width: "100%",
+    justifyContent: "space-between",
+    gap: 10
   }
 })

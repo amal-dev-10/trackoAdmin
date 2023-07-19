@@ -1,12 +1,13 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native'
-import React, { useEffect } from 'react'
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
+import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { getRequests, setOverlayComponent } from '../redux/actions'
 import { container, shadowGenerator } from '../utils/helper'
 import RequestCard from '../components/Common/RequestCard'
 import { openOverlayParameter, requestsProps } from '../interfaces/common'
-import { borderColor, cardColor, iconColor } from '../styles/colors'
-import IconSet from '../styles/icons/Icons'
+import { borderColor, cardColor, iconColor, textColorPrimary } from '../styles/colors'
+import AntDesign from 'react-native-vector-icons/AntDesign'
+import NoData from '../components/Common/NoData'
 
 type props = {
   allRequests: requestsProps[],
@@ -15,25 +16,43 @@ type props = {
 }
 
 const Requests = ({allRequests,getRequestsData, openOverlay}: props) => {
+  const [fetchFailed, setFetchFailed] = useState(true as boolean | undefined);
   useEffect(()=>{
     getRequestsData();
   }, [])
   return (
-    <ScrollView style={[styles.requestScreen, container]} showsVerticalScrollIndicator={false}>
-      <View style={styles.wrapper}>
-        {
-          allRequests.map((data, i:number)=>{
-            return (
-              <RequestCard key={"requestCard"+i} requestData={data}/>
-            )
-          })
-        }
-        <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{openOverlay(6)}}>
-          <IconSet name='user-o' color={iconColor} size={30}/>
-          <Text style={styles.addText}>Click here to add clients to your organization</Text>
-        </TouchableOpacity>
-      </View>
-    </ScrollView>
+    <View style={[container]}>
+      {
+        allRequests?.length ? 
+          <ScrollView style={[styles.requestScreen]} showsVerticalScrollIndicator={false}>
+            <View style={styles.wrapper}>
+              {
+                allRequests.map((data, i:number)=>{
+                  return (
+                    <RequestCard key={"requestCard"+i} requestData={data}/>
+                  )
+                })
+              }
+            </View>
+          </ScrollView>
+        : <></>
+      }
+      {
+        fetchFailed != undefined &&
+        <NoData 
+          text='No pending or new requests from clients. You can directly add client to your business here'
+          onTouch={(button: string) => { button === "Add Client" ? openOverlay(6) : "" } }
+          buttons={["Add Client"]}
+          data={allRequests} 
+          fetchFailed={false}
+        />
+      }
+
+      <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{openOverlay(6)}}>
+        <AntDesign size={25} name='plus' color={textColorPrimary}/>
+        {/* <Text style={styles.addText}>Click here to add clients to your organization</Text> */}
+      </TouchableOpacity>
+    </View>
   )
 }
 
@@ -62,15 +81,20 @@ const styles = StyleSheet.create({
     height: "100%",
   },
   requestCard:{
+    position: "absolute",
     backgroundColor: cardColor,
-    padding: 15,
-    borderRadius: 10,
+    borderRadius: Dimensions.get("window").width * 0.15,
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    gap: 10,
-    width: "48%"
+    height: Dimensions.get("window").width * 0.18,
+    width: Dimensions.get("window").width * 0.18,
+    elevation: 3,
+    borderWidth: 2,
+    borderColor: "#1e1e1e",
+    right: 0,
+    bottom: 10
   },
   addText:{
     textAlign: "center",

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { borderColor, iconColor } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
-import { container } from '../utils/helper'
+import { container, showToast } from '../utils/helper'
 import { ScrollView } from 'react-native-gesture-handler'
 import { connect } from 'react-redux'
 import { getAllPackages, mapPackagesToState } from '../redux/actions'
@@ -22,8 +22,8 @@ const Packages = ({allPackages, businessId, mapPackage}: props) => {
     let resp: apiResponse = await getPackages(businessId)
     if(resp.status === 200){
         mapPackage(resp.data);
-    }else{
-        // error
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      showToast("Data fetch failed !")
     }
   }
 

@@ -1,130 +1,161 @@
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown';
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary, unitColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
-import { dropDownProps } from '../interfaces/common';
+import { apiResponse, dropDownProps } from '../interfaces/common';
 import { connect } from 'react-redux';
 import { key } from '../styles/constants';
 import PieChart from '../components/Charts/PieChart';
+import MembershipInsight from '../components/Insights/MembershipInsight';
+import { iMembershipInsight } from '../interfaces/business';
+import { setMembershipInsightAction } from '../redux/actions';
+import { getInsights } from '../services/apiCalls/serviceCalls';
+import { container, showToast } from '../utils/helper';
+import NoData from '../components/Common/NoData';
 
 type props = {
   yearData: dropDownProps[],
-  monthData: dropDownProps[]
+  monthData: dropDownProps[],
+  setMembershipInsight: any,
+  membershipInsight: iMembershipInsight
 }
 
-const Insights = ({yearData, monthData}: props) => {
+const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight}: props) => {
   const [year, setYear] = useState({label: "", value: ""} as dropDownProps);
   const [month, setMonth] = useState({label: "", value: ""} as dropDownProps);
+  const [insightType, setInsightType] = useState({label: "", value: ""} as dropDownProps);
+  const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
+
+  const getData = async (y: string, m: string)=>{
+    if(y && m){
+      let resp: apiResponse = await getInsights("membership", y, m.toLowerCase());
+      if(resp?.status === 200){
+          setMembershipInsight(resp.data);
+          setFetchFailed(false)
+      }else if(resp?.status === 500 || resp?.status === undefined){
+        setFetchFailed(true);
+      }
+    }
+  }
+
+  const loadButtonClicked = ()=>{
+    if(membershipInsight.month.toLowerCase() != month.value || membershipInsight.year != year.value){
+      getData(year.value, month.value);
+    }
+  }
+
+  // useEffect(()=>{
+  //   getData();
+  // }, [year, month])
+
+  useEffect(()=>{
+    let currentDate: Date = new Date();
+    let m = currentDate.toLocaleString('en-US', {month: "short"});
+    let y = currentDate.getFullYear().toString();
+
+    setYear({label: y, value: y});
+    setMonth({label: m.toUpperCase(), value: m.toLowerCase()});
+    getData(y, m);
+  }, []);
 
   return (
-    <ScrollView style={styles.insightScreen}>
-      <View style={styles.membershipInsightSection}>
-        <Text>MEMBERSHIP INSIGHTS</Text>
-        <View style={styles.dropDownView}>
-          <Dropdown
-            style={[styles.dropdown]}
-            placeholderStyle={{fontSize: fontSize.small}}
-            selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-            containerStyle={styles.dropDownContainer}
-            data={yearData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={'YEAR'}
-            value={year.value}
-            onChange={function (item): void {
-              setYear(item)
-            } }
-            itemTextStyle={{fontSize: fontSize.small}}
-            activeColor='#3e3e3e57'
+    <View style={[container]}>
+      {
+        Object.entries(membershipInsight).length ? 
+          <ScrollView style={styles.insightScreen}>
+            <View style={styles.membershipInsightSection}>
+              <View style={styles.insgightTypeView}>
+                <Text style={styles.keys}>INSIGHT TYPE</Text>
+                <Dropdown
+                  style={[styles.dropdown, {width: "60%"}]}
+                  placeholderStyle={{fontSize: fontSize.small}}
+                  selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                  containerStyle={styles.dropDownContainer}
+                  data={[{label: "MEMBERSHIP INSIGHTS", value: ""}]}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={'YEAR'}
+                  value={insightType.value}
+                  onChange={function (item): void {
+                    setInsightType(item)
+                  } }
+                  itemTextStyle={{fontSize: fontSize.small}}
+                  activeColor='#3e3e3e57'
+                />
+              </View>
+              <Text style={styles.keys}>FILTER BY MONTH & YEAR</Text>
+              <View style={styles.dropDownView}>
+                <Dropdown
+                  style={[styles.dropdown]}
+                  placeholderStyle={{fontSize: fontSize.small}}
+                  selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                  containerStyle={styles.dropDownContainer}
+                  data={yearData}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={'YEAR'}
+                  value={year.value}
+                  onChange={function (item): void {
+                    setYear(item)
+                  } }
+                  itemTextStyle={{fontSize: fontSize.small}}
+                  activeColor='#3e3e3e57'
+                />
+                <Dropdown
+                  style={[styles.dropdown]}
+                  placeholderStyle={{fontSize: fontSize.small}}
+                  selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                  containerStyle={styles.dropDownContainer}
+                  data={monthData}
+                  maxHeight={300}
+                  labelField="label"
+                  valueField="value"
+                  placeholder={'MONTH'}
+                  value={month.value}
+                  onChange={function (item): void {
+                    setMonth(item)
+                  } }
+                  itemTextStyle={{fontSize: fontSize.small}}
+                  activeColor='#3e3e3e57'
+                />
+                <TouchableOpacity style={styles.loadBtn} onPress={()=>{loadButtonClicked()}}>
+                  <Text style={styles.btnText}>LOAD</Text>
+                </TouchableOpacity>
+              </View>
+              <Text>{insightType.label.toUpperCase()}</Text>
+              <MembershipInsight/>
+            </View>
+          </ScrollView>
+        : <></>
+      }
+      {
+        fetchFailed != undefined ?
+          <NoData
+                text='No insights found to load.'
+                buttons={[]}
+                fetchFailed={fetchFailed}
+                data={membershipInsight}
           />
-          <Dropdown
-            style={[styles.dropdown]}
-            placeholderStyle={{fontSize: fontSize.small}}
-            selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-            containerStyle={styles.dropDownContainer}
-            data={monthData}
-            maxHeight={300}
-            labelField="label"
-            valueField="value"
-            placeholder={'MONTH'}
-            value={month.value}
-            onChange={function (item): void {
-              setMonth(item)
-            } }
-            itemTextStyle={{fontSize: fontSize.small}}
-            activeColor='#3e3e3e57'
-          />
-        </View>
-        <View style={[styles.statView, styles.column]}>
-          <View style={styles.first}>
-            <View style={[styles.section, styles.column]}>
-              <Text style={key}>Total</Text>
-              <View style={styles.amountView}>
-                <Text style={styles.unit}>RS</Text>
-                <Text style={styles.amount}>42,300</Text>
-              </View>
-            </View>
-          </View>
-          <View style={[styles.second, styles.row]}>
-            <View style={styles.section}>
-              <Text style={key}>Gold</Text>
-              <View style={styles.amountView}>
-                <Text style={styles.unit}>RS</Text>
-                <Text style={styles.amount}>12,000</Text>
-              </View>
-            </View>
-            <View style={styles.section}>
-              <Text style={key}>Silver</Text>
-              <View style={styles.amountView}>
-                <Text style={styles.unit}>RS</Text>
-                <Text style={styles.amount}>8,000</Text>
-              </View>
-            </View>
-            <View style={styles.section}>
-              <Text style={key}>Bronze</Text>
-              <View style={styles.amountView}>
-                <Text style={styles.unit}>RS</Text>
-                <Text style={styles.amount}>22,300</Text>
-              </View>
-            </View>
-          </View>
-        </View>
-        <View style={styles.memberShipChart}>
-          <View style={styles.pieChartView}>
-            <PieChart/>
-          </View>
-          <View style={styles.chartStats}>
-            <View style={styles.statCard}>
-              <Text style={styles.statText}>201</Text>
-              <Text style={[key, styles.keyAbsolute]}>GOLD</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statText}>201</Text>
-              <Text style={[key, styles.keyAbsolute]}>SILVER</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statText}>201</Text>
-              <Text style={[key, styles.keyAbsolute]}>BRONZE</Text>
-            </View>
-            <View style={styles.statCard}>
-              <Text style={styles.statText}>603</Text>
-              <Text style={[key, styles.keyAbsolute]}>TOTAL</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-    </ScrollView>
+        : <></>
+      }
+    </View>
   )
 }
 
 const mapStateToProps = (state: any)=>({
   monthData: state.dropDown.months,
-  yearData: state.dropDown.years
+  yearData: state.dropDown.years,
+  membershipInsight: state.insight.membershipInsight
 })
 
-export default connect(mapStateToProps)(Insights)
+const mapDispatchToProps = (dispatch: any)=>({
+  setMembershipInsight: (d: iMembershipInsight)=>{dispatch(setMembershipInsightAction(d))}
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(Insights)
 
 const styles = StyleSheet.create({
   insightScreen:{
@@ -133,10 +164,10 @@ const styles = StyleSheet.create({
     // display: "flex",
     // flexDirection: "column",
     gap: 10,
-    paddingTop: 20
+    paddingTop: 20,
   },
   dropdown:{
-    width: "35%",
+    flex: 1,
     backgroundColor: cardColor,
     paddingVertical: 5,
     paddingHorizontal: 10,
@@ -160,92 +191,29 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     gap: 10,
-    alignItems: "flex-start"
+    alignItems: "flex-start",
   },
-  column: {
+  insgightTypeView:{
     display: "flex",
     flexDirection: "column",
     alignItems: "flex-start",
-    justifyContent: "center"
-  },
-  statView:{
-    display: "flex",
-    flexDirection: 'column',
-    alignItems: "flex-start",
-    gap: 10
-  },
-  section:{
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "flex-start",
-    justifyContent: "center",
-  },
-  amountView:{
-    display: "flex",
-    flexDirection: "row",
-    gap:5,
-    alignItems: "center"
-  },
-  row: {
-    display: "flex",
-    flexDirection: "row",
-    alignItems: "center"
-  },
-  unit:{
-    fontSize: fontSize.xmedium,
-    fontWeight: "600",
-    color: unitColor
-  },
-  amount:{
-    fontSize: fontSize.xmedium,
-    color: textColorPrimary,
-    fontWeight: "600",
-  },
-  second:{
-    gap:15,
-  },
-  first:{
-
-  },
-  memberShipChart:{
-    display: "flex",
-    flexDirection: "row",
-    gap: 10,
-    alignItems: 'flex-start',
+    gap: 5,
     width: "100%"
   },
-  pieChartView:{
-    backgroundColor: cardColor,
-    borderRadius: 10,
-    padding: 10,
-    flex: 1,
-    elevation: 3,
+  keys:{
+    fontSize: fontSize.small,
+    color: borderColor
+  },
+  loadBtn:{
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    paddingVertical: 8,
+    paddingHorizontal: 20,
   },
-  chartStats:{
-    display: "flex",
-    flexDirection: 'column',
-    gap: 30,
-    justifyContent: "flex-start",
-    alignItems: 'center',
-    width: "20%"
-  },
-  statCard:{
-    padding: 10,
-    borderRadius: 10,
-    backgroundColor: cardColor,
-    elevation: 3
-  },
-  statText:{
-    color: iconColor,
-    fontSize: fontSize.medium
-  },
-  keyAbsolute:{
-    position: "absolute",
-    top: -18,
+  btnText:{
+    fontSize: fontSize.small,
     color: textColorPrimary,
-    fontWeight: "600"
+    fontWeight: "500"
   }
 })

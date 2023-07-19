@@ -55,9 +55,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
     }
 
     useEffect(()=>{
-        if(!clientData.memberShipDetails?.tier){
-            getDropDownData()
-        }
+        getDropDownData();
     },[])
 
     return (
@@ -68,37 +66,43 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                 </View>
                 <View style={styles.detail}>
                     {
-                        dropData.length && !clientData.memberShipDetails?.expired ?
-                            <Text style={styles.msgText}>You can activate package to your client.</Text>
-                        : 
-                        clientData.memberShipDetails?.tier ? 
-                        <Text style={styles.msgText}>There is already an active membership for this client</Text>
-                        : <Text style={styles.msgText}>There are no packages. You can add packages in the package tab.</Text>
+                        // dropData.length && !clientData.memberShipDetails?.expired ?
+                        //     <Text style={styles.msgText}>You can activate package to your client.</Text>
+                        // : 
+                        // clientData.memberShipDetails?.tier && !clientData.memberShipDetails.expired ? 
+                        // <Text style={styles.msgText}>There is already an active membership for this client</Text>
+                        // : dropData.length ? <></> : <Text style={styles.msgText}>There are no packages. You can add packages in the package tab.</Text>
                     }
                     {
                         dropData.length ?
-                        <Dropdown
-                            style={[styles.dropdown]}
-                            placeholderStyle={{fontSize: fontSize.small}}
-                            selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                            containerStyle={styles.dropDownContainer}
-                            data={dropData}
-                            maxHeight={300}
-                            labelField="label"
-                            valueField="value"
-                            placeholder={'Select package'}
-                            // value={year.value}
-                            onChange={function (item): void {
-                                dropDownChanged(item.label)
-                            } }
-                            itemTextStyle={{fontSize: fontSize.small}}
-                            activeColor='#3e3e3e57'
-                        /> : <></>
+                            (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ? 
+                                <>
+                                    <Text style={styles.msgText}>You can activate package to your client.</Text>
+                                    <Dropdown
+                                        style={[styles.dropdown]}
+                                        placeholderStyle={{fontSize: fontSize.small}}
+                                        selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                                        containerStyle={styles.dropDownContainer}
+                                        data={dropData}
+                                        maxHeight={300}
+                                        labelField="label"
+                                        valueField="value"
+                                        placeholder={'Select package'}
+                                        // value={year.value}
+                                        onChange={function (item): void {
+                                            dropDownChanged(item.label)
+                                        } }
+                                        itemTextStyle={{fontSize: fontSize.small}}
+                                        activeColor='#3e3e3e57'
+                                    /> 
+                                </> 
+                            : <Text style={styles.msgText}>There is already an active membership for this client</Text>
+                        : <Text style={styles.msgText}>There are no packages. You can add packages in the package tab.</Text>
                     }
                 </View>
                 <View style={styles.footer}>
                     {
-                        dropData.length ?
+                        (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ?
                         <Button
                             onTouch={()=>{activateMembershipClicked()}}
                             text='Activate'
@@ -142,7 +146,8 @@ const styles = StyleSheet.create({
         margin: 10,
         padding: 10,
         minHeight: "40%",
-        maxHeight: "70%"
+        maxHeight: "70%",
+        width: "90%"
     },
     headerActivate:{
         display: "flex",

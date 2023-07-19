@@ -138,3 +138,27 @@ export const getHomeStats = async ()=>{
     }
     return res
 }
+
+export const getEndedSubscriptions = async ()=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`client/expiredMembership/${st.dashboard.selectedBusiness?.uid}`)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getInsights = async (type: string, year: string, month: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`business/insights/${st.dashboard.selectedBusiness?.uid}?type=${type}&year=${year}&month=${month}`)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
