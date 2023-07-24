@@ -3,10 +3,12 @@ import { setLoader } from "../../redux/actions";
 import store from "../../redux/store";
     
 
-export const getData = async (url: string) => {
+export const getData = async (url: string, byPassLoading: boolean = false) => {
     let response = null;
     try {
-        store.dispatch(setLoader(true));
+        if(!byPassLoading){
+            store.dispatch(setLoader(true));
+        }
         response = await createApiInstance().get(url);
     } catch (error) {
         console.log(error);

@@ -1,8 +1,10 @@
 // Bottom navigation actions
 
-import { iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
+import { iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
 import { iTransactions, packagesProps } from "../../interfaces/common";
 import { iMembership, iMembershipDetails } from "../../interfaces/iClient";
+import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
+import store from "../store";
 
 export const tabIconClicked = (payload: any = null)=>{
   return {
@@ -62,6 +64,11 @@ export const showActivatePackage = (payload: boolean)=>{
 // Overlay
 
 export const setOverlayComponent = (payload: any = null)=>{
+  let st = store;
+  let index: number = st.getState().overlay.componentList.findIndex((x)=>{return x.id === payload});
+  if(index > -1){
+    setRoute(fomatFirstLetterCapital(st.getState().overlay.componentList[index].screenName || ""))
+  }
   return {
     type: "SET_OVERLAY_COMPONENT",
     payload: payload
@@ -183,6 +190,22 @@ export const setHomeStatsAction = (payload: mainStat)=>{
 export const setMembershipInsightAction = (payload: iMembershipInsight)=>{
   return {
     type: "SET_MEMBERSHIP_INSIGHT",
+    payload: payload
+  }
+}
+
+export const setFinanceInsightAction = (payload: iFinanceInsight)=>{
+  return {
+    type: "SET_FINANCE_INSIGHT",
+    payload: payload
+  }
+}
+
+// route
+
+export const setRouteNameAction = (payload: string)=>{
+  return {
+    type: "SET_ROUTE_NAME",
     payload: payload
   }
 }

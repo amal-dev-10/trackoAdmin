@@ -9,6 +9,7 @@ import Svg, { Defs, G, Path } from 'react-native-svg';
 import { setOverlayComponent, setSelectedClient } from '../../redux/actions';
 import { connect } from 'react-redux';
 import { openOverlayParameter } from '../../interfaces/common';
+import { fomatFirstLetterCapital } from '../../utils/helper';
 
 type cardPackProps = {
     membershipData: iMembership,
@@ -66,7 +67,7 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
                 <View style={[styles.stripeLeftRight, styles.left]}>
                     <Text style={styles.stripeKey}>Membership Holder</Text>
                     <Text style={styles.stripeValue}>{
-                        membershipData.name.toUpperCase()
+                        fomatFirstLetterCapital(membershipData.name.toUpperCase())
                     }</Text>
                 </View>
                 <View style={[styles.stripeLeftRight, styles.left]}>

@@ -35,3 +35,10 @@ export type iMembershipInsight = {
     year: string,
     month: string
 }
+
+export type iFinanceInsight = {
+    zooomDomain: {x: [number, number], y: [number, number]},
+    data: {x: number, y: number}[],
+    year: string,
+    month: string
+}

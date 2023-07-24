@@ -91,13 +91,13 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
       dateOfBirth: Timestamp.fromDate(selectedDate)
     }
     let resp: apiResponse = await addNewClient(selectedBusinessId, data);
-    if(resp.status === 200){
+    if(resp?.status === 200){
       let temp = allClients;
       temp.push(resp.data);
       setClientToState([...temp])
       let inputs = inputList.map((s)=>{s.value = ""; return s});
       setInputList([...inputs])
-    }else if(resp.status === 406){
+    }else if(resp?.status === 406){
       showToast("User already exists !")
     }else if(resp?.status === 500 || resp?.status === undefined){
       showToast("Data fetch failed !")

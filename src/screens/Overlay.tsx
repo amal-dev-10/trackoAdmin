@@ -14,6 +14,7 @@ import Settings from './Settings';
 import AddClients from './AddClients';
 import ViewClient from './ViewClient';
 import ActivateMembership from '../components/Common/ActivateMembership';
+import BusinessProfile from './BusinessProfile';
 
 type props={
     // component: overlayComponent,
@@ -64,6 +65,10 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
                 {
                     overlayData.id === 7 &&
                     <ViewClient/>
+                }
+                {
+                    overlayData.id === 8 &&
+                    <BusinessProfile/>
                 }
             </View>
         </View>

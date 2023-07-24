@@ -16,6 +16,7 @@ import { clientReducer } from './clientReducer';
 import { transactionReducer } from './transactionReducer';
 import { statsReducer } from './statsReducer';
 import { insightReducer } from './insightReducer';
+import { routeReducer } from './routeReducer';
 
 const rootReducer = combineReducers({
   bottomTab: bottomTabReducer,
@@ -32,7 +33,8 @@ const rootReducer = combineReducers({
   client: clientReducer,
   transactions: transactionReducer,
   homeStat: statsReducer,
-  insight: insightReducer
+  insight: insightReducer,
+  route: routeReducer
 });
 
 export default rootReducer;

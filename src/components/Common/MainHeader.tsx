@@ -30,7 +30,7 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
   return (
     <View style={styles.header}>
       <View style={styles.mainHeaderText}>
-        <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7} onPress={()=>{openOverlay(8)}}>
           <IconSet name='building' size={20} color={iconColor}/>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]} onPress={()=>{gotoDashboard()}} activeOpacity={0.7}>
@@ -38,7 +38,7 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
             <Text style={styles.orgName}>{selectedBusiness.name.toUpperCase()}</Text>
             <Text style={styles.location}>{", " + selectedBusiness.location.toLowerCase()}</Text>
           </View>
-          <IconSet name='left-small' color={iconColor} size={25}/>
+          <IconSet name='angle-left' color={iconColor} size={25} style={{transform:[{rotate: "180deg"}]}}/>
         </TouchableOpacity>
       </View>
       {/* <View style={styles.userView}>

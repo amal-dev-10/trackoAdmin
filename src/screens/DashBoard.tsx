@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container } from '../utils/helper'
+import { container, setRoute } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { textColorPrimary } from '../styles/colors'
@@ -59,6 +59,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
   }
 
   useEffect(()=>{
+    setRoute("Dashboard")
     resetAuthState();
     getMyBusiness()
     // tester()

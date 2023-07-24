@@ -1,5 +1,7 @@
 import { Dimensions, Linking, ToastAndroid } from 'react-native';
 import { iconColor, primaryColor } from '../styles/colors';
+import store from '../redux/store';
+import { setRouteNameAction } from '../redux/actions';
 
 export const container = {
     flex: 1,
@@ -85,3 +87,22 @@ export const openWhatsapp = async (phoneNumber: string) => {
     //   })
     //   .catch(error => console.log("Error:", error));
 };
+
+export const fomatFirstLetterCapital = (sentence: string)=>{
+    let words: string[] = sentence.split(" ");
+    let result: string = "";
+    words.forEach((w)=>{
+        let formatedWord: string = w.charAt(0).toUpperCase() + w.slice(1).toLocaleLowerCase();
+        if(!result){
+            result = formatedWord;
+        }else{
+            result = result + " " + formatedWord
+        }
+    });
+    return result
+}
+
+export const setRoute = (routeName: string)=>{
+    let st = store;
+    st.dispatch(setRouteNameAction(routeName));
+}

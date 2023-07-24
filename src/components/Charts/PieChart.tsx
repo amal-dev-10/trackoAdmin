@@ -40,11 +40,13 @@ const PieChart = ({insightData}: props) => {
                 labels: {fontSize: fontSize.xSmall, fill: iconColor, fontWeight: "700"},
             }}
             animate={{
-                duration: 1000
+                duration: 2000,
+                onLoad: { duration: 1000 }
             }}
             height={270}
             width={270}
             padAngle={2}
+            
         />
     </VictoryContainer>
     : <Text style={styles.noDataText}>No Data available</Text>

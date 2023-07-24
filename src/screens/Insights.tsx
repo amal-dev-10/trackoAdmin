@@ -5,33 +5,43 @@ import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary
 import { fontSize } from '../styles/fonts';
 import { apiResponse, dropDownProps } from '../interfaces/common';
 import { connect } from 'react-redux';
-import { key } from '../styles/constants';
-import PieChart from '../components/Charts/PieChart';
 import MembershipInsight from '../components/Insights/MembershipInsight';
-import { iMembershipInsight } from '../interfaces/business';
-import { setMembershipInsightAction } from '../redux/actions';
+import { iFinanceInsight, iMembershipInsight } from '../interfaces/business';
+import { setFinanceInsightAction, setMembershipInsightAction } from '../redux/actions';
 import { getInsights } from '../services/apiCalls/serviceCalls';
-import { container, showToast } from '../utils/helper';
+import { container, setRoute, showToast } from '../utils/helper';
 import NoData from '../components/Common/NoData';
+import DailyLineChart from '../components/Insights/DailyLineChart';
 
 type props = {
   yearData: dropDownProps[],
   monthData: dropDownProps[],
   setMembershipInsight: any,
-  membershipInsight: iMembershipInsight
+  membershipInsight: iMembershipInsight,
+  financeInsight: iFinanceInsight,
+  setFinanceInsight: any
 }
 
-const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight}: props) => {
+const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight, financeInsight, setFinanceInsight}: props) => {
   const [year, setYear] = useState({label: "", value: ""} as dropDownProps);
   const [month, setMonth] = useState({label: "", value: ""} as dropDownProps);
-  const [insightType, setInsightType] = useState({label: "", value: ""} as dropDownProps);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
+  const chartTypeData = [
+    {label: "MEMBERSHIP INSIGHT", value: "membershipInsight"},
+    {label: "FINANCE INSIGHT", value: "financeInsight"},
+    {label: "CLIENT INSIGHT", value: "newClientInsight"},
+  ]
+  const [insightType, setInsightType] = useState(chartTypeData[0] as dropDownProps);
 
   const getData = async (y: string, m: string)=>{
     if(y && m){
-      let resp: apiResponse = await getInsights("membership", y, m.toLowerCase());
+      let resp: apiResponse = await getInsights(insightType.value, y, m.toLowerCase());
       if(resp?.status === 200){
-          setMembershipInsight(resp.data);
+          if(insightType.value === "membershipInsight"){
+            setMembershipInsight(resp.data);
+          }else if(insightType.value === "financeInsight"){
+            setFinanceInsight(resp.data);
+          }
           setFetchFailed(false)
       }else if(resp?.status === 500 || resp?.status === undefined){
         setFetchFailed(true);
@@ -45,11 +55,12 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight}
     }
   }
 
-  // useEffect(()=>{
-  //   getData();
-  // }, [year, month])
+  useEffect(()=>{
+    getData(year.value, month.value);
+  }, [insightType])
 
   useEffect(()=>{
+    setRoute("Insights")
     let currentDate: Date = new Date();
     let m = currentDate.toLocaleString('en-US', {month: "short"});
     let y = currentDate.getFullYear().toString();
@@ -62,74 +73,80 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight}
   return (
     <View style={[container]}>
       {
-        Object.entries(membershipInsight).length ? 
-          <ScrollView style={styles.insightScreen}>
-            <View style={styles.membershipInsightSection}>
-              <View style={styles.insgightTypeView}>
-                <Text style={styles.keys}>INSIGHT TYPE</Text>
-                <Dropdown
-                  style={[styles.dropdown, {width: "60%"}]}
-                  placeholderStyle={{fontSize: fontSize.small}}
-                  selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                  containerStyle={styles.dropDownContainer}
-                  data={[{label: "MEMBERSHIP INSIGHTS", value: ""}]}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={'YEAR'}
-                  value={insightType.value}
-                  onChange={function (item): void {
-                    setInsightType(item)
-                  } }
-                  itemTextStyle={{fontSize: fontSize.small}}
-                  activeColor='#3e3e3e57'
-                />
-              </View>
-              <Text style={styles.keys}>FILTER BY MONTH & YEAR</Text>
-              <View style={styles.dropDownView}>
-                <Dropdown
-                  style={[styles.dropdown]}
-                  placeholderStyle={{fontSize: fontSize.small}}
-                  selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                  containerStyle={styles.dropDownContainer}
-                  data={yearData}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={'YEAR'}
-                  value={year.value}
-                  onChange={function (item): void {
-                    setYear(item)
-                  } }
-                  itemTextStyle={{fontSize: fontSize.small}}
-                  activeColor='#3e3e3e57'
-                />
-                <Dropdown
-                  style={[styles.dropdown]}
-                  placeholderStyle={{fontSize: fontSize.small}}
-                  selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                  containerStyle={styles.dropDownContainer}
-                  data={monthData}
-                  maxHeight={300}
-                  labelField="label"
-                  valueField="value"
-                  placeholder={'MONTH'}
-                  value={month.value}
-                  onChange={function (item): void {
-                    setMonth(item)
-                  } }
-                  itemTextStyle={{fontSize: fontSize.small}}
-                  activeColor='#3e3e3e57'
-                />
-                <TouchableOpacity style={styles.loadBtn} onPress={()=>{loadButtonClicked()}}>
-                  <Text style={styles.btnText}>LOAD</Text>
-                </TouchableOpacity>
-              </View>
-              <Text>{insightType.label.toUpperCase()}</Text>
-              <MembershipInsight/>
+        <ScrollView style={styles.insightScreen} showsVerticalScrollIndicator={false}>
+          <View style={styles.membershipInsightSection}>
+            <View style={styles.insgightTypeView}>
+              <Text style={styles.keys}>INSIGHT TYPE</Text>
+              <Dropdown
+                style={[styles.dropdown, {width: "60%"}]}
+                placeholderStyle={{fontSize: fontSize.small}}
+                selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                containerStyle={styles.dropDownContainer}
+                data={chartTypeData}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={'Select'}
+                value={insightType.value}
+                onChange={function (item): void {
+                  setInsightType(item)
+                } }
+                itemTextStyle={{fontSize: fontSize.small}}
+                activeColor='#3e3e3e57'
+              />
             </View>
-          </ScrollView>
-        : <></>
+            <Text style={styles.keys}>FILTER BY MONTH & YEAR</Text>
+            <View style={styles.dropDownView}>
+              <Dropdown
+                style={[styles.dropdown]}
+                placeholderStyle={{fontSize: fontSize.small}}
+                selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                containerStyle={styles.dropDownContainer}
+                data={yearData}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={'YEAR'}
+                value={year.value}
+                onChange={function (item): void {
+                  setYear(item)
+                } }
+                itemTextStyle={{fontSize: fontSize.small}}
+                activeColor='#3e3e3e57'
+              />
+              <Dropdown
+                style={[styles.dropdown]}
+                placeholderStyle={{fontSize: fontSize.small}}
+                selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                containerStyle={styles.dropDownContainer}
+                data={monthData}
+                maxHeight={300}
+                labelField="label"
+                valueField="value"
+                placeholder={'MONTH'}
+                value={month.value}
+                onChange={function (item): void {
+                  setMonth(item)
+                } }
+                itemTextStyle={{fontSize: fontSize.small}}
+                activeColor='#3e3e3e57'
+              />
+              <TouchableOpacity style={styles.loadBtn} onPress={()=>{loadButtonClicked()}}>
+                <Text style={styles.btnText}>LOAD</Text>
+              </TouchableOpacity>
+            </View>
+            <Text>{insightType.label.toUpperCase()}</Text>
+            {
+              insightType.value === "membershipInsight" &&
+              <MembershipInsight/>
+            }
+            {
+              insightType.value === "financeInsight" &&
+              <DailyLineChart/>
+            }
+            
+          </View>
+        </ScrollView>
       }
       {
         fetchFailed != undefined ?
@@ -148,11 +165,13 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight}
 const mapStateToProps = (state: any)=>({
   monthData: state.dropDown.months,
   yearData: state.dropDown.years,
-  membershipInsight: state.insight.membershipInsight
+  membershipInsight: state.insight.membershipInsight,
+  financeInsight: state.insight.financeInsight
 })
 
 const mapDispatchToProps = (dispatch: any)=>({
-  setMembershipInsight: (d: iMembershipInsight)=>{dispatch(setMembershipInsightAction(d))}
+  setMembershipInsight: (d: iMembershipInsight)=>{dispatch(setMembershipInsightAction(d))},
+  setFinanceInsight: (d: iFinanceInsight)=>{dispatch(setFinanceInsightAction(d))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Insights)

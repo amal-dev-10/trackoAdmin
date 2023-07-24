@@ -23,9 +23,9 @@ const Transactions = ({type, setTransactions, transactions, mode}: props) => {
         setTransactions([])
         let data: apiResponse | null = null;
         if(mode === "client"){
-            data = await getClientTransactions();
+            data = await getClientTransactions("client");
         }else if(mode === "all"){
-            //
+            data = await getClientTransactions("all");
         }
         if(data && data?.status === 200){
             setTransactions(data.data);

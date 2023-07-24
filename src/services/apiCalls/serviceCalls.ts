@@ -1,6 +1,6 @@
 
 import { ibusiness } from "../../interfaces/business";
-import { iClient, iMembershipDetails } from "../../interfaces/iClient";
+import { iClient, iFilterQuery, iMembershipDetails } from "../../interfaces/iClient";
 import store from "../../redux/store";
 import { getData, postData } from "../service/serviceHandler";
 
@@ -70,10 +70,21 @@ export const addNewClient = async (id: string ,data: iClient)=>{
     return res
 }
 
-export const getAllClients = async (businessId: string)=>{
+export const getAllClients = async (query: iFilterQuery, disableLoader: boolean)=>{
     let res = null;
     try{
-        res = await getData(`client/getAllClients/${businessId}`)
+        let st = store.getState();
+        let q: iFilterQuery = {
+            count: undefined,
+            bronze: undefined,
+            expired: undefined,
+            gold: undefined,
+            noMembership: undefined,
+            search: undefined,
+            silver: undefined,
+            ...query
+        }
+        res = await getData(`client/getAllClients/${st.dashboard.selectedBusiness?.uid}?q=${JSON.stringify(q)}`, disableLoader)
     }
     catch(err){
         console.log(err)
@@ -115,11 +126,15 @@ export const activatePackage = async (packId: string)=>{
     return res
 }
 
-export const getClientTransactions = async ()=>{
+export const getClientTransactions = async (type: string, count: number | null = null)=>{
     let res = null;
     try{
+        let query: string = "";
+        if(count){
+            query = `?count=${count}`
+        }
         let st = store.getState();
-        res = await getData(`client/transactions/${st.dashboard.selectedBusiness?.uid}/${st.transactions.id}`)
+        res = await getData(`client/transactions/${st.dashboard.selectedBusiness?.uid}/${type === "client" ? st.transactions.id : ""}${query}`)
     }
     catch(err){
         console.log(err)

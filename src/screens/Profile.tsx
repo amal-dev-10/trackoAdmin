@@ -6,7 +6,7 @@ import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textCol
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { openOverlayParameter, profileButtonProps } from '../interfaces/common'
-import { setOverlayComponent, toggleSubButton } from '../redux/actions'
+import { setIdTransactions, setOverlayComponent, setTransactionMode, toggleSubButton } from '../redux/actions'
 import { logout } from '../redux/actions/authActions'
 
 type props = {
@@ -14,10 +14,12 @@ type props = {
     profileDetails: any,
     openOverlay: any,
     toggleButton: any,
-    signOut: any
+    signOut: any,
+    setId: any,
+    mode: any
 }
 
-const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, signOut}: props) => {
+const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, signOut, mode, setId}: props) => {
     const [rating, setRating] = useState( 4.6 as number);
     const [stars, setStars] = useState([] as any[]);
 
@@ -124,6 +126,8 @@ const mapDispatchToProps = (dispatch: any)=>({
     openOverlay: (componentId: number)=>{dispatch(setOverlayComponent(componentId))},
     toggleButton: (id: number)=>{dispatch(toggleSubButton(id))},
     signOut: ()=>{dispatch(logout())},
+    setId: (id: string)=>{dispatch(setIdTransactions(id))},
+    mode: (mode: string)=>{dispatch(setTransactionMode(mode))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Profile)

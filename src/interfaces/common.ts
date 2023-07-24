@@ -71,7 +71,8 @@ export type packagesProps = {
 
 export type overlayComponent = {
     name: string,
-    id: number
+    id: number,
+    screenName?: string
 }
 
 export type profileButtonProps = {
@@ -120,6 +121,7 @@ export type openOverlayParameter = {
 
 export type iTransactions = {
     transactionId: string,
+    name?: string,
     dateString: string,
     packDetails: packagesProps
 }

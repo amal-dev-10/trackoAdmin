@@ -5,12 +5,10 @@ const createApiInstance = ()=>{
     let s = store.getState();
     const token = s.auth.data.token;
     const api: AxiosInstance = axios.create({
-        baseURL: 'http://192.168.1.3:3000/api',
+        baseURL: 'http://192.168.1.7:3000/api',
         headers: {
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${token || ""}`
-          // Add your token header here
-          // Example: 'Authorization': `Bearer ${yourToken}`
         },
     });
     return api

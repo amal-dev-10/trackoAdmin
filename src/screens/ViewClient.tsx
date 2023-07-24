@@ -4,7 +4,7 @@ import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { key } from '../styles/constants'
-import { makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
+import { fomatFirstLetterCapital, makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
 import { connect } from 'react-redux'
 import { setIdTransactions, setOverlayComponent, setTransactionMode, setTransactions, showActivatePackage } from '../redux/actions'
 import { iClient, iMembership } from '../interfaces/iClient'
@@ -82,7 +82,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
         <View style={styles.detailView}>
             <IconSet name='user-circle-o' size={90} color={iconColor}/>
             <View style={[styles.nameView]}>
-                <Text style={styles.nameText}>{clientData.name.toUpperCase()}</Text>
+                <Text style={styles.nameText}>{fomatFirstLetterCapital(clientData.name.toUpperCase())}</Text>
                 <Text style={styles.phoneText}>{clientData.phoneNumber}</Text>
             </View>
         </View>

@@ -37,3 +37,13 @@ export type iExpiredData = {
     phoneNumber: string,
     countryCode: string,
 }
+
+export type iFilterQuery = {
+    count?: number,
+    search?: string,
+    gold?: boolean | null,
+    silver?: boolean | null,
+    bronze?: boolean | null,
+    expired?: boolean | null,
+    noMembership?: boolean | null,
+}

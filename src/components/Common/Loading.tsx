@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
         padding: 10,
         display: "flex",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: "#00000062"
     },
     loaderContainer:{
         backgroundColor: cardColor,

@@ -2,7 +2,7 @@ import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
 import { getRequests, setOverlayComponent } from '../redux/actions'
-import { container, shadowGenerator } from '../utils/helper'
+import { container, setRoute, shadowGenerator } from '../utils/helper'
 import RequestCard from '../components/Common/RequestCard'
 import { openOverlayParameter, requestsProps } from '../interfaces/common'
 import { borderColor, cardColor, iconColor, textColorPrimary } from '../styles/colors'
@@ -18,6 +18,7 @@ type props = {
 const Requests = ({allRequests,getRequestsData, openOverlay}: props) => {
   const [fetchFailed, setFetchFailed] = useState(true as boolean | undefined);
   useEffect(()=>{
+    setRoute("Requests")
     getRequestsData();
   }, [])
   return (

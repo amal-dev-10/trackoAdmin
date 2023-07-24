@@ -41,7 +41,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
     const activateMembershipClicked = async ()=>{
         if(packId){
             let resp: apiResponse = await activatePackage(packId)
-            if(resp.status === 200){
+            if(resp?.status === 200){
                 updateClientState(resp.data);
                 showActivatePack(false);
             }else{
