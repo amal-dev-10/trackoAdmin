@@ -30,6 +30,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
 
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
+  const [servieMsg, setServiceMsg] = useState("" as string);
   // const openOverlay = ()=>{
   //   toggleOverlay();
   // }
@@ -50,6 +51,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
 
   const getMyBusiness = async ()=>{
     let resp: apiResponse | null = await getAllBusiness();
+    setServiceMsg(resp?.message || "");
     if(resp?.status === 200){
       setAllBusiness([...resp.data]);
       setFetchFailed(false)
@@ -102,7 +104,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
         {
           fetchFailed != undefined &&
           <NoData 
-            text='No business account is added in this profile. Register your business' 
+            text={servieMsg} 
             onTouch={(button: string)=>{button === "Register" ? toggleOverlay() : ""}} 
             buttons={["Register"]}
             fetchFailed={fetchFailed}

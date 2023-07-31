@@ -27,7 +27,7 @@ const LineChart = ({financeInsight}: props) => {
             tickLabels: { fill: textColorPrimary, fontSize: fontSize.small },
             grid: {stroke: "#1d1d1d8a"},
           }}
-          label={financeInsight.month.toUpperCase()}
+          label={financeInsight.month?.toUpperCase()}
         />
         <VictoryAxis
           // Y-axis style

@@ -22,7 +22,7 @@ type props = {
 
 const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) => {
   const [allValid, setAllValid] = useState(false as boolean);
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState("" as any);
   const [showCalender, setShowCalender] = useState(false);
   const [inputList, setInputList] = useState(
     [
@@ -88,19 +88,20 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
       name: inputList[0].value,
       phoneNumber: inputList[1].value,
       phoneVerified: false,
-      dateOfBirth: Timestamp.fromDate(selectedDate)
+      dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date())
     }
     let resp: apiResponse = await addNewClient(selectedBusinessId, data);
-    if(resp?.status === 200){
+    if(resp?.status === 200 && Object.entries(resp.data).length){
       let temp = allClients;
       temp.push(resp.data);
       setClientToState([...temp])
       let inputs = inputList.map((s)=>{s.value = ""; return s});
-      setInputList([...inputs])
-    }else if(resp?.status === 406){
-      showToast("User already exists !")
+      setInputList([...inputs]);
+      showToast("Client added successfully !")
+    }else if(resp?.status === 200 && !Object.entries(resp.data).length){
+      showToast(resp.message);
     }else if(resp?.status === 500 || resp?.status === undefined){
-      showToast("Data fetch failed !")
+      showToast("Data fetch failed !");
     }
   }
 
@@ -134,13 +135,13 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
         <View style={styles.calenderView}>
           <TouchableOpacity style={styles.dobView} onPress={()=>{setShowCalender(true)}} activeOpacity={0.7}>
             <IconSet name='user-o' color={iconColor} size={20}/>
-            <Text style={styles.dobText}>{selectedDate.toLocaleDateString()}</Text>
+            <Text style={styles.dobText}>{selectedDate ? selectedDate.toLocaleDateString() : "DOB"}</Text>
           </TouchableOpacity>
         </View>
         {
           showCalender ?
           <DateTimePicker
-            value={selectedDate}
+            value={selectedDate ? selectedDate : new Date()}
             mode="date"
             display="calendar"
             onChange={handleDateChange}

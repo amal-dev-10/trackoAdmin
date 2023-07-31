@@ -100,6 +100,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                         : "NA"
                     }
                 </Text>
+                <Text style={styles.subKey}>Pack</Text>
             </View>
             <View style={styles.divider}></View>
             <View style={styles.section}>
@@ -111,6 +112,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                         : clientData.memberShipDetails?.expired ? "EXPIRED" : "NA"
                     }
                 </Text>
+                <Text style={styles.subKey}>Days</Text>
             </View>
             <View style={styles.divider}></View>
             <View style={styles.section}>
@@ -122,6 +124,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                         : "NA"
                     }
                 </Text>
+                <Text style={styles.subKey}>Year</Text>
             </View>
         </View>
         <View>
@@ -275,4 +278,8 @@ const styles = StyleSheet.create({
         color: goldColor,
         fontSize: fontSize.xmedium
     },
+    subKey:{
+        fontSize: fontSize.xSmall,
+        color: borderColor
+    }
 })

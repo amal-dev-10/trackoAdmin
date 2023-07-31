@@ -31,10 +31,10 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
     },
     {
       buttons: [
-        {name: "Gallery", icon: "exchange"},
-        {name: "Settings", icon: "credit-card"},
-        {name: "Share", icon: "credit-card"},
-        {name: "Deactivate Account", icon: "credit-card"},
+        {name: "Gallery", icon: "picture"},
+        {name: "Settings", icon: "cog-outline"},
+        {name: "Share", icon: "share"},
+        {name: "Deactivate Account", icon: "cancel-circled-outline"},
       ],
       title: "MORE"
     }

@@ -21,6 +21,7 @@ type modalProps = {
 const ActivateMembership = ({businessId, showActivatePack, updateClientState, clientData}:modalProps)=>{
     const [dropData, setDropData] = useState([] as dropDownProps[]);
     const [packId, setPackId] = useState("" as string);
+    const [msg, setMsg] = useState("" as string);
 
     const getDropDownData = async ()=>{
         let data: apiResponse = await getPackages(businessId);
@@ -35,7 +36,16 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                 )                
             }
         });
-        setDropData([...temp])
+        setDropData([...temp]);
+        if(temp.length){
+            if((clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired)){
+                setMsg("You can activate package to your client.");
+            }else{
+                setMsg("There is already an active membership for this client")
+            }
+        }else{
+            setMsg("There are no packages. You can add packages in the package tab.")
+        }
     }
 
     const activateMembershipClicked = async ()=>{
@@ -77,7 +87,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                         dropData.length ?
                             (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ? 
                                 <>
-                                    <Text style={styles.msgText}>You can activate package to your client.</Text>
+                                    <Text style={styles.msgText}>{msg}</Text>
                                     <Dropdown
                                         style={[styles.dropdown]}
                                         placeholderStyle={{fontSize: fontSize.small}}
@@ -96,8 +106,8 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                                         activeColor='#3e3e3e57'
                                     /> 
                                 </> 
-                            : <Text style={styles.msgText}>There is already an active membership for this client</Text>
-                        : <Text style={styles.msgText}>There are no packages. You can add packages in the package tab.</Text>
+                            : <Text style={styles.msgText}>{msg}</Text>
+                        : <Text style={styles.msgText}>{msg}</Text>
                     }
                 </View>
                 <View style={styles.footer}>

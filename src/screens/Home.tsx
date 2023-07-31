@@ -8,7 +8,7 @@ import ExpiryCard from '../components/Common/ExpiryCard'
 import { setHomeStatsAction, setOverlayComponent, setTransactionMode } from '../redux/actions'
 import { connect } from 'react-redux'
 import { apiResponse, iTransactions } from '../interfaces/common'
-import { getClientTransactions, getEndedSubscriptions, getHomeStats } from '../services/apiCalls/serviceCalls'
+import { calculateExpiry, getClientTransactions, getEndedSubscriptions, getHomeStats } from '../services/apiCalls/serviceCalls'
 import { mainStat } from '../interfaces/business'
 import { iExpiredData } from '../interfaces/iClient'
 
@@ -72,7 +72,6 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false} style={{height: "100%"}}>
       <View style={{padding: 4}}>
-        <Text style={[styles.welcomeText, styles.child]}>{"Hi, " + "Amal Dev"}</Text>
         {/* balance quick view */}
           <View style={[styles.balanceView, styles.child]}> 
             <View style={[styles.leftRight, styles.left]}>

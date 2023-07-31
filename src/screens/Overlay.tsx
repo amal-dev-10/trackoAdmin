@@ -29,7 +29,7 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
     //     return () => backHandler.remove()
     // },[])
   return (
-    <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='fade'>
+    <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='slide' >
         <View style={[styles.overlayScreen, container]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={()=>{closeOverlay(overlayData.id)}} style={styles.icon} activeOpacity={0.7}>

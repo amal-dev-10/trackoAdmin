@@ -47,3 +47,26 @@ export type iFilterQuery = {
     expired?: boolean | null,
     noMembership?: boolean | null,
 }
+
+export type iFilters = {
+    tabName: string,
+    active: boolean,
+    id: string,
+    filters: subFilters[]
+}
+
+export type subFilters = {
+    active: boolean, 
+    name: string, 
+    value: string, 
+    count: number,
+    id: string
+}
+
+export type iFilterCounts = {
+    gold: number,
+    silver: number,
+    bronze: number,
+    noMembership: number,
+    expired: number
+}

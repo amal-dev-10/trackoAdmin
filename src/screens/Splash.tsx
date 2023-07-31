@@ -5,6 +5,8 @@ import { isAuthenticatedAction, setTokenAction } from '../redux/actions/authActi
 import auth from '@react-native-firebase/auth'
 import { navigate } from '../navigations/NavigationService'
 import { container } from '../utils/helper'
+import IconSet from '../styles/icons/Icons'
+import { textColorPrimary } from '../styles/colors'
 
 type props = {
   setIsAuthenticated: any,
@@ -40,7 +42,7 @@ const Splash = ({setIsAuthenticated, setToken}: props) => {
 
   return (
     <View style={[container, styles.splashScreen]}>
-      <Text>Splash</Text>
+      <IconSet name='tracko-logo' size={23} color={textColorPrimary}/>
     </View>
   )
 }

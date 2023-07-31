@@ -177,3 +177,26 @@ export const getInsights = async (type: string, year: string, month: string)=>{
     }
     return res
 }
+
+export const getFilterCounts = async ()=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`client/filterCount/${st.dashboard.selectedBusiness?.uid}`)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const calculateExpiry = async ()=>{
+    let res = null;
+    try{
+        res = await getData('jobs/expiryTask')
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}

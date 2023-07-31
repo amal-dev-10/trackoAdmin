@@ -2,7 +2,7 @@
 
 import { iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
 import { iTransactions, packagesProps } from "../../interfaces/common";
-import { iMembership, iMembershipDetails } from "../../interfaces/iClient";
+import { iFilters, iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
 import store from "../store";
 
@@ -206,6 +206,41 @@ export const setFinanceInsightAction = (payload: iFinanceInsight)=>{
 export const setRouteNameAction = (payload: string)=>{
   return {
     type: "SET_ROUTE_NAME",
+    payload: payload
+  }
+}
+
+export const checkBoxClickedAction = (payload: string)=>{
+  return {
+    type: "CHECKBOX_CLICKED",
+    payload: payload
+  }
+}
+
+export const filterTabClickedAction = (payload: string)=>{
+  return {
+    type: "FILTER_TAB_CLICKED",
+    payload: payload
+  }
+}
+
+export const previousFilterDataState = ()=>{
+  return {
+    type: "SET_PREVIOUS_FILTER",
+    payload: null
+  }
+}
+
+export const applyFilterAction = ()=>{
+  return {
+    type: "APPLY_FILTER",
+    payload: null
+  }
+}
+
+export const setDropDownDatAction = (payload: iFilters[])=>{
+  return {
+    type: "SET_DROPDOWN_DATA",
     payload: payload
   }
 }
