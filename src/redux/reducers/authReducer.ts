@@ -1,6 +1,4 @@
 import { actionInterface, authProps } from "../../interfaces/common"
-import auth from '@react-native-firebase/auth'
-import { navigate } from "../../navigations/NavigationService"
 
 type props = {
     data: authProps

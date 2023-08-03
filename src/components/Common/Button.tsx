@@ -37,6 +37,6 @@ const styles = StyleSheet.create({
     btnText:{
         color: buttonTextColor,
         fontWeight: "700",
-        fontSize: fontSize.xmedium
+        fontSize: fontSize.small
     }
 })

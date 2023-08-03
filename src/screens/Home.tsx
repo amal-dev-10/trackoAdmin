@@ -94,12 +94,12 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
             </View>
             <View style={styles.statSection}>
               <Text style={[key]}>{wordSplitter("Total Subscribers")}</Text>
-              <Text style={styles.statsValue}>{stat.totalSubscribers}</Text>
+              <Text style={styles.statsValue}>{stat.membershipThisMonth}</Text>
               <Text style={styles.additional}>{stat?.month?.toUpperCase() || "MONTH"}</Text>
             </View>
             <View style={styles.statSection}>
               <Text style={[key]}>{wordSplitter("New Members")}</Text>
-              <Text style={styles.statsValue}>+{stat.newMembers}</Text>
+              <Text style={styles.statsValue}>+{stat.newMembersThisMonth}</Text>
               <Text style={styles.additional}>{stat?.month?.toUpperCase() || "MONTH"}</Text>
             </View>
             <View style={styles.statSection}>
@@ -158,7 +158,7 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
                   return (
                     <View style={styles.recentCard} key={"recent" + i}>
                       <View style={styles.left}>
-                        <Text style={styles.tier}>{d.packDetails.tier.toUpperCase() + " MEMBERSHIP"}</Text>
+                        <Text style={styles.tier}>{d.packDetails.tier.toUpperCase()}</Text>
                         <Text style={styles.date}>{d.dateString.toUpperCase()}</Text>
                       </View>
                       <View style={styles.right}>
@@ -412,7 +412,7 @@ const styles = StyleSheet.create({
     elevation: 3
   },
   tier:{
-    fontSize: fontSize.xmedium,
+    fontSize: fontSize.small,
     color: textColorPrimary,
     fontWeight: "500"
   },

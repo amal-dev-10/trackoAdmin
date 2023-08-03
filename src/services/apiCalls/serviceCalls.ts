@@ -2,7 +2,7 @@
 import { ibusiness } from "../../interfaces/business";
 import { iClient, iFilterQuery, iMembershipDetails } from "../../interfaces/iClient";
 import store from "../../redux/store";
-import { getData, postData } from "../service/serviceHandler";
+import { deleteData, getData, postData } from "../service/serviceHandler";
 
 export const getOwnerById = async (id: string)=>{
     let res = null;
@@ -92,10 +92,10 @@ export const getAllClients = async (query: iFilterQuery, disableLoader: boolean)
     return res
 }
 
-export const updatePackageService = async (pack: string, businessId: string, data: any)=>{
+export const updatePackageService = async (businessId: string, data: any, byPassLoading: boolean = false)=>{
     let res = null;
     try{
-        res = await postData(`business/packages/${pack}/${businessId}`, data)
+        res = await postData(`business/packages/${businessId}`, data, byPassLoading)
     }
     catch(err){
         console.log(err)
@@ -107,6 +107,19 @@ export const getPackages = async (businessId: string)=>{
     let res = null;
     try{
         res = await getData(`business/packages/${businessId}`)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const deletePackage = async (packId: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        let businessId: string = st.dashboard.selectedBusiness?.uid || ""; 
+        res = await deleteData(`business/packages/${businessId}/${packId}`);
     }
     catch(err){
         console.log(err)

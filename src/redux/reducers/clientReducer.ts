@@ -4,7 +4,7 @@ import { iClient, iFilters, iMembership, iMembershipDetails } from "../../interf
 type props = {
     clients: iMembership[],
     selectedClient: iMembership | null,
-    filters: {allFilters: iFilters[]} | null,
+    filters: {allFilters: iFilters[], filterActive?: boolean} | null,
 }
 
 let initialState = {
@@ -62,6 +62,7 @@ export const clientReducer = (state: props = initialState, action: actionInterfa
                         allFilters: [...all]
                     }
                 }
+
             }
             return state
         case "FILTER_TAB_CLICKED":

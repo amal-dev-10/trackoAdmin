@@ -61,6 +61,13 @@ export const showActivatePackage = (payload: boolean)=>{
   }
 }
 
+export const removePackageAction = (payload: string)=>{
+  return {
+    type: "REMOVE_PACKAGE",
+    payload: payload
+  }
+}
+
 // Overlay
 
 export const setOverlayComponent = (payload: any = null)=>{
@@ -244,5 +251,36 @@ export const setDropDownDatAction = (payload: iFilters[])=>{
     payload: payload
   }
 }
+
+export const addNewTemplateAction = ()=>{
+  return {
+    type: "ADD_NEW_TEMPLATE",
+    payload: null
+  }
+}
+
+//confirmation
+
+export const confirmModalPropertiesAction = (payload: {msg?: string, title?: string})=>{
+  return {
+    type: "SET_MODAL_PROPERTIES",
+    payload: payload
+  }
+}
+
+export const confirmAction = (payload: boolean)=>{
+  return {
+    type: "SET_CONFIRM",
+    payload: payload
+  }
+}
+
+export const showConfirmModalAction = (payload: boolean)=>{
+  return {
+    type: "SHOW_CONFIRMATION_MODAL",
+    payload: payload
+  }
+}
+
 
 

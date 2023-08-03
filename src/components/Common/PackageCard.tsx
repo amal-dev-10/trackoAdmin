@@ -4,15 +4,22 @@ import { apiResponse, packagesProps } from '../../interfaces/common'
 import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import { shadowGenerator, showToast } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
-import { updatePackage } from '../../redux/actions'
+import { confirmAction, confirmModalPropertiesAction, removePackageAction, showConfirmModalAction, updatePackage } from '../../redux/actions'
 import { connect } from 'react-redux'
 import IconSet from '../../styles/icons/Icons'
-import { getPackages, updatePackageService } from '../../services/apiCalls/serviceCalls'
+import { deletePackage, getPackages, updatePackageService } from '../../services/apiCalls/serviceCalls'
+import { key } from '../../styles/constants'
+import Loading from './Loading'
 
 type props = {
     packDetail?: packagesProps,
     updatePack: any,
-    businessId: string
+    businessId: string,
+    showModal: any,
+    confirmation: boolean,
+    setProperties: any,
+    removePackage: any,
+    setConfirm: any
 }
 
 type EditableProps = {
@@ -21,15 +28,21 @@ type EditableProps = {
     cost: string,
     duration: number,
     numOfYearOrMonths: string,
+    title: string,
+    tier: string
 }
 
-const PackageCard = ({packDetail, updatePack,businessId}: props) => {
+const PackageCard = ({packDetail, updatePack,businessId,confirmation,showModal,setProperties,removePackage,setConfirm}: props) => {
+    const [showLoader, setShowLoader] = useState(false as boolean);
+    const [currentId, setCurrentId] = useState("" as string);
     const [editable, setEditable] = useState({
         active: packDetail?.active || false,
         cost: packDetail?.cost || "0",
         duration: packDetail?.duration || 0,
         features: packDetail?.features || [],
-        numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1",
+        tier: packDetail?.tier || "",
+        title: packDetail?.title || ""
     } as EditableProps);
     const [newFeature, setNewFeature] = useState("" as string);
     const [editMode, setEditMode] = useState(false as boolean);
@@ -38,7 +51,9 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
         cost: packDetail?.cost || "0",
         duration: packDetail?.duration || 0,
         features: packDetail?.features || [],
-        numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+        numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1",
+        tier: packDetail?.tier || "",
+        title: packDetail?.title || ""
     } as EditableProps)
 
     const addFeature = ()=>{
@@ -64,26 +79,66 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
         setNewFeature("");
     };
 
-    const activateOrUpdateClicked = async (active: boolean)=>{
-        let newData = {...packDetail, ...editable, active: active};
-        if(newData.cost && parseInt(newData.cost) > 0){
-            if(newData.features.length && newData.features.length > 0 ){
-                if(newData.numOfYearOrMonths && parseInt(newData.numOfYearOrMonths) > 0){
-                    let resp: apiResponse = await updatePackageService(newData.tier as string, businessId, newData);
-                    updatePack(resp.data);
-                    setEditable({...editable, active: active})
-                    setDefault({...editable, active: active});
-                    setEditMode(false)
-                }else{
-                    showToast("Number of months cant be 0");
-                }
-            }else{
-                showToast("You should atleast add 1 feature");
-            }
+    const validate = (d: any)=>{
+        let newData = d as packagesProps;
+        let valid: string[] = [];
+        if(!(newData.cost && parseInt(newData.cost) > 0)){
+            valid.push("Cost should be greater than 0")
+        }
+        if(!(newData.features.length && newData.features.length > 0)){
+            valid.push("You should atleast add 1 feature");
+        }
+        if(!(newData.numOfYearOrMonths && parseInt(newData.numOfYearOrMonths) > 0)){
+            valid.push("Number of months cant be 0");
+        }
+        if(!valid.length){
+            return true
         }else{
-            showToast("Cost should be greater than 0");
+            showToast(valid[0]);
+            return false
         }
     }
+
+    const activateOrUpdateClicked = async (active: boolean)=>{
+        let newData = {...packDetail, ...editable, active: active};
+        let check = validate(newData);
+        if(check){
+            setShowLoader(true);
+            let resp: apiResponse = await updatePackageService(businessId, newData, true);
+            updatePack({...resp.data, newTempId: packDetail?.id});
+            setEditable({...editable, active: active})
+            setDefault({...editable, active: active});
+            setEditMode(false);
+            setShowLoader(false);
+        }
+    }
+
+    const removeIconClicked = ()=>{
+        setCurrentId(packDetail?.id || "");
+        if(packDetail?.id && packDetail?.id.length > 4){
+            setProperties({msg: `You have selected ${packDetail?.tier.toUpperCase()} package to remove.\nSure that you want to remove.`})
+            showModal(true);
+        }else{
+            removePackage(packDetail?.id)
+        }
+    }
+
+    const deletePackageFromDb = async ()=>{
+        let resp: apiResponse = await deletePackage(packDetail?.id || "");
+        if(resp.status === 200){
+            removePackage(packDetail?.id);
+            showToast("Package deleted successfully.");
+        }else{
+            showToast("Something went wrong.");
+        }
+        setConfirm(false);
+    }
+
+    useEffect(()=>{
+        if(confirmation && packDetail?.id && packDetail.id === currentId){
+            deletePackageFromDb();
+        }
+    }, [confirmation])
 
     useEffect(()=>{
         setEditable({
@@ -91,14 +146,18 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
             cost: packDetail?.cost || "0",
             duration: packDetail?.duration || 0,
             features: packDetail?.features || [],
-            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1",
+            tier: packDetail?.tier || "",
+            title: packDetail?.title || ""
         });
         setDefault({
             active: packDetail?.active || false,
             cost: packDetail?.cost || "0",
             duration: packDetail?.duration || 0,
             features: packDetail?.features || [],
-            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1"
+            numOfYearOrMonths: packDetail?.numOfYearOrMonths || "1",
+            tier: packDetail?.tier || "",
+            title: packDetail?.title || ""
         });
     }, [packDetail]);
 
@@ -106,7 +165,13 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
   return (
     <View style={[styles.packCard, shadowGenerator(2,2)]}>
         <View style={styles.logoView}>
-            <IconSet name={packDetail?.tier+'pack'} color={goldColor} size={80}/>
+            <Text style={styles.newTemplateTitle} numberOfLines={1} ellipsizeMode='tail'>
+                {
+                    editable?.tier || packDetail?.active ? 
+                    editable?.tier.toUpperCase() : "NEW TEMPLATE"
+                }
+            </Text>
+            {/* <IconSet name={packDetail?.tier+'pack'} color={goldColor} size={80}/> */}
             {
                 (editable.active && !editMode) ?
                 <TouchableOpacity onPress={()=>{setEditMode(true)}} style={styles.editBtn} activeOpacity={0.7}>
@@ -118,61 +183,96 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
                 </TouchableOpacity>
             }
         </View>
-      <View style={[styles.costCard, shadowGenerator()]}>
-        <View style={styles.costLabel}>
-            <View style={styles.unitView}>
-                <Text style={styles.unit}>{packDetail?.currency}</Text>
+        <View style={styles.inputsView}>
+            {
+                !(editable?.active && !editMode) ?
+                <View style={styles.packNameView}>
+                    <Text style={[key, {color: borderColor}]}>{"Tier * ( 3 to 14 characters )"}</Text>
+                    <TextInput
+                        style={[styles.packNameInput]}
+                        keyboardType='name-phone-pad'
+                        onChangeText={(e)=>{setEditable({...editable, tier: e})}}
+                        cursorColor={textColorSecondary}
+                        value={editable.tier}
+                        placeholderTextColor={borderColor}
+                        placeholder='Eg. Premium Pack'
+                        maxLength={14}
+                    />
+                </View> : <></>
+            }
+            <View style={styles.packNameView}>
+                <Text style={[key, {color: borderColor}]}>Pack name *</Text>
+                {
+                    (editable?.active && !editMode) ?
+                    <Text style={styles.packTitle}>{editable?.title}</Text> :
+                    <TextInput
+                        style={[styles.packNameInput]}
+                        keyboardType='name-phone-pad'
+                        onChangeText={(e)=>{setEditable({...editable, title: e})}}
+                        cursorColor={textColorSecondary}
+                        value={editable.title}
+                    />
+                }
             </View>
-            {
-                (editable?.active && !editMode) ?
-                <Text style={styles.price}>{editable?.cost}</Text> :
-                <TextInput
-                    style={[styles.priceInput, styles.commonInput]}
-                    placeholderTextColor={borderColor}
-                    keyboardType='number-pad'
-                    onChangeText={(e)=>{setEditable({...editable, cost: e})}}
-                    cursorColor={textColorSecondary}
-                    value={editable.cost}
-                />
-            }
-        </View>
-        <Text style={{color: iconColor}}>/</Text>
-        <View style={styles.priceOptions}>
-            {
-                (editable.active && !editMode) ?
-                    <Text>{editable.numOfYearOrMonths}</Text> 
-                :
-                <TextInput
-                    style={[styles.numberOfMonthsOrYearInput, styles.commonInput]}
-                    placeholderTextColor={borderColor}
-                    keyboardType='number-pad'
-                    onChangeText={(e)=>{setEditable({...editable, numOfYearOrMonths: e})}}
-                    cursorColor={textColorSecondary}
-                    value={editable.numOfYearOrMonths}
-                />
-            }
-            {
-                (editable.active && !editMode) ? 
-                <Text>{packDetail?.durationList[editable.duration]}</Text>
-                :
-                <View style={styles.durationView}>
-                    {
-                        packDetail?.durationList.map((data, i: number)=>{
-                            return (
-                                <TouchableOpacity 
-                                    style={[styles.durationBtn, editable.duration === i ? styles.active : styles.inActive]} 
-                                    key={"duration" + i}
-                                    onPress={()=>{setEditable({...editable, duration: i})}}
-                                >
-                                    <Text>{data}</Text>
-                                </TouchableOpacity>
-                            )
-                        })
-                    }
+            <View style={styles.packageDetailView}>
+                <Text style={[key, {color: borderColor}]}>Cost & Duration *</Text>
+                <View style={[styles.costCard, shadowGenerator()]}>
+                    <View style={styles.costLabel}>
+                        <View style={styles.unitView}>
+                            <Text style={styles.unit}>{packDetail?.currency}</Text>
+                        </View>
+                        {
+                            (editable?.active && !editMode) ?
+                            <Text style={styles.price}>{editable?.cost}</Text> :
+                            <TextInput
+                                style={[styles.priceInput, styles.commonInput]}
+                                placeholderTextColor={borderColor}
+                                keyboardType='number-pad'
+                                onChangeText={(e)=>{setEditable({...editable, cost: e})}}
+                                cursorColor={textColorSecondary}
+                                value={editable.cost}
+                            />
+                        }
+                    </View>
+                    <Text style={{color: iconColor}}>/</Text>
+                    <View style={styles.priceOptions}>
+                        {
+                            (editable.active && !editMode) ?
+                                <Text>{editable.numOfYearOrMonths}</Text> 
+                            :
+                            <TextInput
+                                style={[styles.numberOfMonthsOrYearInput, styles.commonInput]}
+                                placeholderTextColor={borderColor}
+                                keyboardType='number-pad'
+                                onChangeText={(e)=>{setEditable({...editable, numOfYearOrMonths: e})}}
+                                cursorColor={textColorSecondary}
+                                value={editable.numOfYearOrMonths}
+                            />
+                        }
+                        {
+                            (editable.active && !editMode) ? 
+                            <Text>{packDetail?.durationList[editable.duration]}</Text>
+                            :
+                            <View style={styles.durationView}>
+                                {
+                                    packDetail?.durationList.map((data, i: number)=>{
+                                        return (
+                                            <TouchableOpacity 
+                                                style={[styles.durationBtn, editable.duration === i ? styles.active : styles.inActive]} 
+                                                key={"duration" + i}
+                                                onPress={()=>{setEditable({...editable, duration: i})}}
+                                            >
+                                                <Text>{data}</Text>
+                                            </TouchableOpacity>
+                                        )
+                                    })
+                                }
+                            </View>
+                        }
+                    </View>
                 </View>
-            }
+            </View>
         </View>
-      </View>
       <View style={styles.spacer}></View>
       <View style={styles.featureView}>
         <Text style={styles.text}>FEATURES</Text>
@@ -212,34 +312,47 @@ const PackageCard = ({packDetail, updatePack,businessId}: props) => {
             }
         </View>
       </View>
-      <View style={styles.btnView}>
-        {
-            editable?.active &&
-            <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}} activeOpacity={0.7}>
-                <Text style={styles.btnText}>Update</Text>
-            </TouchableOpacity>
-        }
-        {
-            editable?.active ?     
-                <TouchableOpacity style={[styles.btn]} onPress={()=>{activateOrUpdateClicked(false)}} activeOpacity={0.7}>
-                    <Text style={styles.btnText}>Deactivate</Text>
-                </TouchableOpacity>
-            : 
+        <View style={styles.btnView}>
+            {
+                (editable?.active && editMode) &&
                 <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}} activeOpacity={0.7}>
-                    <Text style={styles.btnText}>Activate</Text>
+                    <Text style={styles.btnText}>Update</Text>
                 </TouchableOpacity>
+            }
+            {
+                editable?.active ?     
+                    <TouchableOpacity style={[styles.btn]} onPress={()=>{activateOrUpdateClicked(false)}} activeOpacity={0.7}>
+                        <Text style={styles.btnText}>Deactivate</Text>
+                    </TouchableOpacity>
+                : 
+                    <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{activateOrUpdateClicked(true)}} activeOpacity={0.7}>
+                        <Text style={styles.btnText}>Activate</Text>
+                    </TouchableOpacity>
+            }
+            <TouchableOpacity style={[styles.btn]} onPress={()=>{removeIconClicked()}} activeOpacity={0.7}>
+                <Text style={styles.btnText}>Remove</Text>
+            </TouchableOpacity>
+        </View>
+        {
+            showLoader ? 
+            <Loading/>
+            : <></>
         }
-      </View>
     </View>
   )
 }
 
 const mapDispatchToProps = (dispatch: any)=>({
-    updatePack: (data: packagesProps)=>dispatch(updatePackage(data))
+    updatePack: (data: packagesProps)=>dispatch(updatePackage(data)),
+    showModal: (show: boolean)=>{dispatch(showConfirmModalAction(show))},
+    setProperties: (data: {msg?: string, title?: string})=>{dispatch(confirmModalPropertiesAction(data))},
+    removePackage: (id: string)=>{dispatch(removePackageAction(id))},
+    setConfirm: (confirm: boolean)=>{dispatch(confirmAction(confirm))}
 })
 
 const mapStateToProps = (state: any)=>({
-    businessId: state.dashboard.selectedBusiness.uid
+    businessId: state.dashboard.selectedBusiness.uid,
+    confirmation: state.confirmation.confirm
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(PackageCard)
@@ -254,7 +367,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 10,
         width: Dimensions.get("window").width * 0.8,
-        marginRight: 10,
+        marginHorizontal: 10
     },
     packImage:{
         height: 90,
@@ -356,8 +469,10 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 50,
         display: "flex",
+        flexDirection: "row",
         alignItems: "center",
         justifyContent: "center",
+        gap: 6,
         paddingLeft: 40,
         paddingRight: 40,
     },
@@ -436,5 +551,41 @@ const styles = StyleSheet.create({
     },
     rotate:{
         transform:[{rotate: "180deg"}]
+    },
+    packageDetailView:{
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+        width: "100%",
+        alignItems: "flex-start"
+    },
+    packNameView:{
+        display: "flex",
+        flexDirection: "column",
+        gap: 4,
+        width: "100%",
+        alignItems: "flex-start"
+    },
+    packNameInput:{
+        backgroundColor: primaryColor,
+        borderRadius: 10,
+        padding: 10,
+        width: "100%"
+    },
+    newTemplateTitle:{
+        color: goldColor,
+        fontSize: fontSize.medium,
+        maxWidth: "90%",
+        fontWeight: "500",
+    },
+    inputsView:{
+        width: "100%",
+        display: "flex",
+        flexDirection: "column",
+        gap: 10
+    },
+    packTitle:{
+        fontSize: fontSize.xmedium,
+        color: textColorSecondary
     }
 })

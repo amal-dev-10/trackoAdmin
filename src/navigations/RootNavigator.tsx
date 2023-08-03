@@ -7,6 +7,7 @@ import { navigationRef } from './NavigationService';
 import { connect } from 'react-redux';
 import { createStackNavigator } from '@react-navigation/stack';
 import Loading from '../components/Common/Loading';
+import Confirmation from '../components/Common/Confirmation';
 
 type props = {
     showLoader: boolean,
@@ -28,6 +29,9 @@ const RootNavigator = ({showLoader, authLoader}: props) => {
                 authLoader ? 
                 <Loading/>
                 : <></>
+            }
+            {
+                <Confirmation/>
             }
         </>
     </NavigationContainer>

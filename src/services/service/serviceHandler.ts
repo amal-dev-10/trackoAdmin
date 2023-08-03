@@ -17,10 +17,12 @@ export const getData = async (url: string, byPassLoading: boolean = false) => {
     return response?.data
 };
 
-export const postData = async (url: string, body: any) => {
+export const postData = async (url: string, body: any, byPassLoading: boolean = false) => {
     let response = null;
     try {
-        store.dispatch(setLoader(true));
+        if(!byPassLoading){
+            store.dispatch(setLoader(true));
+        }
         response = await createApiInstance().post(url, JSON.stringify(body));
     } catch (error) {
         console.log(error);

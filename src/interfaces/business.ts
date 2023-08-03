@@ -12,14 +12,18 @@ export type ibusiness = {
 }
 
 export type mainStat = {
-    amountToday: string,
-    businessId: string,
-    expiredSubs: string
-    lastUpdated: Timestamp,
-    newMembers: string,
+    totalMembership: string,
+    membershipToday: string,
+    membershipThisMonth: string,
+    expiredSubs: string,
     totalAmount: string,
+    amountToday: string,
+    amountThisMonth: string,
     totalMembers: string,
-    totalSubscribers: string,
+    newMembersThisMonth: string,
+    membersToday: string
+    businessId: string,
+    lastUpdated: Timestamp,
     day?: string,
     month?: string
 }

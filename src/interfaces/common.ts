@@ -66,7 +66,8 @@ export type packagesProps = {
     numOfYearOrMonths: string,
     active: boolean,
     currency: string,
-    id: string
+    id: string,
+    title: string
 }
 
 export type overlayComponent = {
@@ -124,4 +125,11 @@ export type iTransactions = {
     name?: string,
     dateString: string,
     packDetails: packagesProps
+}
+
+export type confirmationModal = {
+    showConfirmModal: boolean,
+    msg: string,
+    title: string,
+    confirm: boolean
 }

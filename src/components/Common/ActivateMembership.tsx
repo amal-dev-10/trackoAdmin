@@ -61,7 +61,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
     }
 
     const dropDownChanged = (pack: string)=>{
-        setPackId(pack.toUpperCase());
+        setPackId(pack);
     }
 
     useEffect(()=>{
@@ -100,7 +100,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                                         placeholder={'Select package'}
                                         // value={year.value}
                                         onChange={function (item): void {
-                                            dropDownChanged(item.label)
+                                            dropDownChanged(item.value)
                                         } }
                                         itemTextStyle={{fontSize: fontSize.small}}
                                         activeColor='#3e3e3e57'

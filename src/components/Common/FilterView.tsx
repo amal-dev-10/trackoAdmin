@@ -1,7 +1,7 @@
 import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { fontSize } from '../../styles/fonts'
-import { borderColor, cardColor, textColorPrimary } from '../../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../../styles/colors'
 import Button from './Button'
 import CheckBox from '@react-native-community/checkbox'
 import { iFilterQuery, iFilters } from '../../interfaces/iClient'
@@ -21,10 +21,21 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
   const apply = ()=>{
     let all = filters[0].filters;
     let query: any = {} 
+    let f: string[] = []
     all.forEach((d)=>{
-      let key = d.value as keyof iFilterQuery;
-      query[key] = d.active;
+      let key = d.value as string;
+      if(d.active){
+        if(d.name.toLowerCase() === "no membership"){
+          query.noMembership = true;
+        }else if(d.name.toLowerCase() === "expired"){
+          query.expired = true
+        }else{
+          f.push(key);
+        }
+      }
     });
+    query.filters = f
+    console.log(query);
     applyFilterClicked(query); 
     toggleFilterView()
   }
@@ -46,7 +57,7 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
                     key={"filterTab" + i}
                     onPress={()=>{filterTabClicked(d.id)}}
                     >
-                    <Text numberOfLines={1} ellipsizeMode="tail" style={styles.tabName}>{d.tabName}</Text>
+                      <Text numberOfLines={1} ellipsizeMode="tail" style={styles.tabName}>{d.tabName}</Text>
                     </TouchableOpacity>
                 )
                 })
@@ -64,7 +75,7 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
                             onValueChange={()=>{checkBoxClicked(d.id)}}
                             tintColors={{ true: textColorPrimary, false: borderColor }}
                         />
-                        <Text style={styles.tabFilterText}>{d.name + ` (${d.count})`}</Text>
+                        <Text style={styles.tabFilterText}>{d.name.toUpperCase() + ` (${d.count})`}</Text>
                     </View>
                     )
                 })
@@ -167,10 +178,12 @@ const styles = StyleSheet.create({
         justifyContent: "flex-start"
       },
       tabName:{
-        fontSize: fontSize.xmedium
+        fontSize: fontSize.xmedium,
+        color: iconColor
       },
       tabFilterText:{
-        fontSize: fontSize.xmedium
+        fontSize: fontSize.xmedium,
+        color: borderColor
       },
       filter:{
         display: "flex",
