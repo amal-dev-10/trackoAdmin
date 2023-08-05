@@ -1,5 +1,5 @@
 import { actionInterface } from "../../interfaces/common"
-import { iClient, iFilters, iMembership, iMembershipDetails } from "../../interfaces/iClient"
+import { iClient, iFilters, iMembership, iMembershipDetails, subFilters } from "../../interfaces/iClient"
 
 type props = {
     clients: iMembership[],
@@ -65,6 +65,14 @@ export const clientReducer = (state: props = initialState, action: actionInterfa
 
             }
             return state
+        case "APPLY_FILTER":
+            return {
+                ...state,
+                filters: {
+                    ...state.filters,
+                    allFilters: [...action.payload]
+                }
+            }
         case "FILTER_TAB_CLICKED":
             if(state.filters){
                 let allFilters = state.filters.allFilters;
@@ -87,7 +95,6 @@ export const clientReducer = (state: props = initialState, action: actionInterfa
                 allFilters: [...action.payload]
             };
             let copy = {...state, filters: {...f}, previousState: {...state, filters: {...f}}}
-            console.log(copy.previousState.filters.allFilters[0].filters[0])
             return {
                 ...copy
             }

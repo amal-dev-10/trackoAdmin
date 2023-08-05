@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { BackHandler, StyleSheet, View } from 'react-native';
 import { container, tabBarHeight } from '../utils/helper';
 import MainHeader from '../components/Common/MainHeader';
 import BottomTab from '../components/Common/BottomTab';
@@ -28,6 +28,12 @@ const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
   //     clearTimeout(t);
   //   }, 5000)
   // },[])
+  useEffect(()=>{
+    BackHandler.addEventListener("hardwareBackPress", ()=>{
+      console.log("clicked")
+      return false
+    })
+  }, [])
   return (
     <View style={[container,styles.main]}>
       <View style={[styles.headerBottomView, {marginBottom: 10}]}>

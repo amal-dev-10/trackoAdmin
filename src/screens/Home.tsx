@@ -76,7 +76,7 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
           <View style={[styles.balanceView, styles.child]}> 
             <View style={[styles.leftRight, styles.left]}>
               <Text style={[key]}>TOTAL COLLECTED</Text>
-              <Text style={styles.value}>₹ {parseInt(stat.totalAmount).toLocaleString()}</Text>
+              <Text style={styles.value}>₹ {parseInt(stat.amountThisMonth).toLocaleString()}</Text>
               <Text style={styles.month}>{stat?.month?.toUpperCase() || "MONTH"}</Text>
             </View>
             <View style={[styles.leftRight, styles.right]}>

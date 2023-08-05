@@ -238,10 +238,10 @@ export const previousFilterDataState = ()=>{
   }
 }
 
-export const applyFilterAction = ()=>{
+export const applyFilterAction = (payload: iFilters[])=>{
   return {
     type: "APPLY_FILTER",
-    payload: null
+    payload: payload
   }
 }
 

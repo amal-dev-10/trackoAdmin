@@ -127,11 +127,14 @@ export const deletePackage = async (packId: string)=>{
     return res
 }
 
-export const activatePackage = async (packId: string)=>{
+export const activatePackage = async (packId: string, packOption: string, option: {validFrom: Date})=>{
     let res = null;
     try{
         let st = store.getState();
-        res = await postData(`client/activateMembership/${st.dashboard.selectedBusiness?.uid}/${(<any>st.client).selectedClient.clientId}/${packId}`, {})
+        res = await postData(`client/activateMembership/${st.dashboard.selectedBusiness?.uid}/${(<any>st.client).selectedClient.clientId}/${packId}`, {
+            type: packOption,
+            ...option
+        })
     }
     catch(err){
         console.log(err)
@@ -179,11 +182,11 @@ export const getEndedSubscriptions = async ()=>{
     return res
 }
 
-export const getInsights = async (type: string, year: string, month: string)=>{
+export const getInsights = async (type: string, start: string, end: string)=>{
     let res = null;
     try{
         let st = store.getState();
-        res = await getData(`business/insights/${st.dashboard.selectedBusiness?.uid}?type=${type}&year=${year}&month=${month}`)
+        res = await getData(`business/insights/${st.dashboard.selectedBusiness?.uid}?type=${type}&start=${start}&end=${end}`)
     }
     catch(err){
         console.log(err)

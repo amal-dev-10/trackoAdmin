@@ -74,7 +74,8 @@ const MainLoader = ({showLoader, allTabs, selectedTab, overlays, routeName}: pro
                         (
                             routeName != "Home" &&
                             routeName != "Clients" &&
-                            routeName != "Packages"
+                            routeName != "Packages" &&
+                            routeName != "Insights"
                         ) && <QuoteLoader/>
                     }
                     {

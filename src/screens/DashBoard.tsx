@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { BackHandler, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, setRoute } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
@@ -62,10 +62,14 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
 
   useEffect(()=>{
     setRoute("Dashboard")
+    const backAction = ()=>{
+      return true
+    }
+    let backHandler = BackHandler.addEventListener("hardwareBackPress", backAction)
     resetAuthState();
-    getMyBusiness()
-    // tester()
-  },[])
+    getMyBusiness();
+    return () => backHandler.remove()
+  },[]);
 
   return (
     <View style={[container, styles.dashboardScreen]}>

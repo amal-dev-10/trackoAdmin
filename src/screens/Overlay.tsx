@@ -17,7 +17,7 @@ import ActivateMembership from '../components/Common/ActivateMembership';
 import BusinessProfile from './BusinessProfile';
 
 type props={
-    // component: overlayComponent,
+    // component: overlayComponent[],
     overlayData: overlayComponent,
     closeOverlay: any,
     showModal: boolean
@@ -81,7 +81,6 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
 }
 
 const mapStateToProps = (state: any)=>({
-    component: state.overlay.component,
     showModal: state.packages.showActiveDropDown,
 });
 

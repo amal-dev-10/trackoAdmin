@@ -13,10 +13,12 @@ type props = {
     filters: iFilters[],
     filterTabClicked: any,
     checkBoxClicked: any,
-    applyFilterClicked: any
+    applyFilterClicked: any,
+    applyFilter: any
 }
 
-const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicked,applyFilterClicked}: props) => {
+const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicked,applyFilterClicked, applyFilter}: props) => {
+  const [f, setF] = useState([] as iFilters[]);
   
   const apply = ()=>{
     let all = filters[0].filters;
@@ -35,10 +37,13 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
       }
     });
     query.filters = f
-    console.log(query);
     applyFilterClicked(query); 
     toggleFilterView()
   }
+
+  useEffect(()=>{
+    setF([...filters])
+  }, [])
 
   return (
     filters && filters?.length ?
@@ -67,18 +72,18 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
             filters.length &&
             <View style={styles.detail}>
                 {
-                filters.find((x)=>{return x.active})?.filters.map((d, i:number)=>{
-                    return (
-                    <View style={styles.filter} key={"filter" + i}>
-                        <CheckBox 
-                            value={d.active} 
-                            onValueChange={()=>{checkBoxClicked(d.id)}}
-                            tintColors={{ true: textColorPrimary, false: borderColor }}
-                        />
-                        <Text style={styles.tabFilterText}>{d.name.toUpperCase() + ` (${d.count})`}</Text>
-                    </View>
-                    )
-                })
+                  filters.find((x)=>{return x.active})?.filters.map((d, i:number)=>{
+                      return (
+                      <View style={styles.filter} key={"filter" + i}>
+                          <CheckBox 
+                              value={d.active} 
+                              onValueChange={()=>{checkBoxClicked(d.id)}}
+                              tintColors={{ true: textColorPrimary, false: borderColor }}
+                          />
+                          <Text style={styles.tabFilterText}>{d.name.toUpperCase() + ` (${d.count})`}</Text>
+                      </View>
+                      )
+                  })
                 }
             </View>
             }
@@ -108,6 +113,7 @@ const mapStateToProps = (state: any)=>({
 const mapDispatchToProps = (dispatch: any)=>({
     checkBoxClicked: (checkBoxId: string)=>{dispatch(checkBoxClickedAction(checkBoxId))},
     filterTabClicked: (tabId: string)=>{dispatch(filterTabClickedAction(tabId))},
+    applyFilter: (data: iFilters[])=>{dispatch(applyFilterAction(data))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(FilterView)

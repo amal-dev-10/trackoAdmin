@@ -1,17 +1,17 @@
 import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown';
 import React, { useEffect, useState } from 'react'
-import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary, unitColor } from '../styles/colors';
+import { amountColor, borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary, unitColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import { apiResponse, dropDownProps } from '../interfaces/common';
 import { connect } from 'react-redux';
-import MembershipInsight from '../components/Insights/MembershipInsight';
-import { iFinanceInsight, iMembershipInsight } from '../interfaces/business';
+import { iFinanceInsight, iMembershipInsight, mainStat } from '../interfaces/business';
 import { setFinanceInsightAction, setMembershipInsightAction } from '../redux/actions';
 import { getInsights } from '../services/apiCalls/serviceCalls';
-import { container, setRoute, showToast } from '../utils/helper';
+import { calculateDaysBetweenDates, container, setRoute, showToast } from '../utils/helper';
 import NoData from '../components/Common/NoData';
-import DailyLineChart from '../components/Insights/DailyLineChart';
+import DateTimePicker from '@react-native-community/datetimepicker';
+import AreaChart from '../components/Charts/AreaChart';
 
 type props = {
   yearData: dropDownProps[],
@@ -22,129 +22,232 @@ type props = {
   setFinanceInsight: any
 }
 
-const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight, financeInsight, setFinanceInsight}: props) => {
-  const [year, setYear] = useState({label: "", value: ""} as dropDownProps);
-  const [month, setMonth] = useState({label: "", value: ""} as dropDownProps);
-  const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
-  const chartTypeData = [
-    {label: "MEMBERSHIP INSIGHT", value: "membershipInsight"},
-    {label: "FINANCE INSIGHT", value: "financeInsight"},
-    {label: "CLIENT INSIGHT", value: "newClientInsight"},
-  ]
-  const [insightType, setInsightType] = useState(chartTypeData[0] as dropDownProps);
+type iStats = {
+  totalRevenue: number,
+  avgRevenue: number,
+  totalMembers: number,
+  totalSubscribers: number
+}
 
-  const getData = async (y: string, m: string)=>{
-    if(y && m){
-      let resp: apiResponse = await getInsights(insightType.value, y, m.toLowerCase());
-      if(resp?.status === 200){
-          if(insightType.value === "membershipInsight"){
-            setMembershipInsight(resp.data);
-          }else if(insightType.value === "financeInsight"){
-            setFinanceInsight(resp.data);
-          }
-          setFetchFailed(false)
-      }else if(resp?.status === 500 || resp?.status === undefined){
-        setFetchFailed(true);
+const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight, financeInsight, setFinanceInsight}: props) => {
+  const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
+  const [showStartCalender, setShowStartCalender] = useState(false as boolean);
+  const [showEndCalender, setShowEndCalender] = useState(false as boolean);
+  const [quickStat, setQuickStat] = useState({} as iStats);
+  const [start, setStart] = useState("" as any);
+  const [end, setEnd] = useState("" as any);
+  const [insightData, setInsightData] = useState([] as mainStat[])
+  const chartTypeData = [
+    {label: "REVENUE INSIGHT", value: "revenueInsight"},
+    {label: "NEW CLIENT INSIGHT", value: "newClientInsight"},
+    {label: "NEW SUBSCRIPTIONS", value: "subscriptionInsight"},
+  ]
+  const [insightType, setInsightType] = useState({} as dropDownProps);
+  const [chartData, setChartData] = useState([] as any)
+
+  const getData = async (s: string, e: string)=>{
+    let resp: apiResponse = await getInsights(insightType.value, s, e);
+    if(resp?.status === 200){
+        calculateStats(resp.data);
+        setInsightData(resp.data);
+        setFetchFailed(false);
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      setFetchFailed(true);
+    }
+  }
+
+  const calculateStats = (data: mainStat[])=>{
+    let result: iStats = {
+      totalRevenue: 0,
+      avgRevenue: 0,
+      totalMembers: 0,
+      totalSubscribers: 0
+    }
+    data.forEach((d)=>{
+      result.totalRevenue = result.totalRevenue + parseInt(d.amountToday);
+      result.totalMembers = result.totalMembers + parseInt(d.membersToday);
+      result.totalSubscribers = result.totalSubscribers + parseInt(d.membershipToday)
+    });
+    let numOfDays = calculateDaysBetweenDates(start, end);
+    result.avgRevenue = Math.floor(result.totalRevenue/numOfDays);
+    setQuickStat({...result});
+  }
+
+  const loadButtonClicked = ()=>{
+    setChartData([]);
+    setInsightType({} as dropDownProps);
+    if(start && end){
+      getData(start, end);
+    }
+  }
+
+  const handleDateChange = (event: any, date:Date | undefined, type: string)=>{
+    if(type === "start"){
+      setShowStartCalender(false)
+      if (date) {
+        date.setHours(0,0,0,0);
+        setStart(date);
+      }
+    }else if(type === "end"){
+      setShowEndCalender(false)
+      if (date) {
+        date.setHours(23,59,59,999);
+        setEnd(date);
       }
     }
   }
 
-  const loadButtonClicked = ()=>{
-    if(membershipInsight.month.toLowerCase() != month.value || membershipInsight.year != year.value){
-      getData(year.value, month.value);
+
+  useEffect(()=>{
+    setChartData([]);
+    switch(insightType.value){
+      case "revenueInsight":
+        let c1 = insightData.map((x)=>{
+          return {
+            day: parseInt(x?.day || "0"),
+            revenue: parseInt(x?.amountToday || "0")
+          }
+        });
+        setChartData([...c1]);
+        break;
+      case "newClientInsight":
+        let c2 = insightData.map((x)=>{
+          return {
+            day: parseInt(x?.day || "0"),
+            revenue: parseInt(x?.membersToday || "0")
+          }
+        });
+        setChartData([...c2]);
+        break;
+      case "subscriptionInsight":
+        let c3 = insightData.map((x)=>{
+          return {
+            day: parseInt(x?.day || "0"),
+            revenue: parseInt(x?.membershipToday || "0")
+          }
+        });
+        setChartData([...c3]);
+        break;
+      default:
+        break;
     }
-  }
+  }, [insightType]);
 
   useEffect(()=>{
-    getData(year.value, month.value);
-  }, [insightType])
-
-  useEffect(()=>{
-    setRoute("Insights")
-    let currentDate: Date = new Date();
-    let m = currentDate.toLocaleString('en-US', {month: "short"});
-    let y = currentDate.getFullYear().toString();
-
-    setYear({label: y, value: y});
-    setMonth({label: m.toUpperCase(), value: m.toLowerCase()});
-    getData(y, m);
-  }, []);
+    setRoute("Insights");
+  },[])
 
   return (
     <View style={[container]}>
       {
         <ScrollView style={styles.insightScreen} showsVerticalScrollIndicator={false}>
           <View style={styles.membershipInsightSection}>
-            <View style={styles.insgightTypeView}>
-              <Text style={styles.keys}>INSIGHT TYPE</Text>
-              <Dropdown
-                style={[styles.dropdown, {width: "60%"}]}
-                placeholderStyle={{fontSize: fontSize.small}}
-                selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                containerStyle={styles.dropDownContainer}
-                data={chartTypeData}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={'Select'}
-                value={insightType.value}
-                onChange={function (item): void {
-                  setInsightType(item)
-                } }
-                itemTextStyle={{fontSize: fontSize.small}}
-                activeColor='#3e3e3e57'
-              />
-            </View>
-            <Text style={styles.keys}>FILTER BY MONTH & YEAR</Text>
+            <Text style={styles.keys}>GENERATE DETAILED REPORT BY START & END DATE</Text>
             <View style={styles.dropDownView}>
-              <Dropdown
-                style={[styles.dropdown]}
-                placeholderStyle={{fontSize: fontSize.small}}
-                selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                containerStyle={styles.dropDownContainer}
-                data={yearData}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={'YEAR'}
-                value={year.value}
-                onChange={function (item): void {
-                  setYear(item)
-                } }
-                itemTextStyle={{fontSize: fontSize.small}}
-                activeColor='#3e3e3e57'
-              />
-              <Dropdown
-                style={[styles.dropdown]}
-                placeholderStyle={{fontSize: fontSize.small}}
-                selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                containerStyle={styles.dropDownContainer}
-                data={monthData}
-                maxHeight={300}
-                labelField="label"
-                valueField="value"
-                placeholder={'MONTH'}
-                value={month.value}
-                onChange={function (item): void {
-                  setMonth(item)
-                } }
-                itemTextStyle={{fontSize: fontSize.small}}
-                activeColor='#3e3e3e57'
-              />
+              <TouchableOpacity style={styles.filterDateBtn} onPress={()=>{setShowStartCalender(true)}}>
+                <Text>{start ? start.toLocaleDateString() : "START DATE"}</Text>
+              </TouchableOpacity>
+              <TouchableOpacity style={styles.filterDateBtn} onPress={()=>{setShowEndCalender(true)}}>
+                <Text>{end ? end.toLocaleDateString() : "END DATE"}</Text>
+              </TouchableOpacity>
+              {
+                showStartCalender ? 
+                  <DateTimePicker
+                    value={start ? start : new Date()}
+                    mode="date"
+                    display="calendar"
+                    onChange={(e, d)=>{handleDateChange(e, d, "start")}}
+                    onTouchCancel={()=>{setShowStartCalender(false)}}
+                  />
+                : <></>
+              }
+              {
+                showEndCalender ? 
+                  <DateTimePicker
+                    value={end ? end : new Date()}
+                    mode="date"
+                    display="calendar"
+                    onChange={(e, d)=>{handleDateChange(e, d, "end")}}
+                    onTouchCancel={()=>{setShowEndCalender(false)}}
+                  />
+                : <></>
+              }
               <TouchableOpacity style={styles.loadBtn} onPress={()=>{loadButtonClicked()}}>
                 <Text style={styles.btnText}>LOAD</Text>
               </TouchableOpacity>
             </View>
-            <Text>{insightType.label.toUpperCase()}</Text>
+            <View style={styles.divider}></View>
             {
-              insightType.value === "membershipInsight" &&
-              <MembershipInsight/>
+              Object.entries(quickStat).length ? 
+                <View style={[styles.row, styles.quickStatMain]}>
+                  <View style={[styles.column, {flex: 1}]}>
+                    <View style={[styles.card, styles.column]}>
+                      <Text style={styles.cardText}>Total Revenue</Text>
+                      <View style={styles.valueView}>
+                        <Text style={[styles.valueText, styles.amount]}>{"₹ " + quickStat?.totalRevenue.toLocaleString()}</Text>
+                      </View>
+                    </View>
+                    <View style={[styles.card, styles.column]}>
+                      <Text style={styles.cardText}>Average Revenue</Text>
+                      <View style={styles.valueView}>
+                        <Text style={[styles.valueText, styles.amount]}>{"₹ " + quickStat.avgRevenue.toLocaleString()}</Text>
+                      </View>
+                    </View>
+                  </View>
+                  <View style={[styles.row, {flex: 1}]}>
+                    <View style={[styles.card, styles.column]}>
+                      <Text style={styles.cardText}>{"Total\nClients"}</Text>
+                      <View style={styles.valueView}>
+                        <Text style={[styles.valueText, styles.value]}>{quickStat.totalMembers}</Text>
+                      </View>
+                    </View>
+                    <View style={[styles.card, styles.column]}>
+                      <Text style={styles.cardText}>{"Total\nSubscribers"}</Text>
+                      <View style={styles.valueView}>
+                        <Text style={[styles.valueText, styles.value]}>{quickStat.totalSubscribers}</Text>
+                      </View>
+                    </View>
+                  </View>
+                </View>
+              : <></>
             }
             {
-              insightType.value === "financeInsight" &&
-              <DailyLineChart/>
+              Object.entries(quickStat).length ? 
+                <View style={styles.insgightTypeView}>
+                  <Text style={styles.keys}>INSIGHT TYPE</Text>
+                  <Dropdown
+                    style={[styles.dropdown, {width: "60%"}]}
+                    placeholderStyle={{fontSize: fontSize.small}}
+                    selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                    containerStyle={styles.dropDownContainer}
+                    data={chartTypeData}
+                    maxHeight={300}
+                    labelField="label"
+                    valueField="value"
+                    placeholder={'Select'}
+                    value={insightType.value}
+                    onChange={function (item): void {
+                      setInsightType(item)
+                    } }
+                    itemTextStyle={{fontSize: fontSize.small}}
+                    activeColor='#3e3e3e57'
+                  />
+                </View>
+              : <></>
             }
-            
+            {
+              (
+                (
+                  insightType.value === "revenueInsight"
+                  || insightType.value === "newClientInsight"
+                  || insightType.value === "subscriptionInsight"
+                ) 
+                && chartData.length
+              ) 
+              ?
+                <AreaChart data={chartData}/> 
+              : <></>
+            }
           </View>
         </ScrollView>
       }
@@ -234,5 +337,60 @@ const styles = StyleSheet.create({
     fontSize: fontSize.small,
     color: textColorPrimary,
     fontWeight: "500"
+  },
+  filterDateBtn:{
+    padding: 10,
+    backgroundColor: cardColor,
+    borderRadius: 10,
+    elevation: 3
+  },
+  row:{
+    display: "flex",
+    flexDirection: "row",
+    gap: 5
+  },
+  column:{
+    display: "flex",
+    flexDirection: "column",
+    gap: 5
+  },
+  card: {
+    flex: 1,
+    backgroundColor: cardColor,
+    borderRadius: 10,
+    padding: 7,
+  },
+  quickStatMain:{
+    width: "100%",
+    // height: Dimensions.get("window").height * 0.23
+  },
+  cardText:{
+    color: borderColor,
+    fontSize: fontSize.small
+  },
+  valueView:{
+    flex: 1,
+    width: "100%",
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "flex-end",
+    justifyContent: "flex-end",
+  },
+  valueText:{
+    fontSize: fontSize.large,
+    fontWeight: "300"
+  },
+  amount: {
+    color: goldColor
+  },
+  value:{
+    color: textColorPrimary
+  },
+  divider:{
+    marginVertical: 20,
+    height: 1,
+    width: "100%",
+    borderRadius: 10,
+    backgroundColor: borderColor
   }
 })

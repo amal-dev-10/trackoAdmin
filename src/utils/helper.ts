@@ -106,3 +106,11 @@ export const setRoute = (routeName: string)=>{
     let st = store;
     st.dispatch(setRouteNameAction(routeName));
 }
+
+export const calculateDaysBetweenDates = (startDate: Date, endDate: Date): number => {
+    startDate.setHours(0,0,0,0);
+    endDate.setHours(23, 59, 59, 999);
+    const timeDifference = endDate.getTime() - startDate.getTime();
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+    return Math.round(daysDifference);
+}
