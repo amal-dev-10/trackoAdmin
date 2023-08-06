@@ -119,7 +119,7 @@ const PackageCard = ({packDetail, updatePack,businessId,confirmation,showModal,s
             setProperties({msg: `You have selected ${packDetail?.tier.toUpperCase()} package to remove.\nSure that you want to remove.`})
             showModal(true);
         }else{
-            removePackage(packDetail?.id)
+            removePackage(packDetail?.id);
         }
     }
 

@@ -6,7 +6,7 @@ import { fontSize } from '../styles/fonts'
 import { key } from '../styles/constants'
 import { fomatFirstLetterCapital, makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
 import { connect } from 'react-redux'
-import { setIdTransactions, setOverlayComponent, setTransactionMode, setTransactions, showActivatePackage } from '../redux/actions'
+import { setClientMode, setIdTransactions, setOverlayComponent, setTransactionMode, setTransactions, showActivatePackage } from '../redux/actions'
 import { iClient, iMembership } from '../interfaces/iClient'
 import { iTransactions, openOverlayParameter } from '../interfaces/common'
 
@@ -21,10 +21,11 @@ type viewClientProps = {
     clientData: iMembership,
     openOverlay: any,
     setId: any,
-    mode: any
+    mode: any,
+    clientMode: any
 }
 
-const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:viewClientProps) => {
+const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, clientMode}:viewClientProps) => {
     const [firstRowButtons, setFirstRowButtons] = useState([
         {
             id: 0,
@@ -63,6 +64,10 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                 break;
             case 1:
                 await openWhatsapp(clientData.phoneNumber);
+                break;
+            case 2:
+                clientMode("edit")
+                openOverlay(9);
                 break;
             case 3:
                 setId(clientData.clientId);
@@ -155,7 +160,8 @@ const mapDispatchToProps = (dispatch: any)=>({
     showActivatePack: (show:boolean)=>{dispatch(showActivatePackage(show))},
     openOverlay: (id: openOverlayParameter)=>{dispatch(setOverlayComponent(id))},
     setId: (id: string)=>{dispatch(setIdTransactions(id))},
-    mode: (mode: string)=>{dispatch(setTransactionMode(mode))}
+    mode: (mode: string)=>{dispatch(setTransactionMode(mode))},
+    clientMode: (mode: string)=>{dispatch(setClientMode(mode))}
 });
 
 const mapStateToProps = (state: any)=>({

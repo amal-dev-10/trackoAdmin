@@ -10,20 +10,21 @@ import { applyFilterAction, checkBoxClickedAction, filterTabClickedAction, previ
 
 type props = {
     toggleFilterView: any,
-    filters: iFilters[],
-    filterTabClicked: any,
-    checkBoxClicked: any,
+    clientFilter: iFilters[],
+    // filterTabClicked: any,
+    // checkBoxClicked: any,
     applyFilterClicked: any,
     applyFilter: any
 }
 
-const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicked,applyFilterClicked, applyFilter}: props) => {
-  const [f, setF] = useState([] as iFilters[]);
+const FilterView = ({toggleFilterView, clientFilter,applyFilterClicked, applyFilter}: props) => {
+  const [f, setF] = useState(JSON.parse(JSON.stringify(clientFilter)) as iFilters[]);
   
   const apply = ()=>{
-    let all = filters[0].filters;
+    applyFilter([...f]);
+    let all = f[0].filters;
     let query: any = {} 
-    let f: string[] = []
+    let queryFilters: string[] = []
     all.forEach((d)=>{
       let key = d.value as string;
       if(d.active){
@@ -32,21 +33,49 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
         }else if(d.name.toLowerCase() === "expired"){
           query.expired = true
         }else{
-          f.push(key);
+          queryFilters.push(key);
         }
       }
     });
-    query.filters = f
+    query.filters = queryFilters;
     applyFilterClicked(query); 
     toggleFilterView()
   }
 
+  const cancelBtnClicked = ()=>{
+    setF(JSON.parse(JSON.stringify(clientFilter)));
+    toggleFilterView();
+  }
+
+  const filterTabChanged = (id: string)=>{
+    let allFilters = f;
+    allFilters =  allFilters.map((d)=>{d.active = false; return d});
+    let i: number = allFilters.findIndex((d)=>{return d.id === id});
+    if(i > -1){
+        allFilters[i].active = true;
+    };
+    setF([...allFilters])
+  }
+
+  const checkBoxChanged = (id: string)=>{
+    let all = f;
+    let tabIndex: number = all.findIndex((x)=>{return x.active});
+    if(tabIndex > -1){
+        let filterIndex: number = all[tabIndex].filters.findIndex((x)=>{return x.id === id});
+        if(filterIndex > -1){
+            let a: boolean = all[tabIndex].filters[filterIndex].active;
+            all[tabIndex].filters[filterIndex].active = !a;
+        }
+    };
+    setF([...all]);
+  }
+
   useEffect(()=>{
-    setF([...filters])
-  }, [])
+    setF(JSON.parse(JSON.stringify(clientFilter)))
+  }, [clientFilter])
 
   return (
-    filters && filters?.length ?
+    f && f?.length ?
     <Modal transparent animationType='slide'>
         <View style={styles.mainFilterView}>
         <View style={styles.header}>
@@ -55,12 +84,12 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
         <View style={styles.main}>
             <View style={styles.tabs}>
             {
-                filters.map((d, i:number)=>{
+                f.map((d, i:number)=>{
                 return (
                     <TouchableOpacity 
                     style={[styles.tab, d.active ? styles.tabActive : styles.tabInactive]} 
                     key={"filterTab" + i}
-                    onPress={()=>{filterTabClicked(d.id)}}
+                    onPress={()=>{filterTabChanged(d.id)}}
                     >
                       <Text numberOfLines={1} ellipsizeMode="tail" style={styles.tabName}>{d.tabName}</Text>
                     </TouchableOpacity>
@@ -69,23 +98,23 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
             }
             </View>
             {
-            filters.length &&
-            <View style={styles.detail}>
-                {
-                  filters.find((x)=>{return x.active})?.filters.map((d, i:number)=>{
-                      return (
-                      <View style={styles.filter} key={"filter" + i}>
-                          <CheckBox 
-                              value={d.active} 
-                              onValueChange={()=>{checkBoxClicked(d.id)}}
-                              tintColors={{ true: textColorPrimary, false: borderColor }}
-                          />
-                          <Text style={styles.tabFilterText}>{d.name.toUpperCase() + ` (${d.count})`}</Text>
-                      </View>
-                      )
-                  })
-                }
-            </View>
+            f.length ?
+              <View style={styles.detail}>
+                  {
+                    f.find((x)=>{return x.active})?.filters.map((d, i:number)=>{
+                        return (
+                        <View style={styles.filter} key={"filter" + i}>
+                            <CheckBox 
+                                value={d.active} 
+                                onValueChange={()=>{checkBoxChanged(d.id)}}
+                                tintColors={{ true: textColorPrimary, false: borderColor }}
+                            />
+                            <Text style={styles.tabFilterText}>{d.name.toUpperCase() + ` (${d.count})`}</Text>
+                        </View>
+                        )
+                    })
+                  }
+              </View> : <></>
             }
         </View>
         <View style={styles.footer}>
@@ -95,7 +124,7 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
                 width='40%'
             />
             <Button
-                onTouch={()=>{toggleFilterView()}}
+                onTouch={()=>{cancelBtnClicked()}}
                 text='Cancel'
                 width='40%'
                 borderLess={true}
@@ -107,12 +136,12 @@ const FilterView = ({toggleFilterView, filters, checkBoxClicked, filterTabClicke
 }
 
 const mapStateToProps = (state: any)=>({
-    filters: state.client.filters.allFilters
+    clientFilter: state.clientFilter.filterObject.allFilters
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
-    checkBoxClicked: (checkBoxId: string)=>{dispatch(checkBoxClickedAction(checkBoxId))},
-    filterTabClicked: (tabId: string)=>{dispatch(filterTabClickedAction(tabId))},
+    // checkBoxClicked: (data: iFilters[])=>{dispatch(checkBoxClickedAction(data))},
+    // filterTabClicked: (data: iFilters[])=>{dispatch(filterTabClickedAction(data))},
     applyFilter: (data: iFilters[])=>{dispatch(applyFilterAction(data))}
 })
 

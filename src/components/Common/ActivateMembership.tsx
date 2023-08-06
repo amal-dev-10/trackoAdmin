@@ -7,7 +7,7 @@ import { apiResponse, dropDownProps, packagesProps } from "../../interfaces/comm
 import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from "../../styles/colors";
 import { activatePackage, getPackages } from "../../services/apiCalls/serviceCalls";
 import { connect } from "react-redux";
-import { mapPackagesToState, showActivatePackage, updateMembershipState } from "../../redux/actions";
+import { mapPackagesToState, setAllClients, showActivatePackage, updateMembershipState } from "../../redux/actions";
 import { showToast } from "../../utils/helper";
 import { iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import DateTimePicker from '@react-native-community/datetimepicker';
@@ -17,10 +17,11 @@ type modalProps = {
     businessId: string,
     showActivatePack: any,
     updateClientState: any,
-    clientData: iMembership
+    clientData: iMembership,
+    setClients: any
 }
 
-const ActivateMembership = ({businessId, showActivatePack, updateClientState, clientData}:modalProps)=>{
+const ActivateMembership = ({businessId, showActivatePack, updateClientState, clientData, setClients}:modalProps)=>{
     const [dropData, setDropData] = useState([] as dropDownProps[]);
     const [packId, setPackId] = useState("" as string);
     const [msg, setMsg] = useState("" as string);
@@ -86,6 +87,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                 let resp: apiResponse = await activatePackage(packId, selectedOption, {validFrom: start});
                 if(resp?.status === 200){
                     updateClientState(resp.data);
+                    // setClients([]);
                     showActivatePack(false);
                 }else{
                     showToast("Something went wrong!")
@@ -312,7 +314,8 @@ const mapStateToProps = (state: any)=>({
 const mapDispatchToProps = (dispatch: any)=>({
     mapPackage: (data: packagesProps[])=>{dispatch(mapPackagesToState(data))},
     showActivatePack: (show:boolean)=>{dispatch(showActivatePackage(show))},
-    updateClientState: (data: iMembershipDetails)=>{dispatch(updateMembershipState(data))}
+    updateClientState: (data: iMembershipDetails)=>{dispatch(updateMembershipState(data))},
+    setClients: (data: iMembership[])=>dispatch(setAllClients(data)),
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(ActivateMembership);

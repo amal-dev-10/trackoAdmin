@@ -41,7 +41,7 @@ const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) 
   };
 
   const newTemplateClicked = ()=>{
-    addNewTemplate()
+    addNewTemplate();
     let scroll: any = scrollViewRef.current;
     if(scroll){
       scroll.scrollToEnd({ animated: true });
@@ -50,7 +50,9 @@ const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) 
 
   useEffect(()=>{
     setRoute("Packages");
-    getSavedPackages();
+    if(!allPackages?.length){
+      getSavedPackages();
+    }
   }, [])
 
   return (

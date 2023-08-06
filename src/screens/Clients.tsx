@@ -5,7 +5,7 @@ import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../styles/colors'
 import MembershipCard from '../components/Common/MembershipCard'
 import { apiResponse, memberShipProps } from '../interfaces/common'
-import { setAllClients, setDropDownDatAction, setOverlayComponent, setSelectedClient } from '../redux/actions'
+import { resetReducerAction, setAllClients, setClientMode, setDropDownDatAction, setOverlayComponent, setSelectedClient } from '../redux/actions'
 import { connect } from 'react-redux'
 import { iClient, iFilterQuery, iFilters, iMembership } from '../interfaces/iClient'
 import { getAllClients, getFilterCounts } from '../services/apiCalls/serviceCalls'
@@ -13,6 +13,7 @@ import NoData from '../components/Common/NoData'
 import FilterView from '../components/Common/FilterView'
 import Loading from '../components/Common/Loading'
 import { fontSize } from '../styles/fonts'
+import store from '../redux/store'
 
 type props = {
   setSelectedClient: any,
@@ -20,10 +21,11 @@ type props = {
   clients: iMembership[],
   openOverlay: any,
   setDropDownData: any,
-  filterActive: boolean
+  filterActive: boolean,
+  clientMode: any
 }
 
-const Clients = ({clients, setClients, setSelectedClient, openOverlay, setDropDownData, filterActive}: props) => {
+const Clients = ({clients, setClients, setSelectedClient, openOverlay, setDropDownData, filterActive, clientMode}: props) => {
 
   const [searchText, setSearchText] = useState(null as any);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
@@ -64,10 +66,17 @@ const Clients = ({clients, setClients, setSelectedClient, openOverlay, setDropDo
     }  
   }
 
+  const noDataButtonClicked = (button: string)=>{
+    if(button === "Add Client"){
+      clientMode("add");
+      openOverlay(6);
+    }
+  }
+
   useEffect(()=>{
-    getData();
     setRoute("Clients");
     if(!clients.length){
+      getData();
       getAllClientsFromDb({count: 4}, false)
     }
   }, [])
@@ -117,7 +126,7 @@ const Clients = ({clients, setClients, setSelectedClient, openOverlay, setDropDo
         fetchFailed != undefined &&
           <NoData 
             text={serviceMsg}
-            onTouch={(button: string)=>{button === "Add Client" ? openOverlay(6) : ""}} 
+            onTouch={(button: string)=>{noDataButtonClicked(button)}} 
             buttons={["Add Client"]}
             fetchFailed={fetchFailed}
             data={clients}
@@ -140,14 +149,15 @@ const Clients = ({clients, setClients, setSelectedClient, openOverlay, setDropDo
 
 const mapStateToProps = (state: any)=>({
   clients: state.client.clients,
-  filterActive: state.client.filters?.filterActive || false
+  filterActive: state.clientFilter.filterObject?.filterActive || false
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
   setClients: (data: iMembership[])=>dispatch(setAllClients(data)),
   setSelectedClient: (data: iMembership)=>dispatch(setSelectedClient(data)),
   openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
-  setDropDownData: (data: iFilters[])=>{dispatch(setDropDownDatAction(data))}
+  setDropDownData: (data: iFilters[])=>{dispatch(setDropDownDatAction(data))},
+  clientMode: (mode: string)=>{dispatch(setClientMode(mode))}
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Clients)
@@ -193,7 +203,7 @@ const styles = StyleSheet.create({
     height: 7,
     width: 7,
     borderRadius: 10,
-    backgroundColor: "crimson",
+    backgroundColor: textColorPrimary,
     position: "absolute",
     right: 0,
     top: 0

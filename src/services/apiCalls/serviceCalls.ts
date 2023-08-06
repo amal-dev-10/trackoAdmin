@@ -2,7 +2,7 @@
 import { ibusiness } from "../../interfaces/business";
 import { iClient, iFilterQuery, iMembershipDetails } from "../../interfaces/iClient";
 import store from "../../redux/store";
-import { deleteData, getData, postData } from "../service/serviceHandler";
+import { deleteData, getData, patchData, postData } from "../service/serviceHandler";
 
 export const getOwnerById = async (id: string)=>{
     let res = null;
@@ -63,6 +63,17 @@ export const addNewClient = async (id: string ,data: iClient)=>{
     let res = null;
     try{
         res = await postData(`client/client/${id}`, data)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const updateClient = async (id: string ,data: iClient)=>{
+    let res = null;
+    try{
+        res = await patchData(`client/client/${id}`, data)
     }
     catch(err){
         console.log(err)

@@ -8,52 +8,55 @@ import DateTimePicker from '@react-native-community/datetimepicker';
 import { borderColor, cardColor, iconColor, textColorSecondary } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import IconSet from '../styles/icons/Icons';
-import { iClient, iMembership } from '../interfaces/iClient';
-import { addNewClient } from '../services/apiCalls/serviceCalls';
+import { iClient, iMembership, iMembershipDetails } from '../interfaces/iClient';
+import { addNewClient, updateClient } from '../services/apiCalls/serviceCalls';
 import { connect } from 'react-redux';
 import { Timestamp } from 'firebase/firestore';
-import { setAllClients } from '../redux/actions';
+import { closeOverlayComponent, setAllClients, updateClientAction, updateMembershipState } from '../redux/actions';
 
 type props = {
   selectedBusinessId: string,
   allClients: iMembership[],
-  setClientToState: any
+  setClientToState: any,
+  mode: string,
+  selectedClient: iMembership,
+  updateClientDetail: any,
+  closeOverlay: any
 }
 
-const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) => {
+const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, selectedClient, updateClientDetail, closeOverlay}: props) => {
   const [allValid, setAllValid] = useState(false as boolean);
   const [selectedDate, setSelectedDate] = useState("" as any);
   const [showCalender, setShowCalender] = useState(false);
-  const [inputList, setInputList] = useState(
-    [
-      {
-        value: "",
-        msg: "",
-        placeHolder: "Client Name",
-        keyBoardType: 'default',
-        icon: 'signature-freehand',
-        valid: false,
-        name: "clientName",
-        focus: false,
-        id: 0,
-        editable: true,
-        showVerifyBtn: false
-      },
-      {
-        value: "",
-        msg: "",
-        placeHolder: "Phone Number",
-        keyBoardType: 'default',
-        icon: 'cellphone',
-        valid: false,
-        name: "phoneNumber",
-        focus: false,
-        id: 1,
-        editable: true,
-        showVerifyBtn: false
-      }
-    ] as inputProps[]
-  );
+  const inputs = [
+    {
+      value: "",
+      msg: "",
+      placeHolder: "Client Name",
+      keyBoardType: 'default',
+      icon: 'signature-freehand',
+      valid: false,
+      name: "clientName",
+      focus: false,
+      id: 0,
+      editable: true,
+      showVerifyBtn: false
+    },
+    {
+      value: "",
+      msg: "",
+      placeHolder: "Phone Number",
+      keyBoardType: 'default',
+      icon: 'cellphone',
+      valid: false,
+      name: "phoneNumber",
+      focus: false,
+      id: 1,
+      editable: true,
+      showVerifyBtn: false
+    }
+  ] as inputProps[]
+  const [inputList, setInputList] = useState([...inputs]);
 
   const handleDateChange = (event: any, date:any)=>{
     setShowCalender(false)
@@ -77,33 +80,75 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
       return x
     });
     let valid: boolean = updates.every((x)=>{return x.valid});
-    valid ? updates[1].showVerifyBtn = true : updates[1].showVerifyBtn = false;
+    if(mode != "edit"){
+      valid ? updates[1].showVerifyBtn = true : updates[1].showVerifyBtn = false;
+    }
     setInputList([...updates]);
-    setAllValid(valid);
+    setAllValid((valid && selectedDate));
   }
 
   const createNewClient = async ()=>{
-    let data: iClient = {
-      countryCode: "+91",
-      name: inputList[0].value,
-      phoneNumber: inputList[1].value,
-      phoneVerified: false,
-      dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date())
-    }
-    let resp: apiResponse = await addNewClient(selectedBusinessId, data);
-    if(resp?.status === 200 && Object.entries(resp.data).length){
-      let temp = allClients;
-      temp.push(resp.data);
-      setClientToState([...temp])
-      let inputs = inputList.map((s)=>{s.value = ""; return s});
-      setInputList([...inputs]);
-      showToast("Client added successfully !")
-    }else if(resp?.status === 200 && !Object.entries(resp.data).length){
-      showToast(resp.message);
-    }else if(resp?.status === 500 || resp?.status === undefined){
-      showToast("Data fetch failed !");
+    if(allValid){
+      let data: iClient = {
+        countryCode: "+91",
+        name: inputList[0].value,
+        phoneNumber: inputList[1].value,
+        phoneVerified: false,
+        dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date())
+      }
+      let resp: apiResponse = await addNewClient(selectedBusinessId, data);
+      if(resp?.status === 200 && Object.entries(resp.data).length){
+        let temp = allClients;
+        temp.concat([resp.data]);
+        setClientToState(JSON.parse(JSON.stringify(temp)));
+        let inputs = inputList.map((s)=>{s.value = ""; return s});
+        setInputList([...inputs]);
+        showToast("Client added successfully !")
+      }else if(resp?.status === 200 && !Object.entries(resp.data).length){
+        showToast(resp.message);
+      }else if(resp?.status === 500 || resp?.status === undefined){
+        showToast("Data fetch failed !");
+      }
+    }else{
+      showToast("Verify all details.")
     }
   }
+
+  const updateClientClicked = async ()=>{
+    let data = {
+      name: inputList[0].value
+    } as iClient;
+    let resp : apiResponse = await updateClient(selectedClient?.clientId || "", data);
+    if(resp.status === 200){
+      updateClientDetail({...resp.data});
+      closeOverlay(9);
+      showToast("Updated Successfully.")
+    }else{
+      showToast("Something went wrong.")
+    }
+  }
+
+  useEffect(()=>{
+    if(mode === "edit"){
+      let inputIndex = inputs.findIndex((x)=>{return x.name === "clientName"});
+      if(inputIndex > -1){
+        let tempInput = inputs[inputIndex]
+        setInputList([tempInput]);
+        let temp = [tempInput].map((x)=>{
+          if(x.name === "clientName"){
+            x.value = selectedClient.name;
+          }else if(x.name === "phoneNumber"){
+            x.value = selectedClient.phoneNumber;
+          }
+          return x
+        });
+        setInputList([...temp]);
+        // if(selectedClient?.dobDate){
+        //   selectedDate(new Date(selectedClient.dobDate))
+        // }
+      }
+    }
+  }, [])
 
   return (
     <View style={styles.addClientScreen}>
@@ -132,12 +177,16 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
             )
           })
         }
-        <View style={styles.calenderView}>
-          <TouchableOpacity style={styles.dobView} onPress={()=>{setShowCalender(true)}} activeOpacity={0.7}>
-            <IconSet name='user-o' color={iconColor} size={20}/>
-            <Text style={styles.dobText}>{selectedDate ? selectedDate.toLocaleDateString() : "DOB"}</Text>
-          </TouchableOpacity>
-        </View>
+        {
+          mode != "edit" ? 
+            <View style={styles.calenderView}>
+              <TouchableOpacity style={styles.dobView} onPress={()=>{setShowCalender(true)}} activeOpacity={0.7}>
+                <IconSet name='user-o' color={iconColor} size={20}/>
+                <Text style={styles.dobText}>{selectedDate ? selectedDate.toLocaleDateString() : "DOB"}</Text>
+              </TouchableOpacity>
+            </View>
+          : <></>
+        }
         {
           showCalender ?
           <DateTimePicker
@@ -150,11 +199,20 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
         }
       </View>
       <View style={styles.btnView}>
-        <Button
-            onTouch={()=>{createNewClient()}}
-            text='ADD'
+        {
+          mode === "edit" ? 
+          <Button
+            onTouch={()=>{updateClientClicked()}}
+            text='EDIT'
             width='35%'
-        />
+          />
+          :
+          <Button
+              onTouch={()=>{createNewClient()}}
+              text='ADD'
+              width='35%'
+          />
+        }
       </View>
     </View>
   )
@@ -162,11 +220,15 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState}: props) =
 
 const mapStateToProps = (state: any)=>({
   selectedBusinessId: state.dashboard.selectedBusiness?.uid || "",
-  allClients: state.client.clients
+  allClients: state.client.clients,
+  mode: state.client.mode,
+  selectedClient: state.client.selectedClient
 })
 
 const mapDispatchToProps = (dispatch: any)=>({
-  setClientToState: (data: iMembership[])=>dispatch(setAllClients(data))
+  setClientToState: (data: iMembership[])=>dispatch(setAllClients(data)),
+  updateClientDetail: (data: any)=>{dispatch(updateClientAction(data))},
+  closeOverlay: (id: number)=>{dispatch(closeOverlayComponent(id))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddClients)

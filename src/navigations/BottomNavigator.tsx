@@ -30,7 +30,6 @@ const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
   // },[])
   useEffect(()=>{
     BackHandler.addEventListener("hardwareBackPress", ()=>{
-      console.log("clicked")
       return false
     })
   }, [])

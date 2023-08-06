@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { getRequests, setOverlayComponent } from '../redux/actions'
+import { getRequests, setClientMode, setOverlayComponent } from '../redux/actions'
 import { container, setRoute, shadowGenerator } from '../utils/helper'
 import RequestCard from '../components/Common/RequestCard'
 import { openOverlayParameter, requestsProps } from '../interfaces/common'
@@ -12,11 +12,20 @@ import NoData from '../components/Common/NoData'
 type props = {
   allRequests: requestsProps[],
   getRequestsData: any,
-  openOverlay: any
+  openOverlay: any,
+  clientMode: any
 }
 
-const Requests = ({allRequests,getRequestsData, openOverlay}: props) => {
+const Requests = ({allRequests,getRequestsData, openOverlay, clientMode}: props) => {
   const [fetchFailed, setFetchFailed] = useState(true as boolean | undefined);
+
+  const noDataButtonClicked = (button: string)=>{
+    if(button === "Add Client"){
+      clientMode("add");
+      openOverlay(6);
+    }
+  }
+
   useEffect(()=>{
     setRoute("Requests")
     getRequestsData();
@@ -42,14 +51,14 @@ const Requests = ({allRequests,getRequestsData, openOverlay}: props) => {
         fetchFailed != undefined &&
         <NoData 
           text='No pending or new requests from clients. You can directly add client to your business here'
-          onTouch={(button: string) => { button === "Add Client" ? openOverlay(6) : "" } }
+          onTouch={(button: string) => { noDataButtonClicked(button) } }
           buttons={["Add Client"]}
           data={allRequests} 
           fetchFailed={false}
         />
       }
 
-      <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{openOverlay(6)}}>
+      <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{clientMode("add");openOverlay(6)}}>
         <AntDesign size={25} name='plus' color={textColorPrimary}/>
         {/* <Text style={styles.addText}>Click here to add clients to your organization</Text> */}
       </TouchableOpacity>
@@ -63,7 +72,8 @@ const mapStateToProps = (state: any)=>({
 
 const mapDispatchToProps = (dispatch: any)=>({
   getRequestsData: ()=>{dispatch(getRequests())},
-  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
+  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
+  clientMode: (mode: string)=>{dispatch(setClientMode(mode))}
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Requests) 

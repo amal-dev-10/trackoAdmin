@@ -18,6 +18,7 @@ import { statsReducer } from './statsReducer';
 import { insightReducer } from './insightReducer';
 import { routeReducer } from './routeReducer';
 import { confirmationReducer } from './confirmReducer';
+import { clientFilters } from './clientFilter';
 
 const rootReducer = combineReducers({
   bottomTab: bottomTabReducer,
@@ -36,7 +37,8 @@ const rootReducer = combineReducers({
   homeStat: statsReducer,
   insight: insightReducer,
   route: routeReducer,
-  confirmation: confirmationReducer
+  confirmation: confirmationReducer,
+  clientFilter: clientFilters
 });
 
 export default rootReducer;

@@ -7,6 +7,7 @@ export type iClient = {
     dateOfBirth?: Timestamp,
     phoneVerified: boolean,
     createdDate?: Timestamp,
+    dobDate?: Date,
     uid?: string
 }
 
@@ -69,4 +70,10 @@ export type iFilterCounts = {
     bronze: number,
     noMembership: number,
     expired: number
+}
+
+export type updatableClient = {
+    name?: string,
+    dateOfBirth?: Timestamp,
+    phoneVerified?: boolean,
 }

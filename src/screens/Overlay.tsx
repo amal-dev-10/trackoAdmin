@@ -59,7 +59,7 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
                     <Settings/> //terms and conditions
                 }
                 {
-                    overlayData.id === 6 &&
+                    (overlayData.id === 6 || overlayData.id === 9) &&
                     <AddClients/> // add new client
                 }
                 {

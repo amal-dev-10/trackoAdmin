@@ -9,6 +9,7 @@ import { navigate } from '../../navigations/NavigationService'
 import { ibusiness } from '../../interfaces/business'
 import store from '../../redux/store'
 import { bottomTabProps } from '../../interfaces/common'
+import { setRoute } from '../../utils/helper'
 
 type props = {
   openOverlay: any,
@@ -18,6 +19,7 @@ type props = {
 }
 
 const gotoDashboard = ()=>{
+  setRoute("Dashboard");
   let st = store.dispatch;
   st(resetReducerAction("tabReducer"));
   st(resetReducerAction("clientReducer"));

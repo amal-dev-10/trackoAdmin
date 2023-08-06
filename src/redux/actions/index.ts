@@ -155,6 +155,20 @@ export const resetReducerAction = (payload: string)=>{
   }
 }
 
+export const setClientMode = (payload: string)=>{
+  return {
+    type: "SET_MODIFY_CLIENT_MODE",
+    payload: payload
+  }
+}
+
+export const updateClientAction = (payload: any)=>{
+  return {
+    type: "UPDATE_CLIENT_DETAILS",
+    payload: payload
+  }
+}
+
 // packages
 
 export const mapPackagesToState = (payload: packagesProps[])=>{
@@ -217,14 +231,14 @@ export const setRouteNameAction = (payload: string)=>{
   }
 }
 
-export const checkBoxClickedAction = (payload: string)=>{
+export const checkBoxClickedAction = (payload: iFilters[])=>{
   return {
     type: "CHECKBOX_CLICKED",
     payload: payload
   }
 }
 
-export const filterTabClickedAction = (payload: string)=>{
+export const filterTabClickedAction = (payload: iFilters[])=>{
   return {
     type: "FILTER_TAB_CLICKED",
     payload: payload
