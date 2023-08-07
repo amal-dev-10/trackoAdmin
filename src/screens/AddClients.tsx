@@ -5,14 +5,14 @@ import Input from '../components/Common/Input';
 import { showToast, valueBinder } from '../utils/helper';
 import Button from '../components/Common/Button';
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { borderColor, cardColor, iconColor, textColorSecondary } from '../styles/colors';
+import { borderColor, iconColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import IconSet from '../styles/icons/Icons';
-import { iClient, iMembership, iMembershipDetails } from '../interfaces/iClient';
+import { iClient, iMembership } from '../interfaces/iClient';
 import { addNewClient, updateClient } from '../services/apiCalls/serviceCalls';
 import { connect } from 'react-redux';
 import { Timestamp } from 'firebase/firestore';
-import { closeOverlayComponent, setAllClients, updateClientAction, updateMembershipState } from '../redux/actions';
+import { closeOverlayComponent, setAllClients, updateClientAction } from '../redux/actions';
 
 type props = {
   selectedBusinessId: string,

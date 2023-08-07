@@ -1,14 +1,14 @@
-import { ActivityIndicator, Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container, setRoute, shadowGenerator, showToast, wordSplitter } from '../utils/helper'
+import { setRoute, shadowGenerator, showToast, wordSplitter } from '../utils/helper'
 import { fontSize } from '../styles/fonts'
-import { amountColor, borderColor, cardColor, goldColor, iconColor, textColorPrimary, unitColor } from '../styles/colors'
+import { borderColor, cardColor, iconColor, textColorPrimary, unitColor } from '../styles/colors'
 import { key, subTitleStyle } from '../styles/constants'
 import ExpiryCard from '../components/Common/ExpiryCard'
 import { setHomeStatsAction, setOverlayComponent, setTransactionMode } from '../redux/actions'
 import { connect } from 'react-redux'
 import { apiResponse, iTransactions } from '../interfaces/common'
-import { calculateExpiry, getClientTransactions, getEndedSubscriptions, getHomeStats } from '../services/apiCalls/serviceCalls'
+import { getClientTransactions, getEndedSubscriptions, getHomeStats } from '../services/apiCalls/serviceCalls'
 import { mainStat } from '../interfaces/business'
 import { iExpiredData } from '../interfaces/iClient'
 
@@ -189,7 +189,6 @@ const mapStateToProps = (state: any)=>({
 const ExpiryLoader = ()=>{
 
   const colorValue = new Animated.Value(0);
-  // Interpolate the color value to create a "wind" effect from left to right
   const backgroundColor = colorValue.interpolate({
     inputRange: [0, 1],
     outputRange: ["#1e1e1ec3", "#1e1e1e41"],

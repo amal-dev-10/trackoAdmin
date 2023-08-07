@@ -1,12 +1,12 @@
 import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { fontSize } from '../../styles/fonts'
-import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../../styles/colors'
+import { borderColor, cardColor, iconColor, textColorPrimary } from '../../styles/colors'
 import Button from './Button'
 import CheckBox from '@react-native-community/checkbox'
-import { iFilterQuery, iFilters } from '../../interfaces/iClient'
+import { iFilters } from '../../interfaces/iClient'
 import { connect } from 'react-redux'
-import { applyFilterAction, checkBoxClickedAction, filterTabClickedAction, previousFilterDataState } from '../../redux/actions'
+import { applyFilterAction } from '../../redux/actions'
 
 type props = {
     toggleFilterView: any,

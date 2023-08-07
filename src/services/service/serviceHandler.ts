@@ -1,7 +1,6 @@
 import createApiInstance from "../axios/axios";
 import { setLoader } from "../../redux/actions";
 import store from "../../redux/store";
-import { apiResponse } from "../../interfaces/common";
 import { navigate } from "../../navigations/NavigationService";
     
 

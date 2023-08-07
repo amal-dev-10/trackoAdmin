@@ -43,14 +43,6 @@ export const packageReducer = (state: props = initialState, action: actionInterf
             return {...state, allPackages: [...state.allPackages]}
         case "MAP_SAVED_PACKAGE":
             let dbData: packagesProps[] = action.payload;
-            // let mappedData = state.allPackages.map((d)=>{
-            //     let index:number = dbData.findIndex((x)=>{return x.tier.toLowerCase() === d.tier.toLowerCase()});
-            //     if(index > -1){
-            //         return dbData[index]
-            //     }else{
-            //         return d
-            //     }
-            // });
             return {
                 ...state,
                 allPackages: [...dbData]

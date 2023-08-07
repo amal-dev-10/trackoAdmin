@@ -1,6 +1,6 @@
 import {StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container, valueBinder } from '../../utils/helper'
+import { container, showToast, valueBinder } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { iconColor, textColorSecondary } from '../../styles/colors'
 import Button from '../Common/Button'
@@ -49,7 +49,29 @@ const SignUp = ({user}: props) => {
     const [allInputTrue, setAllInputTrue] = useState(false as boolean);
 
     const validation = ()=>{
-      let check: boolean = inputList.every((x)=>{return x.value != ""})
+      let temp = inputList.map((d)=>{
+        switch(d.name){
+          case "phoneNumber":
+            if(d.value.length === 13){
+              d.valid = true;
+            }else{
+              d.valid = false;
+            }
+            break;
+          case "name":
+            if(d.value.length >= 3 && d.value.length <= 20){
+              d.valid = true
+            }else{
+              d.valid = false
+            }
+            break;
+          default:
+            break;
+        }
+        return d
+      });
+      setInputList([...temp]);
+      let check: boolean = temp.every((x)=>{return x.valid})
       setAllInputTrue(check);
     }
 
@@ -63,9 +85,10 @@ const SignUp = ({user}: props) => {
         }
         let res: apiResponse | null = await saveOwner(data);
         if(res?.status === 200){
-          navigate("MainStack")
+          navigate("Dashboard");
+          navigate("MainStack");
         }else{
-          //error
+          showToast("Signup failed.")
         }
       }
     }

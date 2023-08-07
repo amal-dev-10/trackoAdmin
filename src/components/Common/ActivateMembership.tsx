@@ -4,14 +4,14 @@ import { fontSize } from "../../styles/fonts";
 import { Dropdown } from "react-native-element-dropdown";
 import { useEffect, useState } from "react";
 import { apiResponse, dropDownProps, packagesProps } from "../../interfaces/common";
-import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from "../../styles/colors";
+import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from "../../styles/colors";
 import { activatePackage, getPackages } from "../../services/apiCalls/serviceCalls";
 import { connect } from "react-redux";
 import { mapPackagesToState, setAllClients, showActivatePackage, updateMembershipState } from "../../redux/actions";
 import { showToast } from "../../utils/helper";
 import { iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import DateTimePicker from '@react-native-community/datetimepicker';
-import { RadioButton, Text as radioText, Checkbox } from "react-native-paper";
+import { RadioButton, Checkbox } from "react-native-paper";
 
 type modalProps = {
     businessId: string,

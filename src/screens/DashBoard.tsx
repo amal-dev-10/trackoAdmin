@@ -1,4 +1,4 @@
-import { BackHandler, StyleSheet, Text, View } from 'react-native'
+import { BackHandler, StyleSheet, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, setRoute } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
@@ -9,9 +9,9 @@ import DashboardCard from '../components/Common/DashboardCard'
 import { apiResponse } from '../interfaces/common'
 import DashboardOverlay from '../components/Common/DashboardOverlay'
 import { ScrollView } from 'react-native-gesture-handler'
-import { logout, resetStateAction } from '../redux/actions/authActions'
+import { resetStateAction } from '../redux/actions/authActions'
 import { connect } from 'react-redux'
-import { getAllBusiness, getOwnerById } from '../services/apiCalls/serviceCalls'
+import { getAllBusiness } from '../services/apiCalls/serviceCalls'
 import { setAllBusinesses, setOverlayComponent, setSelectedBusiness } from '../redux/actions'
 import { ibusiness } from '../interfaces/business'
 import { navigate } from '../navigations/NavigationService'
@@ -31,18 +31,10 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
   const [servieMsg, setServiceMsg] = useState("" as string);
-  // const openOverlay = ()=>{
-  //   toggleOverlay();
-  // }
 
   const toggleOverlay = () => {
     setShowOverlay(!showOverlay);
   };
-
-  // const tester = async ()=>{
-  //   let res = await getOwnerById("7bcd340f-1ad5-44f9-baa1-d85280b190ab");
-  //   console.log(res)
-  // }
 
   const gotoDashboard = (businessData: ibusiness)=>{
     selectBusiness(businessData);
@@ -66,8 +58,8 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
       return true
     }
     let backHandler = BackHandler.addEventListener("hardwareBackPress", backAction)
-    resetAuthState();
     getMyBusiness();
+    resetAuthState();
     return () => backHandler.remove()
   },[]);
 

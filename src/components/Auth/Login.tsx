@@ -50,7 +50,10 @@ const Login = ({signInWithPhoneNumber}: props) => {
 
   const sendOtpClicked = ()=>{
     if(allInputsValid){
-      signInWithPhoneNumber(inputList[0].value)
+      signInWithPhoneNumber(inputList[0].value);
+      let t = inputList;
+      t[0].value = "";
+      setInputList([...t]);
     }
   }
 

@@ -1,10 +1,8 @@
-import { Dimensions, Image, ImageProps, ImageSourcePropType, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, {useEffect, useRef, useState } from 'react'
-import { borderColor, cardColor, goldColor, iconColor, memberShipTextColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
-import LinearGradient from 'react-native-linear-gradient';
+import { Dimensions, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { borderColor, goldColor, iconColor, memberShipTextColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
-import { iClient, iMembership } from '../../interfaces/iClient';
-import IconSet from '../../styles/icons/Icons';
+import { iMembership } from '../../interfaces/iClient';
 import Svg, { Defs, G, Path } from 'react-native-svg';
 import { setOverlayComponent, setSelectedClient } from '../../redux/actions';
 import { connect } from 'react-redux';

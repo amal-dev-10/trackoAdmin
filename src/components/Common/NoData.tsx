@@ -1,8 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import IconSet from '../../styles/icons/Icons'
-import { borderColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
+import { borderColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 
 type props = {

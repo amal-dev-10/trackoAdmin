@@ -7,7 +7,7 @@ import { deleteData, getData, patchData, postData } from "../service/serviceHand
 export const getOwnerById = async (id: string)=>{
     let res = null;
     try{
-        res = await getData(`/owner/owner/${id}`);
+        res = await getData(`owner/owner/${id}`);
     }
     catch(err){
         console.log(err);
@@ -18,7 +18,7 @@ export const getOwnerById = async (id: string)=>{
 export const saveOwner = async (data: any = null)=>{
     let res = null;
     try{
-        res = await postData("/owner/owner", data);
+        res = await postData("owner/owner", data);
     }
     catch(err){
         console.log(err)

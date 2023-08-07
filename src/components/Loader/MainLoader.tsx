@@ -1,15 +1,13 @@
-import { Modal, StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator, Animated } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
+import { Modal, StyleSheet, Text, View, ScrollView, Dimensions, Animated } from 'react-native'
+import React from 'react'
+import { borderColor, cardColor, primaryColor } from '../../styles/colors'
 import { connect } from 'react-redux';
 import { fontSize } from '../../styles/fonts';
-import { bottomTabProps, overlayComponent, tabDataInterface } from '../../interfaces/common';
+import { overlayComponent } from '../../interfaces/common';
 import Loading from '../Common/Loading';
 
 type props = {
     showLoader: boolean,
-    selectedTab: number,
-    allTabs: bottomTabProps[],
     overlays: overlayComponent[],
     routeName: string
 }
@@ -22,7 +20,7 @@ inputRange: [0, 1],
 outputRange: ['rgba(20,20,20,1)', 'rgba(20,20,20,0.3)'],
 });
 
-const MainLoader = ({showLoader, allTabs, selectedTab, overlays, routeName}: props) => {
+const MainLoader = ({showLoader, overlays, routeName}: props) => {
     const skeletonLoaderScreens = ["Home", "Clients", "Requests", "Packages"];
     const activityLoaderTabs = [
         "transactions",
@@ -144,8 +142,6 @@ const QuoteLoader = ()=>{
 
 const mapStateToProps = (state: any)=>({
     showLoader: state.loader?.show || false,
-    allTabs: state.bottomTab.allTabs,
-    selectedTab: state.bottomTab.activeComponentId,
     overlays: state.overlay.opendedComponents,
     routeName: state.route.currentRoute
 })

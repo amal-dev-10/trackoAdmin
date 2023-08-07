@@ -5,7 +5,7 @@ const createApiInstance = ()=>{
     let s = store.getState();
     const token = s.auth.data.token;
     const api: AxiosInstance = axios.create({
-        baseURL: 'http://192.168.1.5:3000/api',
+        baseURL: 'http://trackoapi-env.eba-esdsr73m.us-east-1.elasticbeanstalk.com/api',
         headers: {
           'Content-Type': 'application/json',
           "Authorization": `Bearer ${token || ""}`

@@ -5,13 +5,12 @@ import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
-import { openOverlayParameter, profileButtonProps } from '../interfaces/common'
+import { profileButtonProps } from '../interfaces/common'
 import { setIdTransactions, setOverlayComponent, setTransactionMode, toggleSubButton } from '../redux/actions'
 import { logout } from '../redux/actions/authActions'
 
 type props = {
     profileBtnList: profileButtonProps[],
-    profileDetails: any,
     openOverlay: any,
     toggleButton: any,
     signOut: any,
@@ -19,7 +18,7 @@ type props = {
     mode: any
 }
 
-const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, signOut, mode, setId}: props) => {
+const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setId}: props) => {
     const [rating, setRating] = useState( 4.6 as number);
     const [stars, setStars] = useState([] as any[]);
 
@@ -119,7 +118,6 @@ const Profile = ({profileBtnList, profileDetails, openOverlay, toggleButton, sig
 
 const mapStateToProps = (state: any)=>({
     profileBtnList: state.profile.buttons,
-    profileDetails: state.profile.profileDetails
 });
 
 const mapDispatchToProps = (dispatch: any)=>({

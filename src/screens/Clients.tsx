@@ -1,22 +1,20 @@
 import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container, setRoute, showToast } from '../utils/helper'
+import { container, setRoute } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
-import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../styles/colors'
+import { borderColor, iconColor, textColorPrimary } from '../styles/colors'
 import MembershipCard from '../components/Common/MembershipCard'
-import { apiResponse, memberShipProps } from '../interfaces/common'
-import { resetReducerAction, setAllClients, setClientMode, setDropDownDatAction, setOverlayComponent, setSelectedClient } from '../redux/actions'
+import { apiResponse } from '../interfaces/common'
+import { setAllClients, setClientMode, setDropDownDatAction, setOverlayComponent } from '../redux/actions'
 import { connect } from 'react-redux'
-import { iClient, iFilterQuery, iFilters, iMembership } from '../interfaces/iClient'
+import { iFilterQuery, iFilters, iMembership } from '../interfaces/iClient'
 import { getAllClients, getFilterCounts } from '../services/apiCalls/serviceCalls'
 import NoData from '../components/Common/NoData'
 import FilterView from '../components/Common/FilterView'
 import Loading from '../components/Common/Loading'
 import { fontSize } from '../styles/fonts'
-import store from '../redux/store'
 
 type props = {
-  setSelectedClient: any,
   setClients: any,
   clients: iMembership[],
   openOverlay: any,
@@ -25,7 +23,7 @@ type props = {
   clientMode: any
 }
 
-const Clients = ({clients, setClients, setSelectedClient, openOverlay, setDropDownData, filterActive, clientMode}: props) => {
+const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActive, clientMode}: props) => {
 
   const [searchText, setSearchText] = useState(null as any);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
@@ -154,7 +152,6 @@ const mapStateToProps = (state: any)=>({
 
 const mapDispatchToProps = (dispatch: any)=>({
   setClients: (data: iMembership[])=>dispatch(setAllClients(data)),
-  setSelectedClient: (data: iMembership)=>dispatch(setSelectedClient(data)),
   openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
   setDropDownData: (data: iFilters[])=>{dispatch(setDropDownDatAction(data))},
   clientMode: (mode: string)=>{dispatch(setClientMode(mode))}

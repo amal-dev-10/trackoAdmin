@@ -1,14 +1,14 @@
-import { Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown';
 import React, { useEffect, useState } from 'react'
-import { amountColor, borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary, unitColor } from '../styles/colors';
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import { apiResponse, dropDownProps } from '../interfaces/common';
 import { connect } from 'react-redux';
 import { iFinanceInsight, iMembershipInsight, mainStat } from '../interfaces/business';
 import { setFinanceInsightAction, setMembershipInsightAction } from '../redux/actions';
 import { getInsights } from '../services/apiCalls/serviceCalls';
-import { calculateDaysBetweenDates, container, setRoute, showToast } from '../utils/helper';
+import { calculateDaysBetweenDates, container, setRoute } from '../utils/helper';
 import NoData from '../components/Common/NoData';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AreaChart from '../components/Charts/AreaChart';

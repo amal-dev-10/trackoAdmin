@@ -1,4 +1,4 @@
-import { actionInterface, bottomTabProps, packagesProps, tabDataInterface } from "../../interfaces/common"
+import { actionInterface, tabDataInterface } from "../../interfaces/common"
 
 let initialState: tabDataInterface = {
     activeComponentId: 0,

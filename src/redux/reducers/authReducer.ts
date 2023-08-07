@@ -82,11 +82,17 @@ export const authReducer = (state: props = initialState, action: actionInterface
             }
         case "RESET_STATE":
             return {
+                ...state,
                 data:{
                     ...initialState.data,
                     token: state.data.token
                 }
-            } 
+            }
+        case "RESET_REDUCER":
+            if(action.payload === "authReducer"){
+                return {...initialState}
+            }
+            return state
         default:
             return state
     }

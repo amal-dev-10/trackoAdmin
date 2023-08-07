@@ -1,6 +1,5 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useState } from 'react'
-import { mainLoaderReducer } from '../redux/reducers/mainLoader'
 import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, Modal } from 'react-native'
+import { StyleSheet, View, Modal } from 'react-native'
 import React, { useState } from 'react'
 import Button from './Button'
 import { apiResponse, inputProps } from '../../interfaces/common'

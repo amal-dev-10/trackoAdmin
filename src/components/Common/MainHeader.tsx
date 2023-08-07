@@ -1,7 +1,7 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import IconSet from '../../styles/icons/Icons'
-import { borderColor, cardColor, iconColor, textColorPrimary } from '../../styles/colors'
+import { borderColor, cardColor, iconColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import { resetReducerAction, setOverlayComponent } from '../../redux/actions'
 import { connect } from 'react-redux'

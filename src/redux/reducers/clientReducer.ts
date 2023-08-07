@@ -73,63 +73,6 @@ export const clientReducer = (state: props = initialState, action: actionInterfa
                 ...state,
                 mode: action.payload
             }
-        // case "CHECKBOX_CLICKED":
-        //     if(state.filters){
-        //         // let all = state.filters.allFilters;
-        //         // let tabIndex: number = all.findIndex((x)=>{return x.active});
-        //         // if(tabIndex > -1){
-        //         //     let filterIndex: number = all[tabIndex].filters.findIndex((x)=>{return x.id === action.payload});
-        //         //     if(filterIndex > -1){
-        //         //         let a: boolean = all[tabIndex].filters[filterIndex].active;
-        //         //         all[tabIndex].filters[filterIndex].active = !a;
-        //         //     }
-        //         // }
-        //         return {
-        //             ...state,
-        //             filters: {
-        //                 ...state.filters,
-        //                 allFilters: [...action.payload]
-        //             }
-        //         }
-
-        //     }
-        //     return state
-        // case "APPLY_FILTER":
-        //     let n = {
-        //         ...state,
-        //         filters: {
-        //             ...state.filters,
-        //             allFilters: [...action.payload as iFilters[]]
-        //         }
-        //     } as props
-        //     console.log("apply", action.payload[0].filters)
-        //     return n
-
-        // case "FILTER_TAB_CLICKED":
-        //     if(state.filters){
-        //         // let allFilters = state.filters.allFilters;
-        //         // allFilters =  allFilters.map((d)=>{d.active = false; return d});
-        //         // let i: number = allFilters.findIndex((d)=>{return d.id === action.payload});
-        //         // if(i > -1){
-        //         //     allFilters[i].active = true;
-        //         // };
-        //         return {
-        //             ...state,
-        //             filters: {
-        //                 ...state.filters,
-        //                 allFilters: [...action.payload]
-        //             }
-        //         }
-        //     }
-        //     return state
-        // case "SET_DROPDOWN_DATA":
-        //     let f: any = {
-        //         allFilters: [...action.payload]
-        //     };
-        //     let copy = {...state, filters: {...f}, previousState: {...state, filters: {...f}}}
-        //     return {
-        //         ...copy
-        //     }
         default:
             return state
     }

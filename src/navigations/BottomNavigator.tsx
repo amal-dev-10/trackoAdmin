@@ -20,14 +20,6 @@ type bottomTabPropsInt = {
 }
 
 const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
-  //for loader testing
-  // useEffect(()=>{
-  //   showLoader(true)
-  //   let t = setTimeout(()=>{
-  //     showLoader(false)
-  //     clearTimeout(t);
-  //   }, 5000)
-  // },[])
   useEffect(()=>{
     BackHandler.addEventListener("hardwareBackPress", ()=>{
       return false

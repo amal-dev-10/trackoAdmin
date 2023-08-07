@@ -1,14 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import IconSet from '../styles/icons/Icons'
-import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary } from '../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { key } from '../styles/constants'
 import { fomatFirstLetterCapital, makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
 import { connect } from 'react-redux'
-import { setClientMode, setIdTransactions, setOverlayComponent, setTransactionMode, setTransactions, showActivatePackage } from '../redux/actions'
-import { iClient, iMembership } from '../interfaces/iClient'
-import { iTransactions, openOverlayParameter } from '../interfaces/common'
+import { setClientMode, setIdTransactions, setOverlayComponent, setTransactionMode, showActivatePackage } from '../redux/actions'
+import { iMembership } from '../interfaces/iClient'
+import { openOverlayParameter } from '../interfaces/common'
 
 type buttons = {
     id: number,
@@ -91,10 +91,6 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, cli
                 <Text style={styles.phoneText}>{clientData.phoneNumber}</Text>
             </View>
         </View>
-        {/* <View style={styles.memberSince}>
-            <IconSet name='user-o' size={20} color={iconColor}/>
-            <Text>Member since 2020</Text>
-        </View> */}
         <View style={styles.statRow}>
             <View style={styles.section}>
                 <Text style={key}>{wordSplitter("Active membership")}</Text>

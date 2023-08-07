@@ -1,11 +1,11 @@
-import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React from 'react'
 import { container } from '../utils/helper'
 import IconSet from '../styles/icons/Icons';
-import { cardColor, iconColor, primaryColor } from '../styles/colors';
+import { iconColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import { connect } from 'react-redux';
-import { dropDownProps, openOverlayParameter, overlayComponent, packagesProps } from '../interfaces/common';
+import { overlayComponent } from '../interfaces/common';
 import { closeOverlayComponent, setOverlayComponent } from '../redux/actions';
 import Profile from './Profile';
 import Transactions from './Transactions';
@@ -17,17 +17,13 @@ import ActivateMembership from '../components/Common/ActivateMembership';
 import BusinessProfile from './BusinessProfile';
 
 type props={
-    // component: overlayComponent[],
     overlayData: overlayComponent,
     closeOverlay: any,
     showModal: boolean
 }
 
 const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
-    // useEffect(()=>{
-    //     const backHandler = BackHandler.addEventListener("hardwareBackPress",()=>{return false})
-    //     return () => backHandler.remove()
-    // },[])
+
   return (
     <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='slide' >
         <View style={[styles.overlayScreen, container]}>
