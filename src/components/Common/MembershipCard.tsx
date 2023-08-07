@@ -1,14 +1,12 @@
-import { Dimensions, Image, ImageProps, ImageSourcePropType, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, {useEffect, useRef, useState } from 'react'
-import { borderColor, cardColor, goldColor, iconColor, memberShipTextColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
-import LinearGradient from 'react-native-linear-gradient';
+import { Dimensions, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React, { useRef, useState } from 'react'
+import { borderColor, goldColor, iconColor, memberShipTextColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
-import { iClient, iMembership } from '../../interfaces/iClient';
-import IconSet from '../../styles/icons/Icons';
+import { iMembership } from '../../interfaces/iClient';
 import Svg, { Defs, G, Path } from 'react-native-svg';
 import { setOverlayComponent, setSelectedClient } from '../../redux/actions';
 import { connect } from 'react-redux';
-import { openOverlayParameter } from '../../interfaces/common';
+import { fomatFirstLetterCapital } from '../../utils/helper';
 
 type cardPackProps = {
     membershipData: iMembership,
@@ -55,9 +53,13 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
                 {
                     membershipData?.memberShipDetails?.tier && !membershipData.memberShipDetails.expired ? 
                         <View style={styles.packImage}>
-                            <IconSet name={`${membershipData?.memberShipDetails?.tier?.toLowerCase()+"pack"}`} size={65} color={goldColor}/>
-                            <View style={styles.divider}></View>
-                            <Text style={styles.orgName}>IGNITE FITNESS</Text>
+                            {/* <IconSet name={`${membershipData?.memberShipDetails?.tier?.toLowerCase()+"pack"}`} size={65} color={goldColor}/> */}
+                            <Text style={styles.planText}
+                                numberOfLines={1}
+                                ellipsizeMode='tail'
+                            >{membershipData.memberShipDetails.tier.toUpperCase()}</Text>
+                            {/* <View style={styles.divider}></View> */}
+                            {/* <Text style={styles.orgName} numberOfLines={1} ellipsizeMode='tail'>IGNITE FITNESS</Text> */}
                         </View>
                     : <Text style={styles.tierName}>{membershipData.memberShipDetails?.expired ? "EXPIRED" : "NO MEMBERSHIP"}</Text>
                 }
@@ -66,7 +68,7 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
                 <View style={[styles.stripeLeftRight, styles.left]}>
                     <Text style={styles.stripeKey}>Membership Holder</Text>
                     <Text style={styles.stripeValue}>{
-                        membershipData.name.toUpperCase()
+                        fomatFirstLetterCapital(membershipData.name.toUpperCase())
                     }</Text>
                 </View>
                 <View style={[styles.stripeLeftRight, styles.left]}>
@@ -229,5 +231,10 @@ const styles = StyleSheet.create({
     phoneNumber:{
         color: borderColor,
         textAlign: "right",
+    },
+    planText:{
+        fontSize: fontSize.medium,
+        color: goldColor,
+        maxWidth: "80%"
     }
 })

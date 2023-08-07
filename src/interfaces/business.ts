@@ -12,14 +12,37 @@ export type ibusiness = {
 }
 
 export type mainStat = {
-    amountToday: string,
-    businessId: string,
-    expiredSubs: string
-    lastUpdated: Timestamp,
-    newMembers: string,
+    totalMembership: string,
+    membershipToday: string,
+    membershipThisMonth: string,
+    expiredSubs: string,
     totalAmount: string,
+    amountToday: string,
+    amountThisMonth: string,
     totalMembers: string,
-    totalSubscribers: string,
+    newMembersThisMonth: string,
+    membersToday: string
+    businessId: string,
+    lastUpdated: Timestamp,
     day?: string,
     month?: string
+}
+
+export type iMembershipInsight = {
+    totalAmount: string,
+    goldCount: string,
+    silverCount: string,
+    bronzeCount: string,
+    goldAmount: string,
+    silverAmount: string,
+    bronzeAmount: string,
+    year: string,
+    month: string
+}
+
+export type iFinanceInsight = {
+    zooomDomain: {x: [number, number], y: [number, number]},
+    data: {x: number, y: number}[],
+    year: string,
+    month: string
 }

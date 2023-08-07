@@ -1,11 +1,11 @@
-import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { Modal, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import React from 'react'
 import { container } from '../utils/helper'
 import IconSet from '../styles/icons/Icons';
-import { cardColor, iconColor, primaryColor } from '../styles/colors';
+import { iconColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import { connect } from 'react-redux';
-import { dropDownProps, openOverlayParameter, overlayComponent, packagesProps } from '../interfaces/common';
+import { overlayComponent } from '../interfaces/common';
 import { closeOverlayComponent, setOverlayComponent } from '../redux/actions';
 import Profile from './Profile';
 import Transactions from './Transactions';
@@ -14,25 +14,22 @@ import Settings from './Settings';
 import AddClients from './AddClients';
 import ViewClient from './ViewClient';
 import ActivateMembership from '../components/Common/ActivateMembership';
+import BusinessProfile from './BusinessProfile';
 
 type props={
-    // component: overlayComponent,
     overlayData: overlayComponent,
     closeOverlay: any,
     showModal: boolean
 }
 
 const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
-    // useEffect(()=>{
-    //     const backHandler = BackHandler.addEventListener("hardwareBackPress",()=>{return false})
-    //     return () => backHandler.remove()
-    // },[])
+
   return (
-    <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='fade'>
+    <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='slide' >
         <View style={[styles.overlayScreen, container]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={()=>{closeOverlay(overlayData.id)}} style={styles.icon} activeOpacity={0.7}>
-                    <IconSet name='left-small' color={iconColor} size={30}/>
+                    <IconSet name='angle-left' color={iconColor} size={30}/>
                 </TouchableOpacity>
                 <Text style={styles.headerText}>{overlayData.name}</Text>
             </View>
@@ -58,12 +55,16 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
                     <Settings/> //terms and conditions
                 }
                 {
-                    overlayData.id === 6 &&
+                    (overlayData.id === 6 || overlayData.id === 9) &&
                     <AddClients/> // add new client
                 }
                 {
                     overlayData.id === 7 &&
                     <ViewClient/>
+                }
+                {
+                    overlayData.id === 8 &&
+                    <BusinessProfile/>
                 }
             </View>
         </View>
@@ -76,7 +77,6 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
 }
 
 const mapStateToProps = (state: any)=>({
-    component: state.overlay.component,
     showModal: state.packages.showActiveDropDown,
 });
 
@@ -107,7 +107,7 @@ const styles = StyleSheet.create({
     icon:{
         position: "absolute",
         left: 0,
-        paddingRight: 10,
+        paddingRight: 15,
     },
     headerText:{
         fontSize: fontSize.xmedium,

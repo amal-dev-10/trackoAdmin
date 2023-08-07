@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { NavigationContainer } from '@react-navigation/native';
 import MainStack from '../stacks/MainStack';
 import AuthStack from '../stacks/AuthStack';
@@ -7,15 +7,15 @@ import { navigationRef } from './NavigationService';
 import { connect } from 'react-redux';
 import { createStackNavigator } from '@react-navigation/stack';
 import Loading from '../components/Common/Loading';
+import Confirmation from '../components/Common/Confirmation';
 
 type props = {
-    showLoader: boolean,
-    authLoader: boolean
+    authLoader: boolean,
 }
 
 const stack = createStackNavigator();
 
-const RootNavigator = ({showLoader, authLoader}: props) => {
+const RootNavigator = ({authLoader}: props) => {
   return (
     <NavigationContainer ref={navigationRef}>
         <>
@@ -29,14 +29,14 @@ const RootNavigator = ({showLoader, authLoader}: props) => {
                 <Loading/>
                 : <></>
             }
+            <Confirmation/>
         </>
     </NavigationContainer>
   )
 }
 
 const mapStateToProps = (state: any)=>({
-    showLoader: state.loader.show,
-    authLoader: state.auth.data.loading
+    authLoader: state.auth.data.loading,
 })
 
 export default connect(mapStateToProps)(RootNavigator)

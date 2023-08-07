@@ -1,4 +1,4 @@
-import { Modal, StyleSheet, Text, View, ActivityIndicator } from 'react-native'
+import { Modal, StyleSheet, View, ActivityIndicator } from 'react-native'
 import React from 'react'
 import { cardColor, textColorPrimary } from '../../styles/colors'
 
@@ -23,7 +23,8 @@ const styles = StyleSheet.create({
         padding: 10,
         display: "flex",
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: "#00000062"
     },
     loaderContainer:{
         backgroundColor: cardColor,

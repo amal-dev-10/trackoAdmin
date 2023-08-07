@@ -1,9 +1,9 @@
-import { StyleSheet, Text, View, Modal } from 'react-native'
+import { StyleSheet, View, Modal } from 'react-native'
 import React, { useState } from 'react'
 import Button from './Button'
 import { apiResponse, inputProps } from '../../interfaces/common'
 import Input from './Input'
-import { valueBinder } from '../../utils/helper'
+import { showToast, valueBinder } from '../../utils/helper'
 import { KeyboardType } from 'react-native'
 import { BlurView } from '@react-native-community/blur'
 import { connect } from 'react-redux'
@@ -77,6 +77,8 @@ const DashboardOverlay = (props:overlayProps) => {
                     temp.push(resp.data);
                     props.setBusiness(temp);
                     props.close();
+                }else if(resp?.status === 500 || resp?.status === undefined){
+                    showToast("Data fetch failed !")
                 }
             }
             catch(err){

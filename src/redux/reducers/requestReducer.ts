@@ -5,48 +5,7 @@ type props = {
 }
 
 let initialState: props = {
-    allRequests: [
-        {
-            age: "23",
-            date: new Date(),
-            id: "1",
-            image: "",
-            name: "Amal Dev",
-            phoneNumber: "7902992447"
-        },
-        {
-            age: "23",
-            date: new Date(),
-            id: "2",
-            image: "",
-            name: "Rahul Sivan",
-            phoneNumber: "7902992447"
-        },
-        {
-            age: "23",
-            date: new Date(),
-            id: "2",
-            image: "",
-            name: "Midhun Jayapradeep",
-            phoneNumber: "7902992447"
-        },
-        {
-            age: "23",
-            date: new Date(),
-            id: "2",
-            image: "",
-            name: "Rahul Sivan",
-            phoneNumber: "7902992447"
-        },
-        {
-            age: "23",
-            date: new Date(),
-            id: "2",
-            image: "",
-            name: "Midhun Jayapradeep",
-            phoneNumber: "7902992447"
-        }
-    ]
+    allRequests: []
 }
 
 export const requestReducer = (state=initialState, action: actionInterface)=>{

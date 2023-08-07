@@ -1,4 +1,4 @@
-import { actionInterface, bottomTabProps, packagesProps, tabDataInterface } from "../../interfaces/common"
+import { actionInterface, tabDataInterface } from "../../interfaces/common"
 
 let initialState: tabDataInterface = {
     activeComponentId: 0,
@@ -57,7 +57,11 @@ export const bottomTabReducer = (state = initialState, action: actionInterface)=
             } as tabDataInterface
         case "RESET_REDUCER":
             if(action.payload === "tabReducer"){
-                return initialState
+                let temp = state.allTabs.map((x, i: number)=>{
+                    i === 0 ? x.active = true : x.active = false;
+                    return x
+                });
+                return {...initialState, allTabs: [...temp], activeComponentId: 0}
             }
             return state
         default:

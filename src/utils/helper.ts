@@ -1,5 +1,7 @@
 import { Dimensions, Linking, ToastAndroid } from 'react-native';
 import { iconColor, primaryColor } from '../styles/colors';
+import store from '../redux/store';
+import { setRouteNameAction } from '../redux/actions';
 
 export const container = {
     flex: 1,
@@ -85,3 +87,30 @@ export const openWhatsapp = async (phoneNumber: string) => {
     //   })
     //   .catch(error => console.log("Error:", error));
 };
+
+export const fomatFirstLetterCapital = (sentence: string)=>{
+    let words: string[] = sentence.split(" ");
+    let result: string = "";
+    words.forEach((w)=>{
+        let formatedWord: string = w.charAt(0).toUpperCase() + w.slice(1).toLocaleLowerCase();
+        if(!result){
+            result = formatedWord;
+        }else{
+            result = result + " " + formatedWord
+        }
+    });
+    return result
+}
+
+export const setRoute = (routeName: string)=>{
+    let st = store;
+    st.dispatch(setRouteNameAction(routeName));
+}
+
+export const calculateDaysBetweenDates = (startDate: Date, endDate: Date): number => {
+    startDate.setHours(0,0,0,0);
+    endDate.setHours(23, 59, 59, 999);
+    const timeDifference = endDate.getTime() - startDate.getTime();
+    const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
+    return Math.round(daysDifference);
+}

@@ -1,8 +1,10 @@
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
-import { navigate } from '../../navigations/NavigationService';
+import { navigate, resetNavigation } from '../../navigations/NavigationService';
 import { apiResponse } from '../../interfaces/common';
 import { getOwnerById } from '../../services/apiCalls/serviceCalls';
+import { showToast } from '../../utils/helper';
+import { closeOverlayComponent, resetReducerAction } from '.';
 
 export const isAuthenticatedAction = (is: boolean)=>({
     type: "SETISAUTHENTICATED",
@@ -46,11 +48,16 @@ export const signInWithPhoneNumber = (phoneNumber: string)=>{
         dispatch(phoneAuthStart());
         try{
             const confirmation = await auth().signInWithPhoneNumber("+91"+phoneNumber);
-            navigate("Otp");
-            dispatch(phoneCodeSuccess(confirmation));
+            if(confirmation.verificationId){
+                navigate("Otp");
+                dispatch(phoneCodeSuccess(confirmation));
+            }else{
+                showToast("Something went wrong.")
+            }
         }
         catch (err: any){
             console.log(err)
+            showToast("Something went wrong.")
             dispatch(phoneAuthFailure(err?.message || "failed"));
         }
     }
@@ -63,12 +70,17 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
             let user = await confirm.confirm(code);
             if(user){
                 dispatch(phoneAuthSuccess(user));
+                let token: string = await user.user.getIdToken();
+                dispatch(setTokenAction(token))
                 let res = await getOwnerById(user.user?.uid || "");
                 if(res && res.data){
-                     navigate("MainStack");
+                    navigate("MainStack");
                 }else{
                     navigate("Signup")
                 }
+            }else{
+                showToast("Verification failed.");
+                dispatch(phoneAuthFailure("Invalid OTP"));
             }
         }
         catch(err: any){
@@ -80,8 +92,11 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
 export const logout = ()=>{
     return async (dispatch: any)=>{
         await auth().signOut();
+        resetNavigation(0);
         dispatch(logoutAction());
-        navigate("AuthStack")
+        dispatch(resetReducerAction("authReducer"))
+        dispatch(closeOverlayComponent(2));
+        // navigate("AuthStack");
     }
 }
 

@@ -6,3 +6,12 @@ export const navigationRef = React.createRef<NavigationContainerRef<ParamListBas
 export const navigate = (name: string, params?: object) => {
     navigationRef.current?.navigate(name, params);
 };
+
+export const resetNavigation = (index: number)=>{
+    navigationRef.current?.reset({
+        index: index,
+        routes: [
+            {name: "AuthStack"}
+        ]
+    })
+}

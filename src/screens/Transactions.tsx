@@ -1,15 +1,14 @@
 import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
-import React, { useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import LinearGradient from 'react-native-linear-gradient'
 import { amountColor, borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
-import IconSet from '../styles/icons/Icons'
-import { key, subTitleStyle } from '../styles/constants'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { apiResponse, iTransactions } from '../interfaces/common'
 import { setTransactions } from '../redux/actions'
 import { getClientTransactions } from '../services/apiCalls/serviceCalls'
 import { showToast } from '../utils/helper'
+import NoData from '../components/Common/NoData'
 
 type props = {
     type?: string,
@@ -19,19 +18,20 @@ type props = {
 }
 
 const Transactions = ({type, setTransactions, transactions, mode}: props) => {
-    
+    const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
     const getAllTransactions = async ()=>{
         setTransactions([])
         let data: apiResponse | null = null;
         if(mode === "client"){
-            data = await getClientTransactions();
+            data = await getClientTransactions("client");
         }else if(mode === "all"){
-            //
+            data = await getClientTransactions("all");
         }
         if(data && data?.status === 200){
             setTransactions(data.data);
-        }else{
-            showToast("Something went wrong")
+            setFetchFailed(false);
+        }else if(data?.status === 500 || data?.status === undefined){
+            setFetchFailed(true);
         }
     }
 
@@ -67,32 +67,46 @@ const Transactions = ({type, setTransactions, transactions, mode}: props) => {
         <View style={styles.titleView}>
             <Text style={[styles.titleText]}>LAST TRANSACTIONS</Text>
         </View> */}
-        <ScrollView style={styles.transactionScroll} showsVerticalScrollIndicator={false}>
-            {
-                transactions.map((d)=>{
-                    return (
-                        <View style={styles.card} key={d.transactionId}>
-                            <View style={styles.detail}>
-                                <View style={styles.dateView}>
-                                    <Text style={styles.month}>{
-                                        d.dateString?.split(" ")[1] + " " + d.dateString?.split(" ")[2]
-                                    }</Text>
-                                    <Text style={styles.date}>{d.dateString?.split(" ")[0]}</Text>
+        {
+            transactions.length ? 
+                <ScrollView style={styles.transactionScroll} showsVerticalScrollIndicator={false}>
+                    {
+                        transactions.map((d)=>{
+                            return (
+                                <View style={styles.card} key={d.transactionId}>
+                                    <View style={styles.detail}>
+                                        <View style={styles.dateView}>
+                                            <Text style={styles.month}>{
+                                                d.dateString?.split(" ")[1] + " " + d.dateString?.split(" ")[2]
+                                            }</Text>
+                                            <Text style={styles.date}>{d.dateString?.split(" ")[0]}</Text>
+                                        </View>
+                                        <View style={styles.descView}>
+                                            <Text style={styles.membershipText}>{d.packDetails.tier.toUpperCase() + " MEMBERSHIP"}</Text>
+                                        </View>
+                                        <Text style={styles.cost}>{"RS " + d.packDetails.cost}</Text>
+                                    </View>
+                                    <View style={styles.divider}></View>
+                                    <View style={styles.bottom}>
+                                        <Text style={styles.transactionId}>{"ID: " + d.transactionId}</Text>
+                                    </View>
                                 </View>
-                                <View style={styles.descView}>
-                                    <Text style={styles.membershipText}>{d.packDetails.tier.toUpperCase() + " MEMBERSHIP"}</Text>
-                                </View>
-                                <Text style={styles.cost}>{"RS " + d.packDetails.cost}</Text>
-                            </View>
-                            <View style={styles.divider}></View>
-                            <View style={styles.bottom}>
-                                <Text style={styles.transactionId}>{"ID: " + d.transactionId}</Text>
-                            </View>
-                        </View>
-                    )
-                })
-            }
-        </ScrollView>
+                            )
+                        })
+                    }
+                </ScrollView>
+            : <></>
+        }
+        {
+            fetchFailed != undefined ? 
+                <NoData
+                    text='No Transactions found in this account.'
+                    buttons={[]}
+                    fetchFailed={fetchFailed}
+                    data={transactions}
+                />
+            : <></>
+        }
     </View>
   )
 }

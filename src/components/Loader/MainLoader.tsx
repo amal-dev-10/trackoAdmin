@@ -1,89 +1,107 @@
-import { Modal, StyleSheet, Text, View, ScrollView, Dimensions, ActivityIndicator } from 'react-native'
-import React, { useEffect, useState } from 'react'
-import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
+import { Modal, StyleSheet, Text, View, ScrollView, Dimensions, Animated } from 'react-native'
+import React from 'react'
+import { borderColor, cardColor, primaryColor } from '../../styles/colors'
 import { connect } from 'react-redux';
 import { fontSize } from '../../styles/fonts';
-import { bottomTabProps, overlayComponent, tabDataInterface } from '../../interfaces/common';
+import { overlayComponent } from '../../interfaces/common';
 import Loading from '../Common/Loading';
 
 type props = {
     showLoader: boolean,
-    selectedTab: number,
-    allTabs: bottomTabProps[],
-    overlays: overlayComponent[]
+    overlays: overlayComponent[],
+    routeName: string
 }
 
-const MainLoader = ({showLoader, allTabs, selectedTab, overlays}: props) => {
-    // const [translate, setTranslate] = useState(0 as number);
-    // useEffect(()=>{
-    //     let t = 0;
-    //     if(showLoader){
-    //         let a = 0
-    //         t = setInterval(()=>{
-    //             if(a > Dimensions.get("window").width){
-    //                 a = 0
-    //             }
-    //             a = a + 5;
-    //             setTranslate(a);
-    //         }, 5)
-    //     }else{
-    //         clearInterval(t);
-    //         setTranslate(0)
-    //     }
-    // }, [showLoader]);
+const colorValue = new Animated.Value(0);
+
+// Interpolate the color value to create a "wind" effect from left to right
+const backgroundColor = colorValue.interpolate({
+inputRange: [0, 1],
+outputRange: ['rgba(20,20,20,1)', 'rgba(20,20,20,0.3)'],
+});
+
+const MainLoader = ({showLoader, overlays, routeName}: props) => {
+    const skeletonLoaderScreens = ["Home", "Clients", "Requests", "Packages"];
+    const activityLoaderTabs = [
+        "transactions",
+        "profile",
+        "termsAndConditions",
+        "settings",
+        "addClients",
+        "clientDetails",
+        "businessProfile",
+        "Dashboard",
+        "Insights"
+    ]
+    Animated.loop(
+        Animated.sequence([
+            Animated.timing(colorValue, {
+            toValue: 1,
+            duration: 1000,
+            useNativeDriver: false,
+            }),
+            Animated.timing(colorValue, {
+            toValue: 0,
+            duration: 1000,
+            useNativeDriver: false,
+            }),
+        ])
+    ).start();
   return (
-    (showLoader && !overlays.length) ?
-    <Modal>
-        <View style={styles.mainLoader}>
-            <View style={styles.headerLoader}>
-                <View style={styles.dashBtn}></View>
-                <View style={styles.profile}></View>
-            </View>
-            {
-                allTabs[selectedTab].name === "Home" && <HomeLoader/>
-            }
-            {
-                allTabs[selectedTab].name === "Clients" && <ClientLoader/>
-            }
-            {
-                allTabs[selectedTab].name === "Packages" && <PackageLoader/>
-            }
-            {
-                (
-                    allTabs[selectedTab].name != "Home" &&
-                    allTabs[selectedTab].name != "Clients" &&
-                    allTabs[selectedTab].name != "Packages"
-                ) && <QuoteLoader/>
-            }
-            <View style={styles.loaderView}>
-                <ActivityIndicator
-                    size={"large"}
-                    color={textColorPrimary}
-                    style={styles.activityIndicator}
-                />
-            </View>
-            <View style={styles.bottomLoader}>
-            </View>
-        </View>
-    </Modal> : (showLoader && overlays.length) ? <Loading/> : <></>
+    showLoader ?
+        skeletonLoaderScreens.includes(routeName) ? 
+            <Modal>
+                <View style={styles.mainLoader}>
+                    {
+                        skeletonLoaderScreens.includes(routeName) &&
+                        <View style={styles.headerLoader}>
+                            <Animated.View style={[styles.dashBtn, {backgroundColor}]}/>
+                            <Animated.View style={[styles.profile, {backgroundColor}]}/>
+                        </View>
+                    }
+                    {
+                        routeName === "Home" && <HomeLoader/>
+                    }
+                    {
+                        routeName === "Clients" && <ClientLoader/>
+                    }
+                    {
+                        routeName === "Packages" && <PackageLoader/>
+                    }
+                    {
+                        (
+                            routeName != "Home" &&
+                            routeName != "Clients" &&
+                            routeName != "Packages" &&
+                            routeName != "Insights"
+                        ) && <QuoteLoader/>
+                    }
+                    {
+                        skeletonLoaderScreens.includes(routeName) &&
+                        <Animated.View style={[styles.bottomLoader, { backgroundColor }]}>
+                        </Animated.View>
+                    }
+                </View>
+            </Modal> 
+        :
+        (activityLoaderTabs.includes(routeName) || overlays.length) ?
+            <Loading/>
+        : <></>
+    : <></>
   )
 }
 
 const HomeLoader = ()=>{
     return (
         <View style={styles.detailLoader}>
-            <View style={styles.detail1}></View>
-            <View style={[styles.detail, styles.detail2]}></View>
-            <View style={[styles.detail, styles.detail3]}></View>
+            <Animated.View style={[styles.detail1, { backgroundColor }]} />
+            <Animated.View style={[styles.detail, styles.detail2, { backgroundColor }]}/>
+            <Animated.View style={[styles.detail, styles.detail3, { backgroundColor }]}/>
             <ScrollView horizontal scrollEnabled={false} style={styles.scroll} showsHorizontalScrollIndicator={false}>
-                <View style={[styles.detail ,styles.detail4]}></View>
-                <View style={[styles.detail ,styles.detail4]}></View>
-                <View style={[styles.detail ,styles.detail4]}></View>
+                <Animated.View style={[styles.detail ,styles.detail4, { backgroundColor }]}/>
+                <Animated.View style={[styles.detail ,styles.detail4, { backgroundColor }]}/>
+                <Animated.View style={[styles.detail ,styles.detail4, { backgroundColor }]}/>
             </ScrollView>
-            {/* {
-                showLoader &&
-                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
-            } */}
         </View>
     )
 }
@@ -91,15 +109,11 @@ const HomeLoader = ()=>{
 const ClientLoader = ()=>{
     return (
         <View style={styles.detailLoader}>
-            <View style={styles.search}></View>
+            <Animated.View style={[styles.search, { backgroundColor }]}/>
             <View style={styles.cardView}>
-                <View style={styles.card}></View>
-                <View style={styles.card}></View>
+                <Animated.View style={[styles.card, { backgroundColor }]}/>
+                <Animated.View style={[styles.card, { backgroundColor }]}/>
             </View>
-            {/* {
-                showLoader &&
-                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
-            } */}
         </View>
     )
 }
@@ -108,14 +122,10 @@ const PackageLoader = ()=>{
     return (
         <View style={styles.detailLoader}>
             <ScrollView horizontal scrollEnabled={false} style={styles.packageScroll} showsHorizontalScrollIndicator={false}>
-                <View style={[styles.detail ,styles.pack]}></View>
-                <View style={[styles.detail ,styles.pack]}></View>
-                <View style={[styles.detail ,styles.pack]}></View>
+                <Animated.View style={[styles.detail ,styles.pack, { backgroundColor }]}/>
+                <Animated.View style={[styles.detail ,styles.pack, { backgroundColor }]}/>
+                <Animated.View style={[styles.detail ,styles.pack, { backgroundColor }]}/>
             </ScrollView>
-            {/* {
-                showLoader &&
-                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
-            } */}
         </View>
     )
 }
@@ -126,19 +136,14 @@ const QuoteLoader = ()=>{
             <Text style={styles.quote}>
                 You can add clients to your business and track their subscriptions
             </Text>
-            {/* {
-                showLoader &&
-                <View style={[styles.loader, {transform: [{translateX: translate}]}]}></View>
-            } */}
         </View>
     )
 }
 
 const mapStateToProps = (state: any)=>({
     showLoader: state.loader?.show || false,
-    allTabs: state.bottomTab.allTabs,
-    selectedTab: state.bottomTab.activeComponentId,
-    overlays: state.overlay.opendedComponents
+    overlays: state.overlay.opendedComponents,
+    routeName: state.route.currentRoute
 })
 
 export default connect(mapStateToProps)(MainLoader)
@@ -273,5 +278,10 @@ const styles = StyleSheet.create({
     quoteView:{
         alignItems: "center",
         justifyContent: "center",
-    }   
+    },
+    skeletonLine: {
+        height: 12,
+        marginLeft: 8,
+        borderRadius: 4,
+    }
 })

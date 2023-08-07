@@ -4,6 +4,7 @@ import BottomNavigator from '../navigations/BottomNavigator';
 import { connect } from 'react-redux';
 import Overlay from '../screens/Overlay';
 import { overlayComponent } from '../interfaces/common';
+import MainLoader from '../components/Loader/MainLoader';
 
 const mainStack = createStackNavigator();
 
@@ -56,6 +57,7 @@ const MainStack = ({allOverlays}: props) => {
           )
         })
       }
+      <MainLoader/>
     </>
   )
 }

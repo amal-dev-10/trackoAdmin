@@ -1,14 +1,14 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import IconSet from '../styles/icons/Icons'
-import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary } from '../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { key } from '../styles/constants'
-import { makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
+import { fomatFirstLetterCapital, makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
 import { connect } from 'react-redux'
-import { setIdTransactions, setOverlayComponent, setTransactionMode, setTransactions, showActivatePackage } from '../redux/actions'
-import { iClient, iMembership } from '../interfaces/iClient'
-import { iTransactions, openOverlayParameter } from '../interfaces/common'
+import { setClientMode, setIdTransactions, setOverlayComponent, setTransactionMode, showActivatePackage } from '../redux/actions'
+import { iMembership } from '../interfaces/iClient'
+import { openOverlayParameter } from '../interfaces/common'
 
 type buttons = {
     id: number,
@@ -21,19 +21,20 @@ type viewClientProps = {
     clientData: iMembership,
     openOverlay: any,
     setId: any,
-    mode: any
+    mode: any,
+    clientMode: any
 }
 
-const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:viewClientProps) => {
+const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, clientMode}:viewClientProps) => {
     const [firstRowButtons, setFirstRowButtons] = useState([
         {
             id: 0,
-            icon: "mobile",
+            icon: "phone",
             name: "Call"
         },
         {
             id: 1,
-            icon: "exchange",
+            icon: "whatsapp",
             name: "Whatsapp"
         },
         {
@@ -51,7 +52,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
         },
         {
             id: 4,
-            icon: "exchange",
+            icon: "credit-card",
             name: "Membership"
         }
     ] as buttons[]);
@@ -63,6 +64,10 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                 break;
             case 1:
                 await openWhatsapp(clientData.phoneNumber);
+                break;
+            case 2:
+                clientMode("edit")
+                openOverlay(9);
                 break;
             case 3:
                 setId(clientData.clientId);
@@ -82,35 +87,33 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
         <View style={styles.detailView}>
             <IconSet name='user-circle-o' size={90} color={iconColor}/>
             <View style={[styles.nameView]}>
-                <Text style={styles.nameText}>{clientData.name.toUpperCase()}</Text>
+                <Text style={styles.nameText}>{fomatFirstLetterCapital(clientData.name.toUpperCase())}</Text>
                 <Text style={styles.phoneText}>{clientData.phoneNumber}</Text>
             </View>
         </View>
-        {/* <View style={styles.memberSince}>
-            <IconSet name='user-o' size={20} color={iconColor}/>
-            <Text>Member since 2020</Text>
-        </View> */}
         <View style={styles.statRow}>
             <View style={styles.section}>
                 <Text style={key}>{wordSplitter("Active membership")}</Text>
                 <Text style={styles.value}>
                     {
-                        clientData?.memberShipDetails?.tier ?
+                        (clientData?.memberShipDetails?.tier && !clientData.memberShipDetails?.expired) ?
                         clientData?.memberShipDetails?.tier.toUpperCase() 
                         : "NA"
                     }
                 </Text>
+                <Text style={styles.subKey}>Pack</Text>
             </View>
             <View style={styles.divider}></View>
             <View style={styles.section}>
                 <Text style={key}>{wordSplitter("Expires In")}</Text>
                 <Text style={styles.value}>
                     { 
-                        clientData?.memberShipDetails?.expireIn ?
+                        (clientData?.memberShipDetails?.expireIn && !clientData.memberShipDetails?.expired) ?
                             clientData?.memberShipDetails?.expireIn
-                        : "NA"
+                        : clientData.memberShipDetails?.expired ? "EXPIRED" : "NA"
                     }
                 </Text>
+                <Text style={styles.subKey}>Days</Text>
             </View>
             <View style={styles.divider}></View>
             <View style={styles.section}>
@@ -122,6 +125,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode}:vie
                         : "NA"
                     }
                 </Text>
+                <Text style={styles.subKey}>Year</Text>
             </View>
         </View>
         <View>
@@ -152,7 +156,8 @@ const mapDispatchToProps = (dispatch: any)=>({
     showActivatePack: (show:boolean)=>{dispatch(showActivatePackage(show))},
     openOverlay: (id: openOverlayParameter)=>{dispatch(setOverlayComponent(id))},
     setId: (id: string)=>{dispatch(setIdTransactions(id))},
-    mode: (mode: string)=>{dispatch(setTransactionMode(mode))}
+    mode: (mode: string)=>{dispatch(setTransactionMode(mode))},
+    clientMode: (mode: string)=>{dispatch(setClientMode(mode))}
 });
 
 const mapStateToProps = (state: any)=>({
@@ -275,4 +280,8 @@ const styles = StyleSheet.create({
         color: goldColor,
         fontSize: fontSize.xmedium
     },
+    subKey:{
+        fontSize: fontSize.xSmall,
+        color: borderColor
+    }
 })

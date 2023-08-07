@@ -1,6 +1,6 @@
-import { StyleSheet, Text, View } from 'react-native'
+import { BackHandler, StyleSheet, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container } from '../utils/helper'
+import { container, setRoute } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { textColorPrimary } from '../styles/colors'
@@ -9,13 +9,14 @@ import DashboardCard from '../components/Common/DashboardCard'
 import { apiResponse } from '../interfaces/common'
 import DashboardOverlay from '../components/Common/DashboardOverlay'
 import { ScrollView } from 'react-native-gesture-handler'
-import { logout, resetStateAction } from '../redux/actions/authActions'
+import { resetStateAction } from '../redux/actions/authActions'
 import { connect } from 'react-redux'
-import { getAllBusiness, getOwnerById } from '../services/apiCalls/serviceCalls'
+import { getAllBusiness } from '../services/apiCalls/serviceCalls'
 import { setAllBusinesses, setOverlayComponent, setSelectedBusiness } from '../redux/actions'
 import { ibusiness } from '../interfaces/business'
 import { navigate } from '../navigations/NavigationService'
 import IconSet from '../styles/icons/Icons'
+import NoData from '../components/Common/NoData'
 
 type props = {
   resetAuthState: any,
@@ -28,19 +29,12 @@ type props = {
 const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay}: props) => {
 
   const [showOverlay, setShowOverlay] = useState(false as boolean);
-
-  // const openOverlay = ()=>{
-  //   toggleOverlay();
-  // }
+  const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
+  const [servieMsg, setServiceMsg] = useState("" as string);
 
   const toggleOverlay = () => {
     setShowOverlay(!showOverlay);
   };
-
-  // const tester = async ()=>{
-  //   let res = await getOwnerById("7bcd340f-1ad5-44f9-baa1-d85280b190ab");
-  //   console.log(res)
-  // }
 
   const gotoDashboard = (businessData: ibusiness)=>{
     selectBusiness(businessData);
@@ -49,16 +43,25 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
 
   const getMyBusiness = async ()=>{
     let resp: apiResponse | null = await getAllBusiness();
+    setServiceMsg(resp?.message || "");
     if(resp?.status === 200){
       setAllBusiness([...resp.data]);
+      setFetchFailed(false)
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      setFetchFailed(true)
     }
   }
 
   useEffect(()=>{
+    setRoute("Dashboard")
+    const backAction = ()=>{
+      return true
+    }
+    let backHandler = BackHandler.addEventListener("hardwareBackPress", backAction)
+    getMyBusiness();
     resetAuthState();
-    getMyBusiness()
-    // tester()
-  },[])
+    return () => backHandler.remove()
+  },[]);
 
   return (
     <View style={[container, styles.dashboardScreen]}>
@@ -76,21 +79,34 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
           </TouchableOpacity>
         </View>
       </View>
-      <ScrollView contentContainerStyle={styles.cardView} showsVerticalScrollIndicator={false}>
         {
-          allBusiness.map((data: ibusiness, i:number)=>{
-            return(
-              <DashboardCard
-                icon={"building"}
-                id={data?.uid || ""}
-                orgName={data.name}
-                onPress={()=>{gotoDashboard(data)}}
-                key={i}
-              />
-            )
-          })
+          allBusiness.length ?
+          <ScrollView contentContainerStyle={styles.cardView} showsVerticalScrollIndicator={false}>
+            {
+              allBusiness.map((data: ibusiness, i:number)=>{
+                return(
+                  <DashboardCard
+                    icon={"building"}
+                    id={data?.uid || ""}
+                    orgName={data.name}
+                    onPress={()=>{gotoDashboard(data)}}
+                    key={i}
+                  />
+                )
+              })
+            }
+          </ScrollView> : <></>
         }
-      </ScrollView>
+        {
+          fetchFailed != undefined &&
+          <NoData 
+            text={servieMsg} 
+            onTouch={(button: string)=>{button === "Register" ? toggleOverlay() : ""}} 
+            buttons={["Register"]}
+            fetchFailed={fetchFailed}
+            data={allBusiness}
+          />
+        }
       {
         showOverlay &&
         <DashboardOverlay

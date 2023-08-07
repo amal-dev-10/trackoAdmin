@@ -1,14 +1,18 @@
 import { actionInterface } from "../../interfaces/common"
-import { iClient, iMembership, iMembershipDetails } from "../../interfaces/iClient"
+import { iClient, iFilters, iMembership, iMembershipDetails, subFilters, updatableClient } from "../../interfaces/iClient"
 
 type props = {
     clients: iMembership[],
-    selectedClient: iMembership | null
+    selectedClient: iMembership | null,
+    mode: string
+    // filters: {allFilters: iFilters[], filterActive?: boolean} | null,
 }
 
 let initialState = {
     clients:[],
-    selectedClient: null
+    selectedClient: null,
+    filters: null,
+    mode: "add"
 }
 
 export const clientReducer = (state: props = initialState, action: actionInterface)=>{
@@ -29,18 +33,45 @@ export const clientReducer = (state: props = initialState, action: actionInterfa
             }
             return initialState
         case "UPDATE_MEMBERSHIP":
-            let index: number = state.clients.findIndex((d)=>{return d.clientId === state.selectedClient?.clientId});
-            let temp: iMembership[] = [...state.clients];
-            if(index > -1){
-                temp[index].memberShipDetails = {...action.payload}
-            }
+            let temp: iMembership[] = new Array();
+            temp = state.clients.map((x)=>{
+                if(x.clientId === state.selectedClient?.clientId){
+                    x.memberShipDetails = {...action.payload}
+                }
+                return x
+            });
             return{
                 ...state,
-                clients: new Array().concat(temp),
+                clients: JSON.parse(JSON.stringify(temp)),
                 selectedClient: {
                     ...state.selectedClient, 
                     memberShipDetails: {...action.payload as iMembershipDetails}
                 }
+            }
+        case "UPDATE_CLIENT_DETAILS":
+            let updateClient = action.payload as updatableClient & {uid?: String}
+            let t = state.clients.map((x)=>{
+                if(x.clientId === state.selectedClient?.clientId){
+                    delete updateClient?.uid
+                    x = {
+                        ...x,
+                        ...updateClient
+                    }
+                }
+                return x
+            });
+            return {
+                ...state,
+                clients: JSON.parse(JSON.stringify(t)),
+                selectedClient: {
+                    ...state.selectedClient,
+                    ...updateClient
+                }
+            }
+        case "SET_MODIFY_CLIENT_MODE":
+            return {
+                ...state,
+                mode: action.payload
             }
         default:
             return state

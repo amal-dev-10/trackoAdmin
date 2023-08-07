@@ -66,12 +66,14 @@ export type packagesProps = {
     numOfYearOrMonths: string,
     active: boolean,
     currency: string,
-    id: string
+    id: string,
+    title: string
 }
 
 export type overlayComponent = {
     name: string,
-    id: number
+    id: number,
+    screenName?: string
 }
 
 export type profileButtonProps = {
@@ -120,6 +122,14 @@ export type openOverlayParameter = {
 
 export type iTransactions = {
     transactionId: string,
+    name?: string,
     dateString: string,
     packDetails: packagesProps
+}
+
+export type confirmationModal = {
+    showConfirmModal: boolean,
+    msg: string,
+    title: string,
+    confirm: boolean
 }

@@ -1,4 +1,4 @@
-import { StyleSheet, View } from 'react-native';
+import { BackHandler, StyleSheet, View } from 'react-native';
 import { container, tabBarHeight } from '../utils/helper';
 import MainHeader from '../components/Common/MainHeader';
 import BottomTab from '../components/Common/BottomTab';
@@ -10,10 +10,9 @@ import Clients from '../screens/Clients';
 import Requests from '../screens/Requests';
 import Insights from '../screens/Insights';
 import Packages from '../screens/Packages';
-import Overlay from '../screens/Overlay';
-import MainLoader from '../components/Loader/MainLoader';
 import { setLoader } from '../redux/actions';
 import { useEffect } from 'react';
+import MainLoader from '../components/Loader/MainLoader';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
@@ -21,14 +20,11 @@ type bottomTabPropsInt = {
 }
 
 const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
-  //for loader testing
-  // useEffect(()=>{
-  //   showLoader(true)
-  //   let t = setTimeout(()=>{
-  //     showLoader(false)
-  //     clearTimeout(t);
-  //   }, 5000)
-  // },[])
+  useEffect(()=>{
+    BackHandler.addEventListener("hardwareBackPress", ()=>{
+      return false
+    })
+  }, [])
   return (
     <View style={[container,styles.main]}>
       <View style={[styles.headerBottomView, {marginBottom: 10}]}>
@@ -54,7 +50,6 @@ const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
       <View style={[styles.headerBottomView, styles.bottomHeight]}>
         <BottomTab/>
       </View>
-      <MainLoader/>
     </View>
   )
 }

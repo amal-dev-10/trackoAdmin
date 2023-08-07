@@ -1,15 +1,15 @@
 import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
 import IconSet from '../../styles/icons/Icons'
-import { borderColor, cardColor, iconColor, textColorPrimary } from '../../styles/colors'
-import { shadowGenerator } from '../../utils/helper'
+import { borderColor, cardColor, iconColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import { resetReducerAction, setOverlayComponent } from '../../redux/actions'
 import { connect } from 'react-redux'
 import { navigate } from '../../navigations/NavigationService'
 import { ibusiness } from '../../interfaces/business'
 import store from '../../redux/store'
-import { bottomTabProps, overlayComponent } from '../../interfaces/common'
+import { bottomTabProps } from '../../interfaces/common'
+import { setRoute } from '../../utils/helper'
 
 type props = {
   openOverlay: any,
@@ -19,6 +19,7 @@ type props = {
 }
 
 const gotoDashboard = ()=>{
+  setRoute("Dashboard");
   let st = store.dispatch;
   st(resetReducerAction("tabReducer"));
   st(resetReducerAction("clientReducer"));
@@ -30,15 +31,15 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
   return (
     <View style={styles.header}>
       <View style={styles.mainHeaderText}>
-        <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7}>
+        <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7} onPress={()=>{openOverlay(8)}}>
           <IconSet name='building' size={20} color={iconColor}/>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.orgDropDown, shadowGenerator(2,2)]} onPress={()=>{gotoDashboard()}} activeOpacity={0.7}>
+        <TouchableOpacity style={[styles.orgDropDown]} onPress={()=>{gotoDashboard()}} activeOpacity={0.7}>
           <View style={styles.businessNameView}>
-            <Text style={styles.orgName}>{selectedBusiness.name.toUpperCase()}</Text>
-            <Text style={styles.location}>{", " + selectedBusiness.location.toLowerCase()}</Text>
+            <Text style={styles.orgName} numberOfLines={1} ellipsizeMode="tail">{selectedBusiness.name.toUpperCase()}</Text>
+            <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{selectedBusiness.location.toLowerCase()}</Text>
           </View>
-          <IconSet name='left-small' color={iconColor} size={25}/>
+          <IconSet name='angle-left' color={iconColor} size={25} style={{transform:[{rotate: "180deg"}]}}/>
         </TouchableOpacity>
       </View>
       {/* <View style={styles.userView}>
@@ -80,7 +81,7 @@ const styles = StyleSheet.create({
     paddingRight: 15,
     flex: 0.8,
     height: "100%",
-    backgroundColor: cardColor,
+    // backgroundColor: cardColor,
     borderRadius: 10
   },
   userView:{
@@ -92,19 +93,20 @@ const styles = StyleSheet.create({
     alignItems: "center"
   },
   orgName:{
+    width: "90%",
     fontSize: fontSize.xmedium,
     color: iconColor
   },
   location:{
     fontSize: fontSize.small,
-    color: "gray"
+    color: "gray",
+    width: "90%"
   },
   businessNameView: {
     display: "flex",
-    flexDirection: "row",
+    flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: 'baseline',
-    flexWrap: "wrap"
   },
   tabName:{
     fontSize: fontSize.small,
@@ -113,7 +115,7 @@ const styles = StyleSheet.create({
   mainHeaderText:{
     display: "flex",
     flexDirection: "row",
-    gap: 10,
+    gap: 5,
     alignItems: 'center',
     flex: 1,
   },

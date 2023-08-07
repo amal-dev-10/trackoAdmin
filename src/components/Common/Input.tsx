@@ -1,8 +1,8 @@
 import { KeyboardType, StyleSheet, Text, TextInput, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
-import { borderColor, iconColor, inputFocusColor, secondaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
+import { borderColor, iconColor, inputFocusColor, secondaryColor, textColorPrimary } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
-import { shadowGenerator, toCamelCase } from '../../utils/helper'
+import { shadowGenerator } from '../../utils/helper'
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
 import Ionic from 'react-native-vector-icons/Ionicons';
 

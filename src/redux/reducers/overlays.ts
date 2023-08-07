@@ -1,4 +1,5 @@
 import { actionInterface, overlayComponent } from "../../interfaces/common"
+import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
 
 type stateInterface = {
     opendedComponents: overlayComponent[],
@@ -8,13 +9,15 @@ type stateInterface = {
 let initialState: stateInterface = {
     opendedComponents: [],
     componentList:[
-        {id: 1, name: "TRANSACTIONS"},
-        {id: 2, name: "PROFILE"},
-        {id: 3, name: "ALL TRANSACTIONS"},
-        {id: 4, name: "TERMS & CONDITIONS"},
-        {id: 5, name: "SETTINGS"},
-        {id: 6, name: "ADD CLIENTS"},
-        {id: 7, name: "DETAILED"},
+        {id: 1, name: "TRANSACTIONS", screenName: "transactions"},
+        {id: 2, name: "PROFILE", screenName: "profile"},
+        {id: 3, name: "ALL TRANSACTIONS", screenName: "transactions"},
+        {id: 4, name: "TERMS & CONDITIONS", screenName: "termsAndConditions"},
+        {id: 5, name: "SETTINGS", screenName: "settings"},
+        {id: 6, name: "ADD CLIENTS", screenName: "addClients"},
+        {id: 7, name: "DETAILED", screenName: "clientDetails"},
+        {id: 8, name: "", screenName: "businessProfile"},
+        {id: 9, name: "EDIT", screenName: "editClient"},
     ],
 }
 

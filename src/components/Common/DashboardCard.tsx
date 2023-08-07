@@ -5,7 +5,6 @@ import Icon from 'react-native-vector-icons/FontAwesome'
 import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors';
 import { fontSize } from '../../styles/fonts';
 import { TouchableOpacity } from 'react-native';
-import { navigate } from '../../navigations/NavigationService';
 
 const DashboardCard = (props: orgProps) => {
   return (
