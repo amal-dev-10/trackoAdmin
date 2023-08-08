@@ -1,7 +1,7 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { TouchableOpacity } from 'react-native-gesture-handler'
-import { borderColor } from '../../styles/colors'
+import { borderColor, textColorPrimary } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 
 type props = {
@@ -9,7 +9,8 @@ type props = {
     buttons?: string[],
     text: string,
     fetchFailed: boolean,
-    data: any
+    data: any,
+    tryAgainClicked: any
 }
 
 const NoData = (props: props) => {
@@ -50,23 +51,35 @@ const NoData = (props: props) => {
     <View style={styles.noDataView}>
         <Text style={styles.noDataLogo}>{title}</Text> 
         <Text style={styles.noDataText}>{msg}</Text>
-        <View style={styles.buttonRow}>
-            {
-                (buttonList && buttonList?.length) ? 
-                    buttonList.map((d, i:number)=>{
-                        return (
-                            <TouchableOpacity 
-                                onPress={()=>{props.onTouch(d)}} 
-                                style={styles.button}
-                                key={"button"+i}
-                            >
-                                <Text style={styles.buttonText}>{d.toUpperCase()}</Text>
-                            </TouchableOpacity>
-                        )
-                    })
-                : <></>
-            }
-        </View>
+        {
+            !props.fetchFailed ?  
+                <View style={styles.buttonRow}>
+                    {
+                        (buttonList && buttonList?.length) ? 
+                            buttonList.map((d, i:number)=>{
+                                return (
+                                    <TouchableOpacity 
+                                        onPress={()=>{props.onTouch(d)}} 
+                                        style={styles.button}
+                                        key={"button"+i}
+                                    >
+                                        <Text style={styles.buttonText}>{d.toUpperCase()}</Text>
+                                    </TouchableOpacity>
+                                )
+                            })
+                        : <></>
+                    }
+                </View>
+            : <TouchableOpacity 
+                style={{
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    padding: 5
+                }}
+                onPress={()=>{props.tryAgainClicked()}}
+            ><Text style={styles.tryAgainText}>Try Again</Text></TouchableOpacity>
+        }
     </View> : <></>
   )
 }
@@ -112,5 +125,10 @@ const styles = StyleSheet.create({
         fontSize: fontSize.medium,
         fontWeight: "600",
         color: "gray"
+    },
+    tryAgainText:{
+        color: textColorPrimary,
+        fontSize: fontSize.small,
+        fontWeight: "400"
     }
 })

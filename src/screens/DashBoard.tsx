@@ -1,4 +1,4 @@
-import { BackHandler, StyleSheet, View } from 'react-native'
+import { BackHandler, StyleSheet, View, LayoutAnimation, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, setRoute } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
@@ -31,12 +31,14 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
   const [servieMsg, setServiceMsg] = useState("" as string);
+  const [reload, setReload] = useState(false as boolean);
 
   const toggleOverlay = () => {
     setShowOverlay(!showOverlay);
   };
 
   const gotoDashboard = (businessData: ibusiness)=>{
+    setRoute("Home");
     selectBusiness(businessData);
     navigate("Bottom");
   }
@@ -45,6 +47,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
     let resp: apiResponse | null = await getAllBusiness();
     setServiceMsg(resp?.message || "");
     if(resp?.status === 200){
+      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
       setAllBusiness([...resp.data]);
       setFetchFailed(false)
     }else if(resp?.status === 500 || resp?.status === undefined){
@@ -52,14 +55,25 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
     }
   }
 
+  const start = ()=>{
+    getMyBusiness();
+    resetAuthState();
+  }
+
+  useEffect(()=>{
+    if(reload){
+      start();
+      setReload(false);
+    }
+  }, [reload]);
+
   useEffect(()=>{
     setRoute("Dashboard")
     const backAction = ()=>{
       return true
     }
+    start();
     let backHandler = BackHandler.addEventListener("hardwareBackPress", backAction)
-    getMyBusiness();
-    resetAuthState();
     return () => backHandler.remove()
   },[]);
 
@@ -105,6 +119,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
             buttons={["Register"]}
             fetchFailed={fetchFailed}
             data={allBusiness}
+            tryAgainClicked={()=>{setReload(true)}}
           />
         }
       {

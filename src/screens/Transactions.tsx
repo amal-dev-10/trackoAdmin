@@ -1,13 +1,11 @@
-import { Dimensions, ScrollView, StyleSheet, Text, View } from 'react-native'
+import { Dimensions, LayoutAnimation, ScrollView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import LinearGradient from 'react-native-linear-gradient'
-import { amountColor, borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
+import { amountColor, borderColor, cardColor, goldColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { apiResponse, iTransactions } from '../interfaces/common'
 import { setTransactions } from '../redux/actions'
 import { getClientTransactions } from '../services/apiCalls/serviceCalls'
-import { showToast } from '../utils/helper'
 import NoData from '../components/Common/NoData'
 
 type props = {
@@ -19,6 +17,8 @@ type props = {
 
 const Transactions = ({type, setTransactions, transactions, mode}: props) => {
     const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
+    const [reload, setReload] = useState(false as boolean);
+
     const getAllTransactions = async ()=>{
         setTransactions([])
         let data: apiResponse | null = null;
@@ -35,38 +35,22 @@ const Transactions = ({type, setTransactions, transactions, mode}: props) => {
         }
     }
 
+    const start = ()=>{
+        getAllTransactions();
+    }
+
     useEffect(()=>{
-        getAllTransactions()
+        if(reload){
+          start();
+          setReload(false);
+        }
+    }, [reload]);
+
+    useEffect(()=>{
+        start();
     },[])
   return (
     <View style={styles.transactionScreen}>
-        {/* <LinearGradient
-            colors={["rgba(25,25,25,1)", cardColor]}
-            start={{ x: 0.5, y: 0 }}
-            end={{ x: 0.5, y: 1 }}
-            style={[styles.transactionCard]}
-        >
-            <IconSet name='user-o' color={iconColor} size={60}/>
-            <View style={styles.headerDetailView}>
-                <View style={styles.balanceView}>
-                    <Text style={key}>Total Transfered</Text>
-                    <Text style={styles.amount}>12345</Text>
-                </View>
-                <View style={styles.underView}>
-                    <View style={styles.part}>
-                        <Text style={key}>Name</Text>
-                        <Text style={styles.value}>AMAL DEV</Text>
-                    </View>
-                    <View style={styles.part}>
-                        <Text style={key}>Id</Text>
-                        <Text style={styles.value}>PR-24-2023</Text>
-                    </View>
-                </View>
-            </View>
-        </LinearGradient>
-        <View style={styles.titleView}>
-            <Text style={[styles.titleText]}>LAST TRANSACTIONS</Text>
-        </View> */}
         {
             transactions.length ? 
                 <ScrollView style={styles.transactionScroll} showsVerticalScrollIndicator={false}>
@@ -104,6 +88,7 @@ const Transactions = ({type, setTransactions, transactions, mode}: props) => {
                     buttons={[]}
                     fetchFailed={fetchFailed}
                     data={transactions}
+                    tryAgainClicked={()=>{setReload(true)}}
                 />
             : <></>
         }

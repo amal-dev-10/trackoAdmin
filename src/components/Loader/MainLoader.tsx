@@ -1,5 +1,5 @@
 import { Modal, StyleSheet, Text, View, ScrollView, Dimensions, Animated } from 'react-native'
-import React from 'react'
+import React, { useEffect } from 'react'
 import { borderColor, cardColor, primaryColor } from '../../styles/colors'
 import { connect } from 'react-redux';
 import { fontSize } from '../../styles/fonts';
@@ -113,6 +113,7 @@ const ClientLoader = ()=>{
             <View style={styles.cardView}>
                 <Animated.View style={[styles.card, { backgroundColor }]}/>
                 <Animated.View style={[styles.card, { backgroundColor }]}/>
+                <Animated.View style={[styles.card, { backgroundColor }]}/>
             </View>
         </View>
     )
@@ -121,6 +122,12 @@ const ClientLoader = ()=>{
 const PackageLoader = ()=>{
     return (
         <View style={styles.detailLoader}>
+            <View style={{display: "flex", flexDirection: "column", gap: 10, width: "100%"}}>
+                <View style={{backgroundColor: cardColor, height: 20,
+                width: "20%", borderRadius: 10}}></View>
+                <View style={{backgroundColor: cardColor, height: 50,
+                width: "100%", borderRadius: 10}}></View>
+            </View>
             <ScrollView horizontal scrollEnabled={false} style={styles.packageScroll} showsHorizontalScrollIndicator={false}>
                 <Animated.View style={[styles.detail ,styles.pack, { backgroundColor }]}/>
                 <Animated.View style={[styles.detail ,styles.pack, { backgroundColor }]}/>
@@ -222,7 +229,7 @@ const styles = StyleSheet.create({
         padding: 5
     },
     packageScroll:{
-        height: "100%",
+        height: "90%",
         padding: 5
     },
     pack:{
@@ -264,10 +271,11 @@ const styles = StyleSheet.create({
         gap: 10
     },
     card:{
-        height: "40%",
+        height: "29%",
         backgroundColor: cardColor,
         width: "100%",
         borderRadius: 10,
+        padding: 10
     },
     quote:{
         textAlign: "center",

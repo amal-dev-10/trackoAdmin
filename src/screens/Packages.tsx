@@ -1,4 +1,4 @@
-import { Dimensions, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Dimensions, LayoutAnimation, NativeScrollEvent, NativeSyntheticEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useRef, useState } from 'react'
 import { borderColor, cardColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
@@ -24,11 +24,22 @@ const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) 
   const getSavedPackages = async ()=>{
     let resp: apiResponse = await getPackages(businessId);
     if(resp?.status === 200){
-        mapPackage(resp.data);
+      mapPackage(resp.data);
     }else if(resp?.status === 500 || resp?.status === undefined){
       showToast("Data fetch failed !")
     }
   }
+
+  useEffect(()=>{
+    if(allPackages?.length){
+      LayoutAnimation.configureNext({
+        duration: 200, // Adjust the frame rate by changing the duration
+        update: {
+          type: LayoutAnimation.Types.linear ,
+        },
+      });
+    }
+  }, [allPackages])
 
   const scrollViewRef = useRef(null);
   const [visibleCardIndex, setVisibleCardIndex] = useState(0);
@@ -45,6 +56,13 @@ const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) 
     let scroll: any = scrollViewRef.current;
     if(scroll){
       scroll.scrollToEnd({ animated: true });
+    }
+  }
+
+  const scrollToStart = ()=>{
+    let scroll: any = scrollViewRef.current;
+    if(scroll){
+      scroll.scrollTo({ y: 0, animated: true });
     }
   }
 
@@ -89,7 +107,7 @@ const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) 
             {
               allPackages?.map((data, i:number)=>{
                 return (
-                  <PackageCard packDetail={data} key={"pack" + i}/>
+                  <PackageCard packDetail={data} key={"pack" + i} scrollToFirst={()=>{scrollToStart()}}/>
                 )
               })
             }

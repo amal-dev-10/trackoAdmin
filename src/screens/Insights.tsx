@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { LayoutAnimation, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import { Dropdown } from 'react-native-element-dropdown';
 import React, { useEffect, useState } from 'react'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors';
@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { iFinanceInsight, iMembershipInsight, mainStat } from '../interfaces/business';
 import { setFinanceInsightAction, setMembershipInsightAction } from '../redux/actions';
 import { getInsights } from '../services/apiCalls/serviceCalls';
-import { calculateDaysBetweenDates, container, setRoute } from '../utils/helper';
+import { calculateDaysBetweenDates, container, setRoute, showToast } from '../utils/helper';
 import NoData from '../components/Common/NoData';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AreaChart from '../components/Charts/AreaChart';
@@ -36,7 +36,8 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
   const [quickStat, setQuickStat] = useState({} as iStats);
   const [start, setStart] = useState("" as any);
   const [end, setEnd] = useState("" as any);
-  const [insightData, setInsightData] = useState([] as mainStat[])
+  const [insightData, setInsightData] = useState([] as mainStat[]);
+  const [reload, setReload] = useState(false as boolean);
   const chartTypeData = [
     {label: "REVENUE INSIGHT", value: "revenueInsight"},
     {label: "NEW CLIENT INSIGHT", value: "newClientInsight"},
@@ -48,6 +49,12 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
   const getData = async (s: string, e: string)=>{
     let resp: apiResponse = await getInsights(insightType.value, s, e);
     if(resp?.status === 200){
+        LayoutAnimation.configureNext({
+          duration: 200, // Adjust the frame rate by changing the duration
+          update: {
+            type: LayoutAnimation.Types.linear ,
+          },
+        });
         calculateStats(resp.data);
         setInsightData(resp.data);
         setFetchFailed(false);
@@ -77,7 +84,15 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
     setChartData([]);
     setInsightType({} as dropDownProps);
     if(start && end){
-      getData(start, end);
+      let s = start as Date;
+      let e = end as Date;
+      if(s.getTime() < e.getTime()){
+        getData(start, end);
+      }else{
+        showToast("Enter valid dates.")
+      }
+    }else{
+      showToast("Select prefered date.")
     }
   }
 
@@ -100,6 +115,13 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
 
   useEffect(()=>{
     setChartData([]);
+    LayoutAnimation.configureNext({
+      duration: 200, // Adjust the frame rate by changing the duration
+      update: {
+        type: LayoutAnimation.Types.linear ,
+      },
+    });
+
     switch(insightType.value){
       case "revenueInsight":
         let c1 = insightData.map((x)=>{
@@ -133,6 +155,20 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
     }
   }, [insightType]);
 
+  const startReload = ()=>{
+    loadButtonClicked();
+    if(insightType?.value){
+      setInsightType({...insightType});
+    }
+  }
+
+  useEffect(()=>{
+    if(reload){
+      startReload();
+      setReload(false);
+    }
+  }, [reload]);
+
   useEffect(()=>{
     setRoute("Insights");
   },[])
@@ -142,7 +178,7 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
       {
         <ScrollView style={styles.insightScreen} showsVerticalScrollIndicator={false}>
           <View style={styles.membershipInsightSection}>
-            <Text style={styles.keys}>GENERATE DETAILED REPORT BY START & END DATE</Text>
+            <Text style={styles.keys}>GENERATE DETAILED REPORT BY DATE</Text>
             <View style={styles.dropDownView}>
               <TouchableOpacity style={styles.filterDateBtn} onPress={()=>{setShowStartCalender(true)}}>
                 <Text>{start ? start.toLocaleDateString() : "START DATE"}</Text>
@@ -258,6 +294,7 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
                 buttons={[]}
                 fetchFailed={fetchFailed}
                 data={membershipInsight}
+                tryAgainClicked={()=>{setReload(true)}}
           />
         : <></>
       }
@@ -391,6 +428,6 @@ const styles = StyleSheet.create({
     height: 1,
     width: "100%",
     borderRadius: 10,
-    backgroundColor: borderColor
+    backgroundColor: "#232323"
   }
 })

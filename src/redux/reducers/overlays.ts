@@ -27,7 +27,10 @@ export const overlayReducer = (state = initialState, action: actionInterface)=>{
         case "SET_OVERLAY_COMPONENT":
             let componentIndex: number = state.componentList.findIndex((x)=>{return x.id === componentId});
             if(componentIndex > -1){
-                state = {...state, opendedComponents: [...state.opendedComponents, state.componentList[componentIndex]]};
+                let index:number = state.opendedComponents.findIndex((x)=>{x.id === state.componentList[componentIndex].id});
+                if(index < 0){
+                    state = {...state, opendedComponents: [...state.opendedComponents, state.componentList[componentIndex]]};
+                }
             }
             return state;
         case "CLOSE_OVERLAY_COMPONENT":

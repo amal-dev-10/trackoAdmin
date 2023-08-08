@@ -10,7 +10,7 @@ export const getData = async (url: string, byPassLoading: boolean = false) => {
         if(!byPassLoading){
             store.dispatch(setLoader(true));
         }
-        response = await createApiInstance().get(url)
+        response = await createApiInstance().get(url, {timeout: 30000})
     } catch (error: any) {
         if((<string>error.message).includes("401")){
             navigate("Splash")
@@ -27,7 +27,7 @@ export const postData = async (url: string, body: any, byPassLoading: boolean = 
         if(!byPassLoading){
             store.dispatch(setLoader(true));
         }
-        response = await createApiInstance().post(url, JSON.stringify(body));
+        response = await createApiInstance().post(url, JSON.stringify(body), {timeout: 30000});
     } catch (error: any) {
         if((<string>error.message).includes("401")){
             navigate("Splash")
@@ -42,7 +42,7 @@ export const patchData = async (url: string, body: any) => {
     let response = null;
     try {
         store.dispatch(setLoader(true));
-        response = await createApiInstance().patch(url, JSON.stringify(body));
+        response = await createApiInstance().patch(url, JSON.stringify(body), {timeout: 30000});
     } catch (error: any) {
         if((<string>error.message).includes("401")){
             navigate("Splash")
@@ -57,7 +57,7 @@ export const deleteData = async (url: string) => {
     let response = null;
     try {
         store.dispatch(setLoader(true));
-        response = await createApiInstance().delete(url);
+        response = await createApiInstance().delete(url, {timeout: 30000});
     } catch (error: any) {
         if((<string>error.message).includes("401")){
             navigate("Splash")

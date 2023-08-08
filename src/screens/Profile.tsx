@@ -1,13 +1,14 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { LayoutAnimation, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { shadowGenerator } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
-import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, textColorSecondary } from '../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { profileButtonProps } from '../interfaces/common'
 import { setIdTransactions, setOverlayComponent, setTransactionMode, toggleSubButton } from '../redux/actions'
 import { logout } from '../redux/actions/authActions'
+import packageJson from '../../package.json';
 
 type props = {
     profileBtnList: profileButtonProps[],
@@ -19,7 +20,7 @@ type props = {
 }
 
 const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setId}: props) => {
-    const [rating, setRating] = useState( 4.6 as number);
+    const [rating, setRating] = useState( 0 as number);
     const [stars, setStars] = useState([] as any[]);
 
     const ratingStarGenerator = ()=>{
@@ -40,6 +41,7 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
     }
 
     useEffect(()=>{
+        setRating(0);
         let starList = ratingStarGenerator();
         setStars([...starList]);
     },[]);
@@ -49,12 +51,16 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
         <View style={[styles.profileCard, shadowGenerator()]}>
             <View style={styles.details}>
                 <Text style={styles.textName}>AMAL DEV</Text>
-                <View style={styles.ratingView}>
-                    {
-                        stars
-                    }
-                    <Text>4.6</Text>
-                </View>
+                {
+                    rating ? 
+                        <View style={styles.ratingView}>
+                            {
+                                stars
+                            }
+                            <Text>{rating}</Text>
+                        </View>
+                    : <Text style={styles.noRatingText}>No rating</Text>
+                }
                 <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' size={15} color={iconColor}/>
                     <Text style={styles.profileEdit}>Edit Profile</Text>
@@ -74,6 +80,12 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
                                     if(!data.subButtons.length){
                                         data.name === "LOGOUT" ? signOut() : openOverlay(data.id);
                                     }else{
+                                        LayoutAnimation.configureNext({
+                                            duration: 200, // Adjust the frame rate by changing the duration
+                                            update: {
+                                              type: LayoutAnimation.Types.linear ,
+                                            },
+                                          });
                                         toggleButton(data.id);
                                     }
                                     // !data.subButtons.length ? openOverlay(data.id) : toggleButton(data.id)
@@ -110,7 +122,7 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
             }
         </View>
         <View style={styles.versionView}>
-            <Text style={styles.versionName}>TRACKO ADMIN 1.0</Text>
+            <Text style={styles.versionName}>{`${packageJson.name.toUpperCase().replace("_", " ")} v${packageJson.version}`}</Text>
         </View>
     </View>
   )
@@ -241,5 +253,9 @@ const styles = StyleSheet.create({
     subButton:{
         width: "80%",
         justifyContent: "flex-start"
+    },
+    noRatingText:{
+        color: borderColor,
+        fontSize: fontSize.small
     }
 })

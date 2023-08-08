@@ -1,5 +1,5 @@
-import { StyleSheet, Text, View } from 'react-native'
-import React from 'react'
+import { Animated, StyleSheet, Text, View } from 'react-native'
+import React, { useEffect } from 'react'
 import { orgProps } from '../../interfaces/common';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors';

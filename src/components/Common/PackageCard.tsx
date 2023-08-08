@@ -19,7 +19,8 @@ type props = {
     confirmation: boolean,
     setProperties: any,
     removePackage: any,
-    setConfirm: any
+    setConfirm: any,
+    scrollToFirst: any
 }
 
 type EditableProps = {
@@ -32,7 +33,7 @@ type EditableProps = {
     tier: string
 }
 
-const PackageCard = ({packDetail, updatePack,businessId,confirmation,showModal,setProperties,removePackage,setConfirm}: props) => {
+const PackageCard = ({packDetail, updatePack,businessId,confirmation,showModal,setProperties,removePackage,setConfirm,scrollToFirst}: props) => {
     const [showLoader, setShowLoader] = useState(false as boolean);
     const [currentId, setCurrentId] = useState("" as string);
     const [editable, setEditable] = useState({
@@ -119,6 +120,7 @@ const PackageCard = ({packDetail, updatePack,businessId,confirmation,showModal,s
             setProperties({msg: `You have selected ${packDetail?.tier.toUpperCase()} package to remove.\nSure that you want to remove.`})
             showModal(true);
         }else{
+            scrollToFirst()
             removePackage(packDetail?.id);
         }
     }

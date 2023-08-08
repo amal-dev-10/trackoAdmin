@@ -1,4 +1,4 @@
-import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Animated, Dimensions, ScrollView, StyleSheet, Text, TouchableOpacity, View, LayoutAnimation } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { setRoute, shadowGenerator, showToast, wordSplitter } from '../utils/helper'
 import { fontSize } from '../styles/fonts'
@@ -42,6 +42,12 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
   const getEndedSubs = async ()=>{
     let resp: apiResponse = await getEndedSubscriptions();
     if(resp?.status === 200){
+      LayoutAnimation.configureNext({
+        duration: 200, // Adjust the frame rate by changing the duration
+        update: {
+          type: LayoutAnimation.Types.linear,
+        },
+      });
       setEndedSubs([...resp.data]);
     }else if(resp?.status === 500 || resp?.status === undefined){
       showToast("Ended subscriptions data failed !")
@@ -51,6 +57,12 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
   const getRecenetTransactions = async ()=>{
     let resp: apiResponse = await getClientTransactions("all", 3);
     if(resp?.status === 200){
+      LayoutAnimation.configureNext({
+        duration: 200, // Adjust the frame rate by changing the duration
+        update: {
+          type: LayoutAnimation.Types.linear,
+        },
+      });
       setRecentTransactions([...resp.data]);
     }else if(resp?.status === 500 || resp?.status === undefined){
       showToast("Failed to load recent transactions !")

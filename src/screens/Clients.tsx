@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, TextInput, ScrollView, TouchableOpacity, LayoutAnimation } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, setRoute } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
@@ -30,11 +30,18 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
   const [showFilter, setShowFilter] = useState(false as boolean);
   const [filterLoader, setFilterLoader] = useState(false as boolean);
   const [serviceMsg, setServieMsg] = useState("" as string);
+  const [reload, setReload] = useState(false as boolean);
 
   const getAllClientsFromDb = async (query: iFilterQuery, disableLoader: boolean)=>{
     let resp: apiResponse = await getAllClients(query, disableLoader);
     setServieMsg(resp?.message || "Server Error");
     if(resp?.status === 200){
+      LayoutAnimation.configureNext({
+        duration: 200, // Adjust the frame rate by changing the duration
+        update: {
+          type: LayoutAnimation.Types.linear,
+        },
+      });
       setClients(resp.data)
       setFetchFailed(false)
     }else if(resp?.status === 500 || resp?.status === undefined){
@@ -71,11 +78,23 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
     }
   }
 
+  const start = ()=>{
+    getData();
+    getAllClientsFromDb({count: 4}, false)
+  }
+
+  useEffect(()=>{
+    if(reload){
+      start();
+      setReload(false);
+      setSearchText("");
+    }
+  }, [reload])
+
   useEffect(()=>{
     setRoute("Clients");
     if(!clients.length){
-      getData();
-      getAllClientsFromDb({count: 4}, false)
+      start();
     }
   }, [])
 
@@ -91,6 +110,7 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
             keyboardType='default'
             cursorColor={iconColor}
             placeholderTextColor={borderColor}
+            value={searchText}
           />
           <TouchableOpacity style={[styles.btn]} onPress={()=>{startSearch()}} activeOpacity={0.7}>
               <Text style={styles.btnText}>Search</Text>
@@ -128,6 +148,7 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
             buttons={["Add Client"]}
             fetchFailed={fetchFailed}
             data={clients}
+            tryAgainClicked={()=>{setReload(true)}}
           />
       }
       {
