@@ -1,7 +1,7 @@
 
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { navigate, resetNavigation } from '../../navigations/NavigationService';
-import { apiResponse } from '../../interfaces/common';
+import { apiResponse, iOwner } from '../../interfaces/common';
 import { getOwnerById } from '../../services/apiCalls/serviceCalls';
 import { showToast } from '../../utils/helper';
 import { closeOverlayComponent, resetReducerAction } from '.';
@@ -11,8 +11,9 @@ export const isAuthenticatedAction = (is: boolean)=>({
     payload: is
 });
 
-const phoneAuthStart = () => ({
+const phoneAuthStart = (phoneNumber: string) => ({
     type: "PHONE_AUTH_START",
+    payload: phoneNumber
 });
 
 const phoneCodeSuccess = (confirmation: FirebaseAuthTypes.ConfirmationResult)=>({
@@ -20,7 +21,7 @@ const phoneCodeSuccess = (confirmation: FirebaseAuthTypes.ConfirmationResult)=>(
     payload: confirmation
 })
 
-const phoneAuthSuccess = (user: any) => ({
+export const phoneAuthSuccess = (user: iOwner) => ({
     type: "PHONE_AUTH_SUCCESS",
     payload: user,
 });
@@ -45,12 +46,13 @@ export const setTokenAction = (token: string)=>({
 
 export const signInWithPhoneNumber = (phoneNumber: string)=>{
     return async(dispatch: any)=>{
-        dispatch(phoneAuthStart());
+        dispatch(phoneAuthStart(phoneNumber));
         try{
             const confirmation = await auth().signInWithPhoneNumber("+91"+phoneNumber);
             if(confirmation.verificationId){
                 navigate("Otp");
                 dispatch(phoneCodeSuccess(confirmation));
+                showToast("OTP send to your device")
             }else{
                 showToast("Something went wrong.")
             }
@@ -65,18 +67,21 @@ export const signInWithPhoneNumber = (phoneNumber: string)=>{
 
 export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.ConfirmationResult)=>{
     return async (dispatch: any)=>{
-        dispatch(phoneAuthStart());
+        dispatch(phoneAuthStart(""));
         try{
             let user = await confirm.confirm(code);
             if(user){
-                dispatch(phoneAuthSuccess(user));
                 let token: string = await user.user.getIdToken();
                 dispatch(setTokenAction(token))
-                let res = await getOwnerById(user.user?.uid || "");
-                if(res && res.data){
+                let res: apiResponse = await getOwnerById(user.user?.uid || "");
+                if(res.status === 404){
+                    navigate("Signup");
+                }else if(res.status === 200){
+                    dispatch(phoneAuthSuccess(res.data));
                     navigate("MainStack");
                 }else{
-                    navigate("Signup")
+                    showToast("Something went wrong.");
+                    navigate("Login");
                 }
             }else{
                 showToast("Verification failed.");

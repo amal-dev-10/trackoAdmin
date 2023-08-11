@@ -1,28 +1,37 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React, { useEffect } from 'react'
 import { connect } from 'react-redux'
-import { isAuthenticatedAction, setTokenAction } from '../redux/actions/authActions'
+import { isAuthenticatedAction, phoneAuthSuccess, setTokenAction } from '../redux/actions/authActions'
 import auth from '@react-native-firebase/auth'
 import { navigate } from '../navigations/NavigationService'
-import { container } from '../utils/helper'
+import { container, showToast } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
 import { textColorPrimary } from '../styles/colors'
+import { apiResponse, iOwner } from '../interfaces/common'
+import { getOwnerById } from '../services/apiCalls/serviceCalls'
 
 type props = {
   setIsAuthenticated: any,
-  setToken: any
+  setToken: any,
+  setOwner: any
 }
 
-const Splash = ({setIsAuthenticated, setToken}: props) => {
+const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
 
   const authStateChanged = async ()=>{
     try{
       let unSubscribe = auth().onAuthStateChanged(async (user)=>{
         let token = await user?.getIdToken();
         if(token){
-          setIsAuthenticated(true);
           setToken(token);
-          navigate("MainStack");
+          setIsAuthenticated(true);
+          let res: apiResponse = await getOwnerById(user?.uid || "");
+          if(res?.status === 200){
+            setOwner(res.data);
+            navigate("MainStack");
+          }else{
+            showToast("Something went wrong.")
+          }
         }else{
           setIsAuthenticated(false);
           setToken("");
@@ -42,14 +51,15 @@ const Splash = ({setIsAuthenticated, setToken}: props) => {
 
   return (
     <View style={[container, styles.splashScreen]}>
-      <IconSet name='tracko-logo' size={23} color={textColorPrimary}/>
+      <IconSet name='tracko-logo' size={20} color={textColorPrimary}/>
     </View>
   )
 }
 
 const mapDipatchToProps = (dispatch: any)=>({
   setIsAuthenticated: (is: boolean)=>{dispatch(isAuthenticatedAction(is))},
-  setToken: (token: string)=>{dispatch(setTokenAction(token))}
+  setToken: (token: string)=>{dispatch(setTokenAction(token))},
+  setOwner: (data: iOwner)=>{dispatch(phoneAuthSuccess(data))}
 })
 
 export default connect(null, mapDipatchToProps)(Splash)

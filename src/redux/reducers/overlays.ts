@@ -18,6 +18,7 @@ let initialState: stateInterface = {
         {id: 7, name: "DETAILED", screenName: "clientDetails"},
         {id: 8, name: "", screenName: "businessProfile"},
         {id: 9, name: "EDIT", screenName: "editClient"},
+        {id: 10, name: "DATA PRIVACY", screenName: "dataPrivacy"},
     ],
 }
 

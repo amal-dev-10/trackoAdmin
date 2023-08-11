@@ -4,20 +4,22 @@ import { container, showToast, valueBinder } from '../../utils/helper'
 import { fontSize } from '../../styles/fonts'
 import { iconColor, textColorSecondary } from '../../styles/colors'
 import Button from '../Common/Button'
-import { apiResponse, inputProps } from '../../interfaces/common'
+import { apiResponse, iOwner, inputProps } from '../../interfaces/common'
 import Input from '../Common/Input'
 import { KeyboardType } from 'react-native'
 import TitleComponent from '../Common/TitleComponent'
 import { connect } from 'react-redux'
 import { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { navigate } from '../../navigations/NavigationService'
-import { saveOwner } from '../../services/apiCalls/serviceCalls'
+import { getOwnerById, saveOwner } from '../../services/apiCalls/serviceCalls'
+import { phoneAuthSuccess } from '../../redux/actions/authActions'
 
 type props = {
   user: FirebaseAuthTypes.UserCredential,
+  setOwner: any
 }
 
-const SignUp = ({user}: props) => {
+const SignUp = ({user, setOwner}: props) => {
   const [inputList, setInputList] = useState(
     [
       {
@@ -77,19 +79,25 @@ const SignUp = ({user}: props) => {
 
     const signUpClicked = async ()=>{
       if(allInputTrue){
-        let data = {
-          phoneNumber: user.user.phoneNumber,
-          uid: user.user.uid,
-          name: inputList[1].value,
-          phoneVerified: true
-        }
-        let res: apiResponse | null = await saveOwner(data);
-        if(res?.status === 200){
-          navigate("Dashboard");
-          navigate("MainStack");
+        if(user.user?.phoneNumber){
+          let data = {
+            phoneNumber: user.user.phoneNumber,
+            uid: user.user.uid,
+            name: inputList[1].value,
+            phoneVerified: true
+          }
+          let res: apiResponse | null = await saveOwner(data);
+          if(res?.status === 200){
+            setOwner(res.data);
+            navigate("MainStack");
+          }else{
+            showToast("Signup failed.");
+          }
         }else{
-          showToast("Signup failed.")
+          showToast("Signup failed.");
         }
+      }else{
+        showToast("Enter all details.");
       }
     }
 
@@ -145,7 +153,11 @@ const mapStateToProps = (state: any)=>({
   user: state.auth.data.user || "",
 });
 
-export default connect(mapStateToProps, null)(SignUp)
+const mapDispatchToProps = (dispatch: any)=>({
+  setOwner: (data: iOwner)=>{dispatch(phoneAuthSuccess(data))}
+})
+
+export default connect(mapStateToProps, mapDispatchToProps)(SignUp)
 
 const styles = StyleSheet.create({
   signUpScreen:{

@@ -5,10 +5,11 @@ import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
-import { profileButtonProps } from '../interfaces/common'
-import { setIdTransactions, setOverlayComponent, setTransactionMode, toggleSubButton } from '../redux/actions'
+import { iOwner, profileButtonProps } from '../interfaces/common'
+import { resetReducerAction, setIdTransactions, setOverlayComponent, setTransactionMode, toggleSubButton } from '../redux/actions'
 import { logout } from '../redux/actions/authActions'
 import packageJson from '../../package.json';
+import store from '../redux/store'
 
 type props = {
     profileBtnList: profileButtonProps[],
@@ -16,51 +17,23 @@ type props = {
     toggleButton: any,
     signOut: any,
     setId: any,
-    mode: any
+    mode: any,
+    ownerDetail: iOwner
 }
 
-const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setId}: props) => {
-    const [rating, setRating] = useState( 0 as number);
-    const [stars, setStars] = useState([] as any[]);
-
-    const ratingStarGenerator = ()=>{
-        let int: number = Math.floor(rating);
-        let deci: number = rating % 1;
-        let temp: any[] = []
-        for (let index = 0; index < int; index++) {
-            temp.push(
-                <IconSet name='star' color={goldColor} size={18} key={"fullStar" + index}/>
-                )
-        }
-        if(deci != 0){
-            temp.push(
-                <IconSet name='star-half-alt' color={goldColor} size={18} key={"half"}/>
-             )
-        };
-        return temp
-    }
+const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setId, ownerDetail}: props) => {
 
     useEffect(()=>{
-        setRating(0);
-        let starList = ratingStarGenerator();
-        setStars([...starList]);
-    },[]);
-
+        return ()=>{
+            let st = store.dispatch;
+            st(resetReducerAction("profileReducer"));
+        }
+    },[])
   return (
     <View style={styles.profileView}>
         <View style={[styles.profileCard, shadowGenerator()]}>
             <View style={styles.details}>
-                <Text style={styles.textName}>AMAL DEV</Text>
-                {
-                    rating ? 
-                        <View style={styles.ratingView}>
-                            {
-                                stars
-                            }
-                            <Text>{rating}</Text>
-                        </View>
-                    : <Text style={styles.noRatingText}>No rating</Text>
-                }
+                <Text style={styles.textName}>{ownerDetail?.name}</Text>
                 <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' size={15} color={iconColor}/>
                     <Text style={styles.profileEdit}>Edit Profile</Text>
@@ -97,7 +70,7 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
                                 </View>
                                 {
                                     data.subButtons?.length ?
-                                    <IconSet name='right-small' size={20} color={iconColor}/> : <></>
+                                    <IconSet name='angle-left' color={iconColor} size={20} style={{transform:[{rotate: "180deg"}]}}/> : <></>
                                 }
                             </TouchableOpacity>
                             {
@@ -130,6 +103,7 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
 
 const mapStateToProps = (state: any)=>({
     profileBtnList: state.profile.buttons,
+    ownerDetail: state.auth.user 
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
@@ -167,13 +141,6 @@ const styles = StyleSheet.create({
         fontSize: fontSize.medium,
         fontWeight: "700",
         color: textColorPrimary
-    },
-    ratingView:{
-        display: "flex",
-        flexDirection: "row",
-        gap: 5,
-        alignItems: "center",
-        justifyContent: "center"
     },
     orgName:{
         color: iconColor,
@@ -253,9 +220,5 @@ const styles = StyleSheet.create({
     subButton:{
         width: "80%",
         justifyContent: "flex-start"
-    },
-    noRatingText:{
-        color: borderColor,
-        fontSize: fontSize.small
     }
 })

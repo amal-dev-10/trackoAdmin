@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useState } from 'react'
-import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
+import React, { useEffect, useState } from 'react'
+import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { ibusiness } from '../interfaces/business'
@@ -39,6 +39,25 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
     }
 
   ] as sectionProp[]);
+  const [stars, setStars] = useState([] as any[]);
+  const [rating, setRating] = useState(0 as number);
+
+  const ratingStarGenerator = ()=>{
+      let int: number = Math.floor(rating);
+      let deci: number = rating % 1;
+      let temp: any[] = []
+      for (let index = 0; index < int; index++) {
+          temp.push(
+              <IconSet name='star' color={goldColor} size={18} key={"fullStar" + index}/>
+              )
+      }
+      if(deci != 0){
+          temp.push(
+              <IconSet name='star-half-alt' color={goldColor} size={18} key={"half"}/>
+            )
+      };
+      return temp
+  }
 
   const profileButtonsClicked = (name: string)=>{
     let id: string = name.replace(" ", "").toLowerCase();
@@ -50,20 +69,39 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
     }
   }
 
+  useEffect(()=>{
+    let starList = ratingStarGenerator();
+    setStars([...starList]);
+  }, [rating])
+
+  useEffect(()=>{
+    setRating(parseInt(business?.rating || "0"));
+  },[]);
+
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.businessProfileScreen}>
         <Text style={styles.title}>BUSINESS PROFILE</Text>
         <View style={[styles.row,styles.spaceBetween, styles.profileCard]}>
-          <View style={[styles.column, styles.left]}>
+          <View style={[styles.column, styles.left, {flex: 1}]}>
             <View style={styles.row}>
-              <Text style={styles.nameText}>{business.name.toUpperCase()}</Text>
+              <Text style={styles.nameText} numberOfLines={1} ellipsizeMode='tail'>{business.name.toUpperCase()}</Text>
               {
                 business.verified &&
                 <IconSet name='phone' color={textColorPrimary} size={20}/>
               }
             </View>
             <Text style={styles.phoneText}>{fomatFirstLetterCapital(business.location)}</Text>
+            {
+              rating ? 
+                  <View style={styles.ratingView}>
+                      {
+                          stars
+                      }
+                      <Text>{rating}</Text>
+                  </View>
+              : <Text style={styles.noRatingText}>No rating</Text>
+            }
           </View>
           <View style={[styles.column, styles.right]}>
             <View style={styles.profileImage}>
@@ -92,8 +130,8 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
                             onPress={()=>{profileButtonsClicked(b.name)}}
                           >
                             <View style={[styles.row, styles.buttonFirst]}>
-                              <IconSet name={b.icon} size={20} color={iconColor}/>
-                              <Text>{b.name}</Text>
+                              <IconSet name={b.icon} size={20} color={borderColor}/>
+                              <Text style={{color: textColorSecondary, fontSize: fontSize.small}}>{b.name}</Text>
                             </View>
                             <IconSet name='angle-left' size={20} style={{transform: [{rotate: "180deg"}]}}/>
                           </TouchableOpacity>
@@ -163,7 +201,8 @@ const styles = StyleSheet.create({
   nameText:{
     fontSize: fontSize.medium,
     fontWeight: "500",
-    color: textColorSecondary
+    color: textColorSecondary,
+    width: "100%"
   },
   phoneText:{
     fontSize: fontSize.small,
@@ -227,5 +266,16 @@ const styles = StyleSheet.create({
   secondRow:{
     justifyContent: "center",
     width: "100%"
+  },
+  ratingView:{
+    display: "flex",
+    flexDirection: "row",
+    gap: 5,
+    alignItems: "center",
+    justifyContent: "center"
+  },
+  noRatingText:{
+    color: borderColor,
+    fontSize: fontSize.small
   }
 })

@@ -1,4 +1,4 @@
-import { Dimensions, StyleSheet, Text, TouchableOpacity, View } from "react-native";
+import { Dimensions, Modal, StyleSheet, Text, TouchableOpacity, View } from "react-native";
 import Button from "./Button";
 import { fontSize } from "../../styles/fonts";
 import { Dropdown } from "react-native-element-dropdown";
@@ -181,114 +181,116 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
     },[])
 
     return (
-        <View style={styles.modalView}>
-            <View style={styles.container}>
-                <View style={styles.headerActivate}>
-                    <Text style={styles.title}>Activate</Text>
-                </View>
-                <View style={styles.detail}>
-                    {
-                        dropData.length ?
-                            (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ? 
-                                <>
-                                    <Text style={styles.msgText}>{msg}</Text>
-                                    <Dropdown
-                                        style={[styles.dropdown]}
-                                        placeholderStyle={{fontSize: fontSize.small}}
-                                        selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
-                                        containerStyle={styles.dropDownContainer}
-                                        data={dropData}
-                                        maxHeight={300}
-                                        labelField="label"
-                                        valueField="value"
-                                        placeholder={'Select package'}
-                                        // value={year.value}
-                                        onChange={function (item): void {
-                                            dropDownChanged(item.value)
-                                        } }
-                                        itemTextStyle={{fontSize: fontSize.small}}
-                                        activeColor='#3e3e3e57'
-                                    />
-                                    {
-                                        packId ? 
-                                            <View style={styles.startOption}>
-                                                <Text style={styles.msgText}>{"Membership start Options *"}</Text>
-                                                <View style={styles.radioView}>
-                                                    {
-                                                        options.map((option: any) => (
-                                                            <View key={option.value} style={styles.radio}>
-                                                                <RadioButton
-                                                                    value={option.value}
-                                                                    status={selectedOption === option.value ? 'checked' : 'unchecked'}
-                                                                    onPress={() => handleOptionChange(option.value)}
-                                                                    color={textColorPrimary}
-                                                                    uncheckedColor={borderColor}
-                                                                />
-                                                                <Text>{option.label}</Text>
-                                                            </View>
-                                                        ))
-                                                    }
+        <Modal transparent onRequestClose={()=>{showActivatePack(false)}}>
+            <View style={styles.modalView}>
+                <View style={styles.container}>
+                    <View style={styles.headerActivate}>
+                        <Text style={styles.title}>Activate</Text>
+                    </View>
+                    <View style={styles.detail}>
+                        {
+                            dropData.length ?
+                                (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ? 
+                                    <>
+                                        <Text style={styles.msgText}>{msg}</Text>
+                                        <Dropdown
+                                            style={[styles.dropdown]}
+                                            placeholderStyle={{fontSize: fontSize.small}}
+                                            selectedTextStyle={{color: iconColor, fontSize: fontSize.small}}
+                                            containerStyle={styles.dropDownContainer}
+                                            data={dropData}
+                                            maxHeight={300}
+                                            labelField="label"
+                                            valueField="value"
+                                            placeholder={'Select package'}
+                                            // value={year.value}
+                                            onChange={function (item): void {
+                                                dropDownChanged(item.value)
+                                            } }
+                                            itemTextStyle={{fontSize: fontSize.small}}
+                                            activeColor='#3e3e3e57'
+                                        />
+                                        {
+                                            packId ? 
+                                                <View style={styles.startOption}>
+                                                    <Text style={styles.msgText}>{"Membership start Options *"}</Text>
+                                                    <View style={styles.radioView}>
+                                                        {
+                                                            options.map((option: any) => (
+                                                                <View key={option.value} style={styles.radio}>
+                                                                    <RadioButton
+                                                                        value={option.value}
+                                                                        status={selectedOption === option.value ? 'checked' : 'unchecked'}
+                                                                        onPress={() => handleOptionChange(option.value)}
+                                                                        color={textColorPrimary}
+                                                                        uncheckedColor={borderColor}
+                                                                    />
+                                                                    <Text>{option.label}</Text>
+                                                                </View>
+                                                            ))
+                                                        }
+                                                    </View>
                                                 </View>
-                                            </View>
-                                        : <></>
-                                    }
-                                    {
-                                        selectedOption === "custom" ?     
-                                            <TouchableOpacity style={styles.filterDateBtn} onPress={()=>{setShowStartCalender(true)}}>
-                                                <Text>{start ? start.toLocaleDateString() : "START DATE"}</Text>
-                                            </TouchableOpacity>          
-                                        : <></>
-                                    }
-                                </> 
+                                            : <></>
+                                        }
+                                        {
+                                            selectedOption === "custom" ?     
+                                                <TouchableOpacity style={styles.filterDateBtn} onPress={()=>{setShowStartCalender(true)}}>
+                                                    <Text>{start ? start.toLocaleDateString() : "START DATE"}</Text>
+                                                </TouchableOpacity>          
+                                            : <></>
+                                        }
+                                    </> 
+                                : <Text style={styles.msgText}>{msg}</Text>
                             : <Text style={styles.msgText}>{msg}</Text>
-                        : <Text style={styles.msgText}>{msg}</Text>
-                    }
+                        }
+                        {
+                            valid ? 
+                                <View>
+                                    {
+                                        checkboxes.map((x, i:number)=>{
+                                            return (
+                                                <View style={styles.checkBoxView} key={"checkbox" + i}>
+                                                    <Checkbox
+                                                        status={x.checked ? "checked" : "unchecked"}
+                                                        color={textColorPrimary}
+                                                        uncheckedColor={borderColor}
+                                                        onPress={()=>{handleCheckBoxClicked(x)}}                            
+                                                    />
+                                                    <Text style={{color: iconColor, fontSize: fontSize.small}}>{x.label}</Text>
+                                                </View>
+                                            )
+                                        })
+                                    }
+                                </View>
+                            : <></>
+                        }
+                    </View>
                     {
-                        valid ? 
-                            <View>
-                                {
-                                    checkboxes.map((x, i:number)=>{
-                                        return (
-                                            <View style={styles.checkBoxView} key={"checkbox" + i}>
-                                                <Checkbox
-                                                    status={x.checked ? "checked" : "unchecked"}
-                                                    color={textColorPrimary}
-                                                    uncheckedColor={borderColor}
-                                                    onPress={()=>{handleCheckBoxClicked(x)}}                            
-                                                />
-                                                <Text style={{color: iconColor, fontSize: fontSize.small}}>{x.label}</Text>
-                                            </View>
-                                        )
-                                    })
-                                }
+                        packOptionMsg ? 
+                            <View style={styles.selectedPackageDetail}>
+                                <Text style={styles.msgText}>Package starts from</Text>
+                                <Text style={{color: iconColor}}>{packOptionMsg}</Text>
                             </View>
                         : <></>
                     }
-                </View>
-                {
-                    packOptionMsg ? 
-                        <View style={styles.selectedPackageDetail}>
-                            <Text style={styles.msgText}>Package starts from</Text>
-                            <Text style={{color: iconColor}}>{packOptionMsg}</Text>
-                        </View>
-                    : <></>
-                }
-                <View style={styles.footer}>
-                    {
-                        (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ?
+                    <View style={styles.footer}>
+                        {
+                            (clientData?.memberShipDetails?.tier === undefined || clientData?.memberShipDetails?.expired) ?
+                            <Button
+                                onTouch={()=>{activateMembershipClicked()}}
+                                text='Activate'
+                                width='50%'
+                            /> : <></>
+                        }
                         <Button
-                            onTouch={()=>{activateMembershipClicked()}}
-                            text='Activate'
+                            onTouch={()=>{showActivatePack(false)}}
+                            text='Cancel'
                             width='50%'
-                        /> : <></>
-                    }
-                    <Button
-                        onTouch={()=>{showActivatePack(false)}}
-                        text='Cancel'
-                        width='50%'
-                        borderLess={true}
-                    />
+                            borderLess={true}
+                        />
 
+                    </View>
                 </View>
             </View>
             {
@@ -302,7 +304,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
                 />
                 : <></>
             }
-        </View>
+        </Modal>
     )
 }
 
@@ -328,9 +330,8 @@ const styles = StyleSheet.create({
         flexDirection: "column",
         gap: 20,
         borderRadius: 10,
-        margin: 10,
         padding: 10,
-        // minHeight: "45%",
+        minHeight: "45%",
         maxHeight: "70%",
         width: "90%"
     },
@@ -362,18 +363,11 @@ const styles = StyleSheet.create({
         paddingVertical: 10
     },
     modalView:{
-        position: "absolute",
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
-        flexDirection: "row",
         flex: 1,
-        top: 0,
-        left: 0,
-        right: 0,
-        bottom: 0,
-        height: Dimensions.get("window").height,
-        backgroundColor: "#2b2b2b68"
+        width: "100%"
     },
     dropdown:{
         width: "80%",

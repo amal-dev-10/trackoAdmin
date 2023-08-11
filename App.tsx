@@ -7,6 +7,7 @@ import { Provider } from 'react-redux';
 import store from './src/redux/store';
 import RootNavigator from './src/navigations/RootNavigator';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { primaryColor, textColorPrimary } from './src/styles/colors';
 
 function App(): JSX.Element {
   useEffect(() => {
@@ -21,6 +22,7 @@ function App(): JSX.Element {
     <Provider store={store}> 
         <StatusBar
           barStyle={'light-content'}
+          backgroundColor={primaryColor}
         />
         <RootNavigator/>
     </Provider>

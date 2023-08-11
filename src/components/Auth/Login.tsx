@@ -11,6 +11,7 @@ import { connect } from 'react-redux'
 import { signInWithPhoneNumber } from '../../redux/actions/authActions'
 import { Svg, Path, Defs, G } from 'react-native-svg';
 import IconSet from '../../styles/icons/Icons'
+import { ScrollView } from 'react-native-gesture-handler'
 
 type props = {
   signInWithPhoneNumber: any

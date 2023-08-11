@@ -8,7 +8,8 @@ export type ibusiness = {
     uid?: string,
     ownerId?: string,
     verified: boolean,
-    location: string
+    location: string,
+    rating?: string
 }
 
 export type mainStat = {

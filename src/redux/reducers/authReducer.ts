@@ -1,7 +1,8 @@
-import { actionInterface, authProps } from "../../interfaces/common"
+import { actionInterface, authProps, iOwner } from "../../interfaces/common"
 
 type props = {
-    data: authProps
+    data: authProps,
+    user: iOwner
 }
 
 let initialState: props = {
@@ -9,10 +10,13 @@ let initialState: props = {
         confirmation: null,
         isAuthenticated: false,
         showSplash: true,
-        user: {},
         error: "",
         loading: false,
-        token: ""
+        token: "",
+        phoneNumber: ""
+    },
+    user: {
+
     }
 } as props
 
@@ -20,6 +24,7 @@ export const authReducer = (state: props = initialState, action: actionInterface
     switch(action.type){
         case "SETISAUTHENTICATED":
             return {
+                ...state,
                 data:{
                     ...state.data,
                     isAuthenticated: action?.payload
@@ -27,13 +32,16 @@ export const authReducer = (state: props = initialState, action: actionInterface
             }
         case "PHONE_AUTH_START":
             return {
+                ...state,
                 data:{
                     ...state.data,
-                    loading: true
+                    loading: true,
+                    phoneNumber: action.payload
                 }
             }
         case "PHONE_CODE_SUCCESS":
             return {
+                ...state,
                 data:{
                     ...state.data,
                     confirmation: action.payload,
@@ -41,33 +49,38 @@ export const authReducer = (state: props = initialState, action: actionInterface
                 }
             }
         case "PHONE_AUTH_SUCCESS":
-            return {
+            let temp = {
+                ...state,
                 data:{
                     ...state.data,
                     loading: false,
-                    user: action.payload
-                }
+                },
+                user: JSON.parse(JSON.stringify(action.payload))
             }
+            return {...JSON.parse(JSON.stringify(temp))}
         case "PHONE_AUTH_FAILURE":
             return {
+                ...state,
                 data:{
                     ...state.data,
                     loading: false,
-                    error: action.payload,
-                    user: null
-                }
+                    error: {...action.payload},
+                },
+                user: null
             }
         case "LOGOUT":
             return {
+                ...state,
                 data:{
                     ...state.data,
                     isAuthenticated: false,
                     loading: false,
-                    user: null
-                }
+                },
+                user: null
             }
         case "SET_TOKEN":
             return {
+                ...state,
                 data: {
                     ...state.data,
                     token: action.payload
@@ -75,6 +88,7 @@ export const authReducer = (state: props = initialState, action: actionInterface
             }
         case "LOADING":
             return {
+                ...state,
                 data:{
                     ...state.data,
                     loading: action.payload

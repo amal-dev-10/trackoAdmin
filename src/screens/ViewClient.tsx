@@ -87,7 +87,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, cli
         <View style={styles.detailView}>
             <IconSet name='user-circle-o' size={90} color={iconColor}/>
             <View style={[styles.nameView]}>
-                <Text style={styles.nameText}>{fomatFirstLetterCapital(clientData.name.toUpperCase())}</Text>
+                <Text style={styles.nameText}>{clientData.name.toUpperCase()}</Text>
                 <Text style={styles.phoneText}>{clientData.phoneNumber}</Text>
             </View>
         </View>
@@ -128,7 +128,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, cli
                 <Text style={styles.subKey}>Year</Text>
             </View>
         </View>
-        <View>
+        <View style={styles.column}>
             <View style={styles.quickButtons}>
                 {
                     firstRowButtons.map((s, i:number)=>{
@@ -227,7 +227,6 @@ const styles = StyleSheet.create({
         backgroundColor: cardColor,
         padding: 12,
         elevation: 3,
-        margin: 5,
         flex: 1
     },
     quickButtons:{
@@ -235,6 +234,7 @@ const styles = StyleSheet.create({
         flexDirection: "row",
         // alignItems: "center",
         // justifyContent: "center",
+        gap: 5,
         flexWrap: "wrap",
     },
     buttonView:{
@@ -283,5 +283,10 @@ const styles = StyleSheet.create({
     subKey:{
         fontSize: fontSize.xSmall,
         color: borderColor
+    },
+    column:{
+        display: "flex",
+        flexDirection: "column",
+        gap: 5
     }
 })

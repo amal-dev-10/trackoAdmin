@@ -88,7 +88,7 @@ const DashboardOverlay = (props:overlayProps) => {
     }
 
   return (
-    <Modal transparent visible={props.show}>
+    <Modal transparent visible={props.show} onRequestClose={()=>{props.close()}}>
         <BlurView
             style={{flex:1}}
             blurType="dark"

@@ -15,15 +15,21 @@ type props = {
 }
 
 const Confirmation = ({modalData, setConfirm, setProperties, showModal}: props) => {
+    
+    const cancelAction = ()=>{
+        setConfirm(false); 
+        showModal(false)
+    }
+
     useEffect(()=>{
         setProperties({
             msg: "You have selected BASIC PLAN to remove.\nSure you want to delete ?",
             title: "Confirmation"
         })
-    }, [])  
+    }, []) 
   return (
     modalData.showConfirmModal ?
-    <Modal transparent>
+    <Modal transparent onRequestClose={()=>{cancelAction()}} animationType='fade'>
         <View style={styles.confirmationView}>
             <View style={styles.container}>
                 <View style={styles.headerActivate}>
@@ -43,7 +49,7 @@ const Confirmation = ({modalData, setConfirm, setProperties, showModal}: props) 
                         width='40%'
                     />
                     <Button
-                        onTouch={()=>{setConfirm(false); showModal(false)}}
+                        onTouch={()=>{cancelAction()}}
                         text='Cancel'
                         width='40%'
                         borderLess={true}

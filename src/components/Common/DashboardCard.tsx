@@ -12,7 +12,7 @@ const DashboardCard = (props: orgProps) => {
         <Icon size={50} name={props.icon} color={textColorPrimary}/>
         <View style={styles.details}>
             <Text style={styles.cardTitle}>{props.orgName}</Text>
-            <Text style={styles.id}>{props.id}</Text>
+            <Text style={styles.id}>{props.location.toLocaleLowerCase()}</Text>
         </View>
     </TouchableOpacity>
   )
@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         gap: 10,
         width: "100%",
         alignItems: "center",
-        borderRadius: 20,
+        borderRadius: 10,
         backgroundColor: cardColor,
         elevation: 2
     },

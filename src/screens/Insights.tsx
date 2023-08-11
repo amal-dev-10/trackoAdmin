@@ -248,7 +248,7 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
               : <></>
             }
             {
-              Object.entries(quickStat).length ? 
+              insightData.length ? 
                 <View style={styles.insgightTypeView}>
                   <Text style={styles.keys}>INSIGHT TYPE</Text>
                   <Dropdown

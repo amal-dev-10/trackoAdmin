@@ -5,7 +5,7 @@ import { fontSize } from '../../styles/fonts'
 import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import Button from '../Common/Button'
 import TitleComponent from '../Common/TitleComponent'
-import { verfyOtpCode } from '../../redux/actions/authActions'
+import { signInWithPhoneNumber, verfyOtpCode } from '../../redux/actions/authActions'
 import { connect } from 'react-redux'
 import { FirebaseAuthTypes } from '@react-native-firebase/auth'
 
@@ -18,11 +18,13 @@ type optInputInterface = {
 type props = {
   verifyOtp: any,
   confirmation: FirebaseAuthTypes.ConfirmationResult,
+  sendOTP: any,
+  phoneNumber: string
 }
 
-const Otp = ({verifyOtp, confirmation}: props) => {
+const Otp = ({verifyOtp, confirmation, sendOTP, phoneNumber}: props) => {
   const [inputList, setInputList] = useState([] as optInputInterface[]);
-  const [timer, setTimer] = useState(5 as number);
+  const [timer, setTimer] = useState(59 as number);
   let interval: number;
   const textInputRefs = useRef<Array<TextInput | null>>([]);
   const otpLength: number = 6;
@@ -43,7 +45,7 @@ const Otp = ({verifyOtp, confirmation}: props) => {
   };
 
   const resendOtp = ()=>{
-
+    sendOTP(phoneNumber);
   }
 
   const makeError = (er: boolean)=>{
@@ -66,7 +68,6 @@ const Otp = ({verifyOtp, confirmation}: props) => {
       temp.push(t);
     };
     setInputList([...temp]);
-    textInputRefs.current[0]?.focus();
     let t = timer;
     interval = setInterval(()=>{
       setTimer(t);
@@ -82,7 +83,7 @@ const Otp = ({verifyOtp, confirmation}: props) => {
     <View style={[container, styles.otpScreen]}>
       <TitleComponent
         title='One-Time Password'
-        subTitle='Enter the One-time password received to your phone number'
+        subTitle='Enter the One-time password received in your phone'
       />
       <View style={styles.main}>
         <View style={styles.optInputView}>
@@ -146,11 +147,13 @@ const Otp = ({verifyOtp, confirmation}: props) => {
 }
 
 const mapDispatchToProps = (dispatch: any)=>({
-  verifyOtp: async (code: string, confirm: FirebaseAuthTypes.ConfirmationResult)=>{await dispatch(verfyOtpCode(code, confirm))}
+  verifyOtp: async (code: string, confirm: FirebaseAuthTypes.ConfirmationResult)=>{await dispatch(verfyOtpCode(code, confirm))},
+  sendOTP: (phoneNumber: string) => dispatch(signInWithPhoneNumber(phoneNumber)),
 })
 
 const mapStateToProps = (state: any)=>({
   confirmation: state.auth.data.confirmation,
+  phoneNumber: state.auth.data.phoneNumber
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Otp)

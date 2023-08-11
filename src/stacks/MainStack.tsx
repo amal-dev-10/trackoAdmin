@@ -5,6 +5,8 @@ import { connect } from 'react-redux';
 import Overlay from '../screens/Overlay';
 import { overlayComponent } from '../interfaces/common';
 import MainLoader from '../components/Loader/MainLoader';
+import { useEffect } from 'react';
+import { BackHandler } from 'react-native';
 
 const mainStack = createStackNavigator();
 
@@ -44,6 +46,13 @@ const MainStack = ({allOverlays}: props) => {
       };
     },
   }
+
+  useEffect(()=>{
+    const back = BackHandler.addEventListener("hardwareBackPress", ()=>{
+        return true
+    });
+    return ()=>{back.remove()}
+  }, []);
   return (
     <>
       <mainStack.Navigator initialRouteName='Dashboard' screenOptions={config}>

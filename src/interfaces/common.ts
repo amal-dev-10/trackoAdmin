@@ -18,7 +18,7 @@ export type inputProps = {
 export type orgProps = {
     icon: string,
     orgName: string,
-    id: string,
+    location: string,
     onPress: any
 }
 
@@ -103,10 +103,19 @@ export type authProps = {
     confirmation: FirebaseAuthTypes.ConfirmationResult | null,
     isAuthenticated: boolean,
     showSplash: boolean,
-    user: any,
     error: string,
     loading: boolean,
-    token: string
+    token: string,
+    phoneNumber: string
+}
+
+export type iOwner = {
+    createdDate: Timestamp,
+    name: string,
+    phoneNumber: string,
+    phoneVerified: boolean,
+    uid: string,
+    rating: string
 }
 
 export type apiResponse = {

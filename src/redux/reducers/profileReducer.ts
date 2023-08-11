@@ -26,9 +26,9 @@ let initialState = {
                     id: 4,
                 },
                 {
-                    icon: "hammer",
+                    icon: "user-secret",
                     name: "DATA PRIVACY",
-                    id: 7,
+                    id: 10,
                 }
             ]
         },
@@ -61,6 +61,16 @@ export const profileReducer = (state: props = initialState, action: actionInterf
                 return x
             });
             state = {...state, buttons: [...updated]}
+            return state
+        case "RESET_REDUCER":
+            if(action.payload === "profileReducer"){
+                return {
+                    ...state,
+                    buttons: JSON.parse(JSON.stringify([
+                        ...initialState.buttons
+                    ]))
+                }
+            }
             return state
         default:
             return state; 

@@ -19,13 +19,18 @@ import BusinessProfile from './BusinessProfile';
 type props={
     overlayData: overlayComponent,
     closeOverlay: any,
-    showModal: boolean
+    showModal: boolean,
+    openedList: overlayComponent[]
 }
 
-const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
-
+const Overlay = ({overlayData, closeOverlay, showModal, openedList}: props) => {
   return (
-    <Modal visible={overlayData.id != 0} presentationStyle='fullScreen' animationType='slide' >
+    <Modal 
+        visible={overlayData.id != 0} 
+        presentationStyle='fullScreen' 
+        animationType='slide'
+        onRequestClose={()=>{closeOverlay(openedList[openedList.length-1].id)}}
+    >
         <View style={[styles.overlayScreen, container]}>
             <View style={styles.header}>
                 <TouchableOpacity onPress={()=>{closeOverlay(overlayData.id)}} style={styles.icon} activeOpacity={0.7}>
@@ -78,6 +83,7 @@ const Overlay = ({overlayData, closeOverlay, showModal}: props) => {
 
 const mapStateToProps = (state: any)=>({
     showModal: state.packages.showActiveDropDown,
+    openedList: state.overlay.opendedComponents
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
