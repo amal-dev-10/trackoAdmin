@@ -7,7 +7,7 @@ let initialState: loaderProps = {
 export const loaderReducer = (state = initialState, action: actionInterface)=>{
     switch(action.type){
         case "SHOW_LOADER":
-            state = {...state, show: action.payload}
+            state = {...state, show: JSON.parse(JSON.stringify(action.payload))}
             return state;
         default: 
             return state

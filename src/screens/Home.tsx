@@ -21,7 +21,7 @@ type props = {
 
 const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
 
-  const [endedSubs, setEndedSubs] = useState([] as iExpiredData[]);
+  const [endedSubs, setEndedSubs] = useState([] as (iExpiredData & {selected: boolean, showSelect: boolean})[]);
   const [recentTransaction, setRecentTransactions] = useState([] as iTransactions[]);
   const [showLoader, setShowLoader] = useState(false as boolean);
 
@@ -35,7 +35,7 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
     if(resp?.status === 200){
       setHomeStat(resp.data);
     }else if(resp?.status === 500 || resp?.status === undefined){
-      showToast("Stat fetching failed !")
+      // showToast("Stat fetching failed !")
     }
   }
 
@@ -48,9 +48,13 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
           type: LayoutAnimation.Types.linear,
         },
       });
-      setEndedSubs([...resp.data]);
+      let temp = (resp.data as iExpiredData[]).map((d)=>{
+        let t: iExpiredData & {selected: boolean, showSelect: boolean} = {...d, selected: false, showSelect: false};
+        return t
+      })
+      setEndedSubs([...temp]);
     }else if(resp?.status === 500 || resp?.status === undefined){
-      showToast("Ended subscriptions data failed !")
+      // showToast("Ended subscriptions data failed !")
     } 
   }
 
@@ -65,7 +69,7 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
       });
       setRecentTransactions([...resp.data]);
     }else if(resp?.status === 500 || resp?.status === undefined){
-      showToast("Failed to load recent transactions !")
+      // showToast("Failed to load recent transactions !")
     }
   }
 
@@ -82,10 +86,10 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
     getAllData();
   }, [])
   return (
-    <ScrollView showsVerticalScrollIndicator={false} style={{height: "100%"}}>
-      <View style={{padding: 4}}>
+    <ScrollView showsVerticalScrollIndicator={false} style={{height: "100%"}} contentContainerStyle={{paddingTop: 10}}>
+      <View style={styles.homeMain}>
         {/* balance quick view */}
-          <View style={[styles.balanceView, styles.child]}> 
+          <View style={[styles.balanceView]}> 
             <View style={[styles.leftRight, styles.left]}>
               <Text style={[key]}>TOTAL COLLECTED</Text>
               <Text style={styles.value}>₹ {parseInt(stat.amountThisMonth).toLocaleString()}</Text>
@@ -99,7 +103,7 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
         {/* // */}
 
         {/* quick stats */}
-          <View style={[styles.statsView, shadowGenerator(2,2), styles.child]}>
+          <View style={[styles.statsView, shadowGenerator(2,2)]}>
             <View style={styles.statSection}>
               <Text style={[key]}>{wordSplitter("Total Members")}</Text>
               <Text style={styles.statsValue}>{stat.totalMembers}</Text>
@@ -128,8 +132,8 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
               endedSubs.length ? 
                 <View style={styles.titleView}>
                   <Text style={[subTitleStyle]}>ENDED SUBSCRIPTIONS</Text>
-                  <TouchableOpacity style={styles.titleBtn}>
-                    <Text style={styles.titleBtnText}>View All</Text>
+                  <TouchableOpacity style={styles.titleBtn} onPress={()=>{openOverlay(11)}}>
+                    <Text style={styles.titleBtnText}>Advanced</Text>
                   </TouchableOpacity>
                 </View>
               : <></>
@@ -140,12 +144,15 @@ const Home = ({openOverlay, setHomeStat, stat, mode}: props) => {
                   horizontal 
                   showsHorizontalScrollIndicator={false} 
                   style={styles.scrollView}
-                  contentContainerStyle={{paddingVertical: 10, paddingHorizontal: 1}}
+                  contentContainerStyle={{paddingHorizontal: 1}}
                 >
                   {
                     endedSubs.map((d, i:number)=>{
                       return (
-                        <ExpiryCard key={"expired"+i} data={d}/>
+                        <ExpiryCard 
+                          key={"expired"+i} 
+                          data={d}
+                        />
                       )
                     })
                   }
@@ -199,7 +206,6 @@ const mapStateToProps = (state: any)=>({
 })
 
 const ExpiryLoader = ()=>{
-
   const colorValue = new Animated.Value(0);
   const backgroundColor = colorValue.interpolate({
     inputRange: [0, 1],
@@ -230,22 +236,28 @@ const ExpiryLoader = ()=>{
       scrollEnabled={false}
     >
       {
-        [1,2].map((d,i:number)=>{
+        [1].map((d,i:number)=>{
           return (
-            <View style={styles.expiryCardLoader} key={"loader"+i}>
-              <Animated.View style={[styles.imageLoader, { backgroundColor }]}/>
-              <View style={styles.detailMainLoader}>
-                <View style={styles.detailLoader}>
-                  <Animated.View style={[styles.keyLoader, { backgroundColor }]}/>
-                  <Animated.View style={[styles.valueLoader, { backgroundColor }]}/>
+            <View style={styles.expiryLoader} key={"loader"+i}
+              >
+                <View style={{flex: 1, display: "flex", flexDirection: "row", gap: 10, alignItems: "center", height: "100%"}}>
+                  <View style={{display: "flex", flexDirection: "column", gap: 10, alignItems: "center", justifyContent: "center"}}>
+                    <Animated.View style={[styles.imageLoader, { backgroundColor }]}/>
+                    <Animated.View style={[styles.valueLoader, { backgroundColor }]}/>
+                  </View>
+                  <View style={styles.detailMainLoader}>
+                    <View style={styles.detailLoader}>
+                      <Animated.View style={[styles.keyLoader, { backgroundColor }]}/>
+                      <Animated.View style={[styles.valueLoader, { backgroundColor }]}/>
+                    </View>
+                    <View style={styles.detailLoader}>
+                      <Animated.View style={[styles.keyLoader, { backgroundColor }]}/>
+                      <Animated.View style={[styles.valueLoader, { backgroundColor }]}/>
+                    </View>
+                  </View>
                 </View>
-                <View style={styles.detailLoader}>
-                  <Animated.View style={[styles.keyLoader, { backgroundColor }]}/>
-                  <Animated.View style={[styles.valueLoader, { backgroundColor }]}/>
-                </View>
-              </View>
-              <Animated.View style={[styles.buttonLoader, { backgroundColor }]}/>
-              <Animated.View style={[styles.buttonLoader, { backgroundColor }]}/>
+              {/* <Animated.View style={[styles.buttonLoader, { backgroundColor }]}/>
+              <Animated.View style={[styles.buttonLoader, { backgroundColor }]}/> */}
             </View>
           )
         })
@@ -257,9 +269,10 @@ const ExpiryLoader = ()=>{
 export default connect(mapStateToProps, mapDispatchToProps)(Home)
 
 const styles = StyleSheet.create({
-  welcomeText:{
-    fontSize: fontSize.medium,
-    // fontWeight: "500"
+  homeMain:{
+    display: "flex",
+    flexDirection: "column",
+    gap: 20
   },
   balanceView:{
     display: "flex",
@@ -312,9 +325,6 @@ const styles = StyleSheet.create({
     gap: 5,
     height: "100%"
   },
-  child:{
-    marginBottom: 25
-  },
   spacer:{
     width: 2,
     height: "40%",
@@ -330,7 +340,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: "flex-start",
-    gap: 15
+    gap: 20
   },
   scrollView:{
     width: "100%",
@@ -401,10 +411,11 @@ const styles = StyleSheet.create({
   detailMainLoader:{
     display: "flex",
     flexDirection: "column",
+    alignItems: "flex-start",
     flex: 1,
-    width: "100%",
-    justifyContent: "space-between",
-    gap: 10
+    gap: 10,
+    height: "100%",
+    justifyContent: "center"
   },
   recentView:{
     display: "flex",
@@ -444,4 +455,18 @@ const styles = StyleSheet.create({
     marginLeft: 8,
     borderRadius: 4,
   },
+  expiryLoader:{
+    flex: 1, 
+    display: "flex", 
+    flexDirection: "row", 
+    gap: 10, 
+    alignItems: "center",
+    padding: 10,
+    borderRadius: 10,
+    paddingVertical: 14,
+    backgroundColor: cardColor,
+    width: Dimensions.get("window").width * 0.9,
+    height: 130,
+    elevation: 3
+  }
 })

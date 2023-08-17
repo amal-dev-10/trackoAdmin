@@ -114,3 +114,10 @@ export const calculateDaysBetweenDates = (startDate: Date, endDate: Date): numbe
     const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
     return Math.round(daysDifference);
 }
+
+export const getHourGap = (milliseconds: number)=>{
+    let notified: number = milliseconds;
+    let now: number = new Date().getTime();
+    let hours = (now - notified) / (1000 * 60 * 60);
+    return Math.floor(hours)
+}

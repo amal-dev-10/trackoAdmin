@@ -26,7 +26,9 @@ export type iMembershipDetails = {
     expired: boolean,
     validFromString?: string,
     validThruString?: string,
-    expireIn?: number
+    expireIn?: number,
+    notifiedOn?: any,
+    notified?: boolean
 }
 
 export type iExpiredData = {
@@ -37,6 +39,8 @@ export type iExpiredData = {
     clientId: string,
     phoneNumber: string,
     countryCode: string,
+    notifiedOn?: Timestamp,
+    notified?: boolean
 }
 
 export type iFilterQuery = {

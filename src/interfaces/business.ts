@@ -47,3 +47,9 @@ export type iFinanceInsight = {
     year: string,
     month: string
 }
+
+export type iMessageResponse = {
+    error: number | null,
+    errorMessage: string,
+    clientId: string
+}

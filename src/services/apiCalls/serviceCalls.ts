@@ -205,11 +205,11 @@ export const getInsights = async (type: string, start: string, end: string)=>{
     return res
 }
 
-export const getFilterCounts = async ()=>{
+export const getFilterCounts = async (disableLoader: boolean = false)=>{
     let res = null;
     try{
         let st = store.getState();
-        res = await getData(`client/filterCount/${st.dashboard.selectedBusiness?.uid}`)
+        res = await getData(`client/filterCount/${st.dashboard.selectedBusiness?.uid}`, disableLoader)
     }
     catch(err){
         console.log(err)
@@ -221,6 +221,20 @@ export const calculateExpiry = async ()=>{
     let res = null;
     try{
         res = await getData('jobs/expiryTask')
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const sendSMSToClients = async (clientList: string[])=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData(`business/sendSMS/${st.dashboard.selectedBusiness?.uid}`, {
+            clientList: clientList
+        })
     }
     catch(err){
         console.log(err)

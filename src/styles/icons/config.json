@@ -219,6 +219,12 @@
       "src": "fontawesome"
     },
     {
+      "uid": "3327862df439988139b61814143b7a42",
+      "css": "cancel-circled",
+      "code": 59410,
+      "src": "typicons"
+    },
+    {
       "uid": "ac6caa6690695e54771e4e68edbc43ea",
       "css": "bronzepack",
       "code": 59409,

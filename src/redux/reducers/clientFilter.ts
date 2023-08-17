@@ -41,7 +41,10 @@ export const clientFilters = (state: props = initialState, action: actionInterfa
             } as props
         case "RESET_REDUCER":
             if(action.payload === "filterReducer"){
-                return {...initialState}
+                return {
+                    ...initialState,
+                    filterObject: null,
+                }
             }
             return state
         default:

@@ -1,58 +1,159 @@
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { openWhatsapp, shadowGenerator } from '../../utils/helper'
+import { getHourGap, openWhatsapp, shadowGenerator, showToast } from '../../utils/helper'
 import IconSet from '../../styles/icons/Icons'
-import { cardColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
 import { key } from '../../styles/constants'
 import { fontSize } from '../../styles/fonts'
 import { iExpiredData } from '../../interfaces/iClient'
 import { openOverlayParameter } from '../../interfaces/common'
 import { setIdTransactions, setOverlayComponent, setTransactionMode } from '../../redux/actions'
 import { connect } from 'react-redux'
+import { Checkbox } from 'react-native-paper'
+import { Firestore, Timestamp } from 'firebase/firestore'
 
 type props = {
-  data: iExpiredData,
+  data: iExpiredData & {selected?: boolean, showSelect?: boolean, delivered?: undefined | boolean},
   openOverlay: any,
   mode: any,
-  setId: any
+  setId: any,
+  selectable?: boolean,
+  longPressed?: any,
+  checkBoxClicked?: any
 }
 
-const ExpiryCard = ({data, mode, openOverlay, setId}: props) => {
-  const [ended, setEnded] = useState(data as iExpiredData);
-  useEffect(()=>{setEnded(data)},[data]);
-
+const ExpiryCard = ({data, mode, openOverlay, setId, selectable, longPressed, checkBoxClicked}: props) => {
+  const [ended, setEnded] = useState(data as iExpiredData & {selected?: boolean, showSelect?: boolean, delivered?: undefined | boolean});
+  const [notifiedOn, setNotifiedOn] = useState(new Date());
+  
   const viewTransaction = ()=>{
     setId(data.clientId);
     mode("client");
     openOverlay(1);
   }
+  
+  const cardLongPressed = ()=>{
+    if(!data.showSelect && selectable){
+      // let temp = ended;
+      // temp.showSelect = true;
+      // temp.selected = true;
+      // setEnded({...temp});
+      longPressed()
+    }
+  }
+
+  const cardClicked = ()=>{
+    if(selectable){
+      // if(ended.showSelect){
+      //   let temp = ended;
+      //   temp.selected = !temp.selected;
+      //   setEnded({...temp})
+      // }
+      checkBoxClicked();
+    }
+  }
+
+  useEffect(()=>{
+    setEnded(JSON.parse(JSON.stringify(data)));
+    let n = data?.notifiedOn as any
+    if(n){
+      let t = new Timestamp(n?._seconds, n?._nanoseconds);
+      setNotifiedOn(t.toDate());
+    }
+  },[data]);
 
   return (
-    <View style={[styles.expiryCard, shadowGenerator(2,2)]}>
-      <View style={[styles.imageSection, styles.common]}>
-        <IconSet name='user-o' size={60} color={iconColor}/>
-        <Text style={styles.nameTag}>{ended.name.toUpperCase()}</Text>
-      </View>
-      <View style={styles.spacer}></View>
-      <View style={[styles.detailSection, styles.common]}>
-        <View style={styles.part}>
-          <Text style={[key]}>Subscription Ended</Text>
-          <Text style={styles.value}>{ended.endedString.toUpperCase()}</Text>
+    <TouchableOpacity 
+      style={[styles.expiryCard]} 
+      onLongPress={()=>{cardLongPressed()}}
+      onPress={()=>{cardClicked()}} 
+      activeOpacity={0.7}
+    >
+      <View style={{flex: 1, display: "flex", flexDirection: "row", gap: 10, alignItems: "center"}}>
+        {
+          data.showSelect ? 
+            <View style={styles.checks}>  
+              <Checkbox
+                onPress={()=>{cardClicked()}}
+                status={data.selected ? 'checked' : "unchecked"}
+                color={textColorPrimary}
+                uncheckedColor={borderColor}
+              />
+            </View>
+          : <></>
+        }
+        <View style={[styles.imageSection, styles.common]}>
+          <IconSet name='user-o' size={60} color={iconColor}/>
+          <Text style={styles.nameTag} numberOfLines={1} ellipsizeMode='tail'>{ended.name.toUpperCase()}</Text>
         </View>
-        <View style={styles.part}>
-          <Text style={[key]}>Package</Text>
-          <Text style={styles.value}>{ended.tier.toUpperCase()}</Text>
+        <View style={styles.spacer}></View>
+        <View style={[styles.detailSection, styles.common]}>
+          <View style={styles.part}>
+            <Text style={[key, {color: borderColor}]}>Subscription Ended</Text>
+            <Text style={styles.value} numberOfLines={1} ellipsizeMode='tail'>{ended.endedString.toUpperCase()}</Text>
+          </View>
+          <View style={styles.part}>
+            <Text style={[key, {color: borderColor}]}>Package</Text>
+            <Text style={[styles.value, {color: goldColor}]} numberOfLines={1} ellipsizeMode='tail'>{ended.tier.toUpperCase()}</Text>
+          </View>
+          {
+            ended?.notified ? 
+              <View style={styles.notifiedView}>
+                <Text style={{color: iconColor, fontSize: fontSize.small}}>Notified</Text>
+                <IconSet name='ok-circle' size={15} color={"#12b100"}/>
+              </View>
+            : ended.delivered != undefined ?
+                ended.delivered ? 
+                  <></>
+                : 
+                <View style={styles.deliveredView}>
+                  <Text style={styles.deliveredText}>Undelivered</Text>
+                  <IconSet name='cancel-circled' color={"crimson"} size={15}/>
+                </View>
+              : <></>
+          }
+        </View>
+        <View style={[styles.buttonSection]}>
+          <TouchableOpacity style={styles.btn}  activeOpacity={0.7} onPress={()=>{openWhatsapp(data.phoneNumber)}}>
+            <IconSet name='whatsapp' color="#25D366" size={20}/>
+          </TouchableOpacity>
+          <TouchableOpacity style={styles.btn}  activeOpacity={0.7} onPress={()=>{viewTransaction()}}>
+            <IconSet name='exchange' color={iconColor} size={20}/>
+          </TouchableOpacity>
         </View>
       </View>
-      <View style={[styles.buttonSection, styles.common]}>
-        <TouchableOpacity style={styles.btn}  activeOpacity={0.7} onPress={()=>{openWhatsapp(data.phoneNumber)}}>
-          <Text style={styles.btnText}>Whatsapp</Text>
-        </TouchableOpacity>
-        <TouchableOpacity style={styles.btn}  activeOpacity={0.7} onPress={()=>{viewTransaction()}}>
-          <Text style={styles.btnText}>View Transaction</Text>
-        </TouchableOpacity>
+      <View style={{width: "100%", display: "flex", flexDirection: "row" ,justifyContent: "space-between", alignItems: "center"}}>
+        <View>
+          {/* {
+            ended.delivered != undefined ?
+              ended.delivered ? 
+                <></>
+              : <View style={styles.deliveredView}>
+                  <IconSet name='cancel' color={"crimson"} size={20}/>
+                  <Text style={styles.deliveredText}>Undelivered</Text>
+                </View>
+            : <></>
+          } */}
+        </View>
+        {
+          ended.notified ? 
+            <View>
+              {
+                getHourGap(notifiedOn.getTime()) >= 1 ? 
+                  <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>{
+                    `Last notified: ${getHourGap(notifiedOn.getTime())} hours ago`
+                  }</Text>
+                : <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>{
+                  "Last notified: few minutes ago"
+                }</Text>
+              }
+            </View>
+          : <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>{
+            "Client not notified yet"
+          }</Text>
+        }
       </View>
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -69,33 +170,40 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "column",
     alignItems: "center",
-    gap: 15,
-    paddingVertical: 20,
-    paddingHorizontal: 15,
+    justifyContent: "center",
+    gap: 10,
     borderRadius: 10,
+    paddingVertical: 14,
     backgroundColor: cardColor,
-    width: Dimensions.get("window").width * 0.45,
-    flex: 1,
-    marginRight: 10
+    width: Dimensions.get("window").width * 0.9,
+    paddingHorizontal: 10,
+    // maxHeight: Dimensions.get("window").height * 0.15,
+    marginRight: 10,
+    elevation: 3
   },
   common: {
     display: "flex",
     flexDirection: "column",
-    width: "100%"
   },
   imageSection:{
     alignItems: "center",
     justifyContent:"center",
-    gap: 10
+    gap: 10,
+    flex: 0.4
   },
   detailSection:{
     alignItems: "flex-start",
-    flex: 1,
-    gap: 10
+    flex: 0.6,
+    gap: 5,
+    height: "100%",
+    justifyContent: "center"
   },
   buttonSection:{
-    flex: 0.2,
-    gap: 20
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    gap: 10,
   },
   part:{
     display: "flex",
@@ -103,26 +211,58 @@ const styles = StyleSheet.create({
     alignItems: "flex-start"
   },
   value:{
-    color: "white",
-    fontSize: fontSize.xmedium
+    color: iconColor,
+    fontSize: fontSize.small,
+    width: "100%"
   },
   nameTag:{
-    fontSize: fontSize.xmedium,
-    fontWeight: "700"
+    fontSize: fontSize.small,
+    fontWeight: "500",
+    width: "100%",
+    textAlign: "center"
   },
   btn:{
-    width: "100%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    backgroundColor: primaryColor,
+    borderRadius: 10,
+    padding: 10,
+    elevation: 3
     // padding: 10
   },
   spacer:{
-    height: 2,
+    height: "100%",
     backgroundColor: primaryColor,
-    width: "80%"
+    width: 1
   },
   btnText:{
     color: textColorPrimary
+  },
+  checks:{
+    height: "100%",
+    flex: 0.1,
+    display: "flex",
+    justifyContent: "flex-start",
+    alignItems: "center",
+  },
+  notifiedView:{
+    display: "flex",
+    flexDirection:"row",
+    alignItems: "center",
+    width: "100%",
+    justifyContent: "flex-start",
+    gap: 5
+  },
+  deliveredView:{
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "flex-start",
+    gap: 5
+  },
+  deliveredText:{
+    fontSize: fontSize.small,
+    color: iconColor,
   }
 })

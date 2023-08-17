@@ -1,4 +1,5 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth"
+import { CancelTokenSource } from "axios"
 import { Timestamp } from "firebase/firestore"
 
 export type inputProps = {
@@ -141,4 +142,9 @@ export type confirmationModal = {
     msg: string,
     title: string,
     confirm: boolean
+}
+
+export type iApiCall = {
+    url: string, 
+    axios: CancelTokenSource
 }

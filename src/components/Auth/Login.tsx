@@ -1,7 +1,7 @@
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container, shadowGenerator, valueBinder } from '../../utils/helper'
-import { borderColor, cardColor, iconColor, secondaryColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
+import { container, valueBinder } from '../../utils/helper'
+import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import Input from '../Common/Input'
 import Button from '../Common/Button'
@@ -11,7 +11,6 @@ import { connect } from 'react-redux'
 import { signInWithPhoneNumber } from '../../redux/actions/authActions'
 import { Svg, Path, Defs, G } from 'react-native-svg';
 import IconSet from '../../styles/icons/Icons'
-import { ScrollView } from 'react-native-gesture-handler'
 
 type props = {
   signInWithPhoneNumber: any
@@ -36,17 +35,21 @@ const Login = ({signInWithPhoneNumber}: props) => {
   const [allInputsValid, setAllInputsValid] = useState(false as boolean)
 
   const validation = ()=>{
-    let temp = inputList;
-    inputList.forEach((inputs)=>{
-      if(!inputs.value || inputs.value.length < 10){
-        temp[inputs.id].valid = false;
-        temp[inputs.id].msg = "Enter a valid phone number"
-      }else{
-        temp[inputs.id].valid = true;
-        temp[inputs.id].msg = ""
-      }
-    });
-    setInputList([...temp]);
+    try{
+      let temp = inputList;
+      inputList.forEach((inputs)=>{
+        if(!inputs.value || inputs.value.length < 10){
+          temp[inputs.id].valid = false;
+          temp[inputs.id].msg = "Enter a valid phone number"
+        }else{
+          temp[inputs.id].valid = true;
+          temp[inputs.id].msg = ""
+        }
+      });
+      setInputList([...temp]);
+    }catch(err){
+      
+    }
   }
 
   const sendOtpClicked = ()=>{

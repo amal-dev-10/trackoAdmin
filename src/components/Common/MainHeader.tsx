@@ -23,7 +23,8 @@ const gotoDashboard = ()=>{
   let st = store.dispatch;
   st(resetReducerAction("tabReducer"));
   st(resetReducerAction("clientReducer"));
-  st(resetReducerAction("packageReducer"))
+  st(resetReducerAction("packageReducer"));
+  st(resetReducerAction("filterReducer"));
   navigate("Dashboard");
 }
 

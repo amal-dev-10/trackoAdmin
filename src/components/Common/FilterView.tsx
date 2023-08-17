@@ -37,6 +37,10 @@ const FilterView = ({toggleFilterView, clientFilter,applyFilterClicked, applyFil
         }
       }
     });
+    let allUnSelected: boolean = all.every((x)=>{return !x.active});
+    if(allUnSelected){
+      query.count = 4;
+    }
     query.filters = queryFilters;
     applyFilterClicked(query); 
     toggleFilterView()

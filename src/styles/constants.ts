@@ -1,11 +1,11 @@
 import { TextStyle } from "react-native";
-import { iconColor } from "./colors";
+import { borderColor, iconColor } from "./colors";
 import { fontSize } from "./fonts";
 
 export const subTitleStyle: TextStyle = {
     fontSize: fontSize.xmedium,
-    color: iconColor,
-    fontWeight: "700"
+    color: borderColor,
+    fontWeight: "600"
 }
 
 export const key: TextStyle = {

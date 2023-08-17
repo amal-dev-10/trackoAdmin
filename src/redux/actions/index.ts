@@ -1,7 +1,7 @@
 // Bottom navigation actions
 
 import { iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
-import { iTransactions, packagesProps } from "../../interfaces/common";
+import { iApiCall, iTransactions, packagesProps } from "../../interfaces/common";
 import { iFilters, iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
 import store from "../store";
@@ -292,6 +292,27 @@ export const confirmAction = (payload: boolean)=>{
 export const showConfirmModalAction = (payload: boolean)=>{
   return {
     type: "SHOW_CONFIRMATION_MODAL",
+    payload: payload
+  }
+}
+
+export const setApiCallAction = (payload: iApiCall)=>{
+  return {
+    type: "SET_NEW_API_CALL",
+    payload: payload
+  }
+}
+
+export const completeApiCallAction = (payload: string)=>{
+  return {
+    type: "COMPLETE_API_CALL",
+    payload: payload
+  }
+}
+
+export const cancelApiCall = (payload: string)=>{
+  return {
+    type: "CANCEL_API_CALL",
     payload: payload
   }
 }

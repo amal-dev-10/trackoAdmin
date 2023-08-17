@@ -95,7 +95,8 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
             }
         </View>
         <View style={styles.versionView}>
-            <Text style={styles.versionName}>{`${packageJson.name.toUpperCase().replace("_", " ")} v${packageJson.version}`}</Text>
+            <IconSet name='tracko-logo' size={10} color={borderColor}/>
+            <Text style={styles.versionName}>{`V ${packageJson.version}`}</Text>
         </View>
     </View>
   )
@@ -173,6 +174,9 @@ const styles = StyleSheet.create({
         fontSize: fontSize.small
     },
     versionView:{
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
         paddingTop: 10
     },
     versionName:{

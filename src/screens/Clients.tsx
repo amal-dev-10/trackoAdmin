@@ -13,6 +13,7 @@ import NoData from '../components/Common/NoData'
 import FilterView from '../components/Common/FilterView'
 import Loading from '../components/Common/Loading'
 import { fontSize } from '../styles/fonts'
+import { ActivityIndicator } from 'react-native-paper'
 
 type props = {
   setClients: any,
@@ -20,10 +21,11 @@ type props = {
   openOverlay: any,
   setDropDownData: any,
   filterActive: boolean,
-  clientMode: any
+  clientMode: any,
+  clientFilter: iFilters[],
 }
 
-const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActive, clientMode}: props) => {
+const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActive, clientMode, clientFilter}: props) => {
 
   const [searchText, setSearchText] = useState(null as any);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
@@ -36,6 +38,7 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
     let resp: apiResponse = await getAllClients(query, disableLoader);
     setServieMsg(resp?.message || "Server Error");
     if(resp?.status === 200){
+      getData();
       LayoutAnimation.configureNext({
         duration: 200, // Adjust the frame rate by changing the duration
         update: {
@@ -56,10 +59,10 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
   }
 
   const getData = async ()=>{
-    let resp: apiResponse = await getFilterCounts();
+    let resp: apiResponse = await getFilterCounts(true);
     if(resp?.status === 200){
       setDropDownData(resp.data);
-    }
+    };
   }
 
   const startSearch = async ()=>{
@@ -79,7 +82,6 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
   }
 
   const start = ()=>{
-    getData();
     getAllClientsFromDb({count: 4}, false)
   }
 
@@ -116,15 +118,29 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
               <Text style={styles.btnText}>Search</Text>
           </TouchableOpacity>
         </View>
-        <TouchableOpacity style={styles.filterBtn} onPress={()=>{setShowFilter(true)}}>
-          <IconSet name='filter' color={iconColor} size={23}/>
-          {
-            filterActive ? 
-              <View style={styles.filterActive}></View>
-            : <></>
-          }
-        </TouchableOpacity>
+        {
+          clientFilter?.length ? 
+            <TouchableOpacity style={styles.filterBtn} onPress={()=>{setShowFilter(true)}}>
+              <IconSet name='filter' color={iconColor} size={23}/>
+              {
+                filterActive ? 
+                  <View style={styles.filterActive}></View>
+                : <></>
+              }
+            </TouchableOpacity>
+          : <ActivityIndicator
+              size={"small"}
+              color={textColorPrimary}
+            />
+        }
       </View>
+      {
+        !fetchFailed ? 
+          <View style={{display: "flex", justifyContent: "flex-start", width: "100%"}}>
+            <Text style={{fontSize: fontSize.small, color: borderColor}}>{`Result (${clients.length})`}</Text>
+          </View>
+        : <></>
+      }
       {
         clients.length && !fetchFailed ? 
         <ScrollView showsVerticalScrollIndicator={false} style={styles.clientScroll}>
@@ -168,7 +184,8 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
 
 const mapStateToProps = (state: any)=>({
   clients: state.client.clients,
-  filterActive: state.clientFilter.filterObject?.filterActive || false
+  filterActive: state.clientFilter.filterObject?.filterActive || false,
+  clientFilter: state.clientFilter.filterObject?.allFilters
 });
 
 const mapDispatchToProps = (dispatch: any)=>({
@@ -184,7 +201,7 @@ const styles = StyleSheet.create({
   clientScreen:{
     display: "flex",
     flexDirection: 'column',
-    gap: 20
+    gap: 10
   },
   searchView:{
     display: "flex",
