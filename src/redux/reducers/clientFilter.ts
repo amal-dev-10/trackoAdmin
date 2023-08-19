@@ -12,7 +12,7 @@ let initialState = {
 export const clientFilters = (state: props = initialState, action: actionInterface)=>{
     switch(action.type){
         case "APPLY_FILTER":
-            let all = action.payload as iFilters[]
+            let all = action.payload as iFilters[];
             let active = all.map((d)=>{
                 let check = d.filters.map((x)=>{
                     return x.active
@@ -36,7 +36,7 @@ export const clientFilters = (state: props = initialState, action: actionInterfa
                 ...state,
                 filterObject: {
                     ...state.filterObject,
-                    allFilters: [...action.payload]
+                    allFilters: JSON.parse(JSON.stringify(action.payload))
                 }
             } as props
         case "RESET_REDUCER":

@@ -24,6 +24,7 @@ type props = {
 const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}: props) => {
   const [endedSubs, setEndedSubs] = useState([] as (iExpiredData & {selected: boolean, showSelect: boolean, delivered: undefined | boolean})[]);
   const [selectAll, setSelectAll] = useState(false as boolean);
+  const [showSelectAll, setShowSelectAll] = useState(false as boolean);
   const [showTools, setShowTools] = useState(false as boolean);
   const [selectedClients, setSelectedClients] = useState([] as string[]);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
@@ -42,7 +43,7 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
       let temp = (resp.data as iExpiredData[]).map((d)=>{
         let t: iExpiredData & {selected: boolean, showSelect: boolean, delivered: undefined | boolean} = {...d, selected: false, showSelect: false, delivered: undefined};
         return t
-      })
+      });
       setEndedSubs([...temp]);
     }else if(resp?.status === 500 || resp?.status === undefined){
       showToast("Ended subscriptions data failed !")
@@ -83,12 +84,18 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
     temp.map((d)=>{
       let n = d?.notifiedOn as any
       let t = new Timestamp(n?._seconds, n?._nanoseconds);
-      let check = !d.notified || (d.notified && getHourGap(t.toDate().getTime()) >= 24);
-      if(check){
-        if(d.clientId === id){
+      let check = d.phoneVerified && (!d.notified || (d.notified && getHourGap(t.toDate().getTime()) >= 24));
+      if(d.clientId === id){
+        if(check){
           d.showSelect = true;
           d.selected = true;
-        }else{
+        }else if(!d.phoneVerified){
+          showToast("Phone number not verified")
+        }else if(getHourGap(t.toDate().getTime()) < 24){
+          showToast("Already notified")
+        }
+      }else{
+        if(check){
           d.showSelect = true;
         }
       }
@@ -138,29 +145,34 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
   useEffect(()=>{
     let selected: boolean[] = [];
     let list: string[] = []; 
+    let eligibilityCheck: boolean[] = [];
     endedSubs.forEach((d)=>{
       let n = d?.notifiedOn as any
       let t = new Timestamp(n?._seconds, n?._nanoseconds);
-      let check = !d.notified || (d.notified && getHourGap(t.toDate().getTime()) >= 24);
+      let check = d.phoneVerified && (!d.notified || (d.notified && getHourGap(t.toDate().getTime()) >= 24));
       if(!check){
         selected.push(false);
       }else{
         selected.push(d.selected);
         if(d.selected){list.push(d.clientId)};
       }
+      eligibilityCheck.push(check);
     });
     setSelectedClients([...list]);
-
+    let someEligible = eligibilityCheck.some((x)=>{return x});
+    setShowSelectAll(someEligible);
     let someSelected: boolean = selected.some((x)=>{return x});
     let allSelected: boolean = selected.every((x)=>{return x});
     let everyUnselected: boolean = selected.every((x)=>{return !x});
     if(someSelected){
+      setShowTools(true);
       setShowTools(JSON.parse(JSON.stringify(true)));
     }
     if(allSelected){
       setSelectAll(JSON.parse(JSON.stringify(true)));
     }
     if(everyUnselected){
+      setShowTools(false);
       setSelectAll(JSON.parse(JSON.stringify(false)));
     }
   }, [endedSubs]);
@@ -170,7 +182,7 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
     temp.map((d)=>{
       let n = d?.notifiedOn as any
       let t = new Timestamp(n?._seconds, n?._nanoseconds);
-      let check = !d.notified || (d.notified && getHourGap(t.toDate().getTime()) >= 24);
+      let check = d.phoneVerified && (!d.notified || (d.notified && getHourGap(t.toDate().getTime()) >= 24));
       if(check){
         d.showSelect = selectAll;
         d.selected = selectAll;
@@ -186,9 +198,9 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
     setSelectedClients([]);
   }
 
-  const start = ()=>{
+  const start = async ()=>{
     setDefault();
-    getEndedSubs();
+    await getEndedSubs();
   }
 
   useEffect(()=>{
@@ -207,15 +219,19 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
       {
         endedSubs.length ? 
           <View style={styles.toolsView}>
-            <View style={styles.selectAllView}>
-              <Checkbox
-                status={selectAll ? "checked" : "unchecked"}
-                onPress={()=>{setSelectAll(!selectAll)}}
-                color={textColorPrimary}
-                uncheckedColor={borderColor}           
-              />
-              <Text style={styles.selectAllText}>Select All</Text>
-            </View>
+            {
+              showSelectAll ? 
+                <View style={styles.selectAllView}>
+                  <Checkbox
+                    status={selectAll ? "checked" : "unchecked"}
+                    onPress={()=>{setSelectAll(!selectAll)}}
+                    color={textColorPrimary}
+                    uncheckedColor={borderColor}           
+                  />
+                  <Text style={styles.selectAllText}>Select All</Text>
+                </View>
+              : <></>
+            }
             {
               showTools &&
               <View style={styles.allToolsView}>

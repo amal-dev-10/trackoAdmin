@@ -7,6 +7,7 @@ import Svg, { Defs, G, Path } from 'react-native-svg';
 import { setOverlayComponent, setSelectedClient } from '../../redux/actions';
 import { connect } from 'react-redux';
 import { fomatFirstLetterCapital } from '../../utils/helper';
+import IconSet from '../../styles/icons/Icons';
 
 type cardPackProps = {
     membershipData: iMembership,
@@ -65,21 +66,21 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
                 }
             </View>
             <View style={styles.stripe}>
-                <View style={[styles.stripeLeftRight, styles.left]}>
+                <View style={[styles.stripeLeftRight, styles.left, {maxWidth: "35%"}]}>
                     <Text style={styles.stripeKey}>Membership Holder</Text>
-                    <Text style={styles.stripeValue}>{
+                    <Text style={[styles.stripeValue, {width: "100%"}]} numberOfLines={1} ellipsizeMode='tail'>{
                         fomatFirstLetterCapital(membershipData.name.toUpperCase())
                     }</Text>
                 </View>
-                <View style={[styles.stripeLeftRight, styles.left]}>
+                <View style={[styles.stripeLeftRight, styles.left, {maxWidth: "30%"}]}>
                     <Text style={styles.stripeKey}>Valid From</Text>
-                    <Text style={styles.stripeValue}>{
+                    <Text style={[styles.stripeValue, {width: "100%"}]} numberOfLines={1} ellipsizeMode='tail'>{
                         membershipData.memberShipDetails?.validFromString ? membershipData.memberShipDetails?.validFromString : "NA"
                     }</Text>
                 </View>
-                <View style={[styles.stripeLeftRight, styles.right]}>
+                <View style={[styles.stripeLeftRight, styles.right, {maxWidth: "30%"}]}>
                     <Text style={styles.stripeKey}>Valid Till</Text>
-                    <Text style={styles.stripeValue}>{
+                    <Text style={[styles.stripeValue, {width: "100%"}]} numberOfLines={1} ellipsizeMode='tail'>{
                         membershipData.memberShipDetails?.validThruString ? membershipData.memberShipDetails?.validThruString : "NA"
                     }</Text>
                 </View>

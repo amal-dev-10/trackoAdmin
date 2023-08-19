@@ -182,7 +182,7 @@ const ActivateMembership = ({businessId, showActivatePack, updateClientState, cl
 
     return (
         <Modal transparent onRequestClose={()=>{showActivatePack(false)}}>
-            <View style={styles.modalView}>
+            <View style={[styles.modalView]}>
                 <View style={styles.container}>
                     <View style={styles.headerActivate}>
                         <Text style={styles.title}>Activate</Text>
@@ -331,8 +331,9 @@ const styles = StyleSheet.create({
         gap: 20,
         borderRadius: 10,
         padding: 10,
-        minHeight: "45%",
-        maxHeight: "70%",
+        // minHeight: "45%",
+        // maxHeight: "70%",
+        // height: "50%",
         width: "90%"
     },
     headerActivate:{
@@ -344,7 +345,7 @@ const styles = StyleSheet.create({
         borderBottomWidth: 2
     },
     detail:{
-        flex: 1,
+        // flex: 1,
         display: "flex",
         justifyContent:"center",
         alignItems:"center",
@@ -367,7 +368,8 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         flex: 1,
-        width: "100%"
+        width: "100%",
+        height: "100%"
     },
     dropdown:{
         width: "80%",

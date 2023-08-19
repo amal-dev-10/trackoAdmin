@@ -18,10 +18,11 @@ type inputProps = {
     value: string,
     focus: boolean,
     editable: boolean,
-    showVerifyBtn?: boolean
+    showVerifyBtn?: boolean,
+    verifyBtnClicked?: any
 }
 
-const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value, focus, editable, showVerifyBtn}:inputProps) => {
+const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value, focus, editable, showVerifyBtn, verifyBtnClicked}:inputProps) => {
     const [f, setF] = useState(focus  as boolean);
     const [placeText, setPlaceText] = useState(placeHolder as string);
     const [showValid, setShowValid] = useState(false as boolean);
@@ -55,8 +56,8 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
                 onChangeText={(e: string)=>{onInput(id, e); setShowValid(true)}}
                 onFocus={(e)=>{setF(true);}}
                 onBlur={()=>{setF(false);}}
-                placeholderTextColor={iconColor}
                 style={styles.input}
+                placeholderTextColor={iconColor}
                 cursorColor={borderColor}
                 keyboardType={keyBoardType}
                 value={value}
@@ -71,7 +72,7 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
             }
             {
                 (showVerifyBtn && v) ? 
-                    <TouchableOpacity style={styles.verifyBtn}>
+                    <TouchableOpacity style={styles.verifyBtn} onPress={()=>{verifyBtnClicked()}}>
                         <Text style={styles.verifyText}>Verify</Text>
                     </TouchableOpacity>
                 : <></>

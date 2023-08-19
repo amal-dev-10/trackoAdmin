@@ -241,3 +241,30 @@ export const sendSMSToClients = async (clientList: string[])=>{
     }
     return res
 }
+
+export const sendVerificationCode = async(phoneNumber: string)=>{
+    let res = null;
+    try{
+        res = await postData(`client/sendOTP`, {
+            phoneNumber: phoneNumber
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const verifyOTPCode = async(phoneNumber: string, code: string)=>{
+    let res = null;
+    try{
+        res = await postData(`client/verifyOTP`, {
+            phoneNumber: phoneNumber,
+            code: code
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}

@@ -87,7 +87,14 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, cli
         <View style={styles.detailView}>
             <IconSet name='user-circle-o' size={90} color={iconColor}/>
             <View style={[styles.nameView]}>
-                <Text style={styles.nameText}>{clientData.name.toUpperCase()}</Text>
+                <View style={styles.nameAndVerifyView}>
+                    <Text style={styles.nameText}>{clientData.name.toUpperCase()}</Text>
+                    {
+                        clientData.phoneVerified ? 
+                            <IconSet name='ok-circle' size={15} color={"#12b100"}/>
+                        : <IconSet name='cancel-circled' size={17} color={borderColor}/>
+                    }
+                </View>
                 <Text style={styles.phoneText}>{clientData.phoneNumber}</Text>
             </View>
         </View>
@@ -202,7 +209,7 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     nameText:{
-        fontSize: fontSize.medium,
+        fontSize: fontSize.xmedium,
         color: textColorPrimary
     },
     phoneText:{
@@ -288,5 +295,11 @@ const styles = StyleSheet.create({
         display: "flex",
         flexDirection: "column",
         gap: 5
+    },
+    nameAndVerifyView:{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 7
     }
 })

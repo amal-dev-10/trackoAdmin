@@ -38,7 +38,6 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
     let resp: apiResponse = await getAllClients(query, disableLoader);
     setServieMsg(resp?.message || "Server Error");
     if(resp?.status === 200){
-      getData();
       LayoutAnimation.configureNext({
         duration: 200, // Adjust the frame rate by changing the duration
         update: {
@@ -81,8 +80,9 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
     }
   }
 
-  const start = ()=>{
-    getAllClientsFromDb({count: 4}, false)
+  const start = async ()=>{
+    await getAllClientsFromDb({count: 4}, false);
+    getData();
   }
 
   useEffect(()=>{
@@ -91,7 +91,7 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
       setReload(false);
       setSearchText("");
     }
-  }, [reload])
+  }, [reload]);
 
   useEffect(()=>{
     setRoute("Clients");

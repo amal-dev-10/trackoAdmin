@@ -85,6 +85,14 @@ const ExpiryCard = ({data, mode, openOverlay, setId, selectable, longPressed, ch
         <View style={[styles.imageSection, styles.common]}>
           <IconSet name='user-o' size={60} color={iconColor}/>
           <Text style={styles.nameTag} numberOfLines={1} ellipsizeMode='tail'>{ended.name.toUpperCase()}</Text>
+          {
+            ended.phoneVerified ? 
+              <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 5}}>
+                <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>Verified</Text>
+                <IconSet name='ok-circle' size={10} color={"#12b100"}/>
+              </View>
+            : <></>
+          }
         </View>
         <View style={styles.spacer}></View>
         <View style={[styles.detailSection, styles.common]}>
@@ -188,7 +196,7 @@ const styles = StyleSheet.create({
   imageSection:{
     alignItems: "center",
     justifyContent:"center",
-    gap: 10,
+    gap: 5,
     flex: 0.4
   },
   detailSection:{

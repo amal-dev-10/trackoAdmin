@@ -55,12 +55,12 @@ const Requests = ({allRequests,getRequestsData, openOverlay, clientMode}: props)
           buttons={["Add Client"]}
           data={allRequests} 
           fetchFailed={false}
+          tryAgainClicked={()=>{}}
         />
       }
 
-      <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{clientMode("add");openOverlay(6)}}>
-        <AntDesign size={25} name='plus' color={textColorPrimary}/>
-        {/* <Text style={styles.addText}>Click here to add clients to your organization</Text> */}
+      <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{clientMode("add"); openOverlay(6)}}>
+        <AntDesign size={20} name='plus' color={textColorPrimary}/>
       </TouchableOpacity>
     </View>
   )
@@ -99,8 +99,8 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     alignItems: "center",
     justifyContent: "center",
-    height: Dimensions.get("window").width * 0.18,
-    width: Dimensions.get("window").width * 0.18,
+    height: Dimensions.get("window").width * 0.14,
+    width: Dimensions.get("window").width * 0.14,
     elevation: 3,
     borderWidth: 2,
     borderColor: "#1e1e1e",

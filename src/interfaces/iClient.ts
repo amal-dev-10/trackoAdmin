@@ -16,6 +16,7 @@ export type iMembership = {
     phoneNumber: string,
     since: string,
     clientId: string,
+    phoneVerified: boolean,
     memberShipDetails: iMembershipDetails
 }
 
@@ -40,7 +41,8 @@ export type iExpiredData = {
     phoneNumber: string,
     countryCode: string,
     notifiedOn?: Timestamp,
-    notified?: boolean
+    notified?: boolean,
+    phoneVerified: boolean
 }
 
 export type iFilterQuery = {

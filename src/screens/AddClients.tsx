@@ -9,10 +9,11 @@ import { borderColor, iconColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import IconSet from '../styles/icons/Icons';
 import { iClient, iMembership } from '../interfaces/iClient';
-import { addNewClient, updateClient } from '../services/apiCalls/serviceCalls';
+import { addNewClient, sendVerificationCode, updateClient, verifyOTPCode } from '../services/apiCalls/serviceCalls';
 import { connect } from 'react-redux';
 import { Timestamp } from 'firebase/firestore';
 import { closeOverlayComponent, setAllClients, updateClientAction } from '../redux/actions';
+import PhoneCodeInput from '../components/Common/PhoneCodeInput';
 
 type props = {
   selectedBusinessId: string,
@@ -28,6 +29,8 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
   const [allValid, setAllValid] = useState(false as boolean);
   const [selectedDate, setSelectedDate] = useState("" as any);
   const [showCalender, setShowCalender] = useState(false);
+  const [showOTPInput, setShowOTPInput] = useState(false as boolean);
+  const [phoneVerified, setPhoneVerified] = useState(false as boolean);
   const inputs = [
     {
       value: "",
@@ -93,7 +96,7 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
         countryCode: "+91",
         name: inputList[0].value,
         phoneNumber: inputList[1].value,
-        phoneVerified: false,
+        phoneVerified: phoneVerified,
         dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date())
       }
       let resp: apiResponse = await addNewClient(selectedBusinessId, data);
@@ -101,7 +104,11 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
         let temp = allClients;
         temp.concat([resp.data]);
         setClientToState(JSON.parse(JSON.stringify(temp)));
-        let inputs = inputList.map((s)=>{s.value = ""; return s});
+        let inputs = inputList.map((s)=>{
+          s.showVerifyBtn = false;
+          s.value = ""; 
+          return s
+        });
         setInputList([...inputs]);
         showToast("Client added successfully !")
       }else if(resp?.status === 200 && !Object.entries(resp.data).length){
@@ -116,7 +123,8 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
 
   const updateClientClicked = async ()=>{
     let data = {
-      name: inputList[0].value
+      name: inputList[0].value,
+      phoneVerified:phoneVerified
     } as iClient;
     let resp : apiResponse = await updateClient(selectedClient?.clientId || "", data);
     if(resp.status === 200){
@@ -128,25 +136,67 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
     }
   }
 
+  const verifyBtnClicked = async ()=>{
+    let resp: apiResponse = await sendVerificationCode(`+91${inputList[1].value}`);
+    if(resp?.status === 200){
+      let temp = inputList;
+      temp[1].showVerifyBtn = false;
+      setInputList([...temp]);
+      setShowOTPInput(true);
+    }else{
+      setShowOTPInput(false);
+      showToast("Something went wrong.")
+    }
+  }
+
+  const checkOTPClicked = async (code: string)=>{
+    let resp: apiResponse = await verifyOTPCode(`+91${inputList[1].value}`, code);
+    if(resp?.status === 200){
+      let temp = inputList;
+      temp[1].showVerifyBtn = false;
+      temp[1].editable = false;
+      setPhoneVerified(true);
+      setInputList([...temp]);
+      setShowOTPInput(false);
+      showToast(resp.message);
+    }else{
+      showToast("Verification failed.");
+      setPhoneVerified(false);
+      setShowOTPInput(false);
+    }
+  }
+
+  useEffect(()=>{
+    validation();
+  }, [selectedDate])
+
   useEffect(()=>{
     if(mode === "edit"){
       let inputIndex = inputs.findIndex((x)=>{return x.name === "clientName"});
       if(inputIndex > -1){
-        let tempInput = inputs[inputIndex]
-        setInputList([tempInput]);
-        let temp = [tempInput].map((x)=>{
-          if(x.name === "clientName"){
-            x.value = selectedClient.name;
-          }else if(x.name === "phoneNumber"){
-            x.value = selectedClient.phoneNumber;
-          }
-          return x
-        });
-        setInputList([...temp]);
-        // if(selectedClient?.dobDate){
-        //   selectedDate(new Date(selectedClient.dobDate))
-        // }
       }
+      let tempInput = inputs[inputIndex]
+      setInputList([tempInput]);
+      let temp = inputList.map((x)=>{
+        if(x.name === "clientName"){
+          x.value = selectedClient.name;
+        }else if(x.name === "phoneNumber"){
+          x.value = selectedClient.phoneNumber;
+          x.editable = false
+          if(!selectedClient.phoneVerified){
+           x.showVerifyBtn = true;
+           x.valid = true;
+           setPhoneVerified(false);
+          }else{
+            setPhoneVerified(true);
+          }
+        }
+        return x
+      });
+      setInputList([...temp]);
+      // if(selectedClient?.dobDate){
+      //   selectedDate(new Date(selectedClient.dobDate))
+      // }
     }
   }, [])
 
@@ -156,24 +206,40 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
         {
           inputList.map((d, i: number)=>{
             return (
-              <Input
-                placeHolder={d.placeHolder}
-                onInput={(id: number, e: string)=>{
-                  let temp = valueBinder(inputList, id, e) as inputProps[]; 
-                  setInputList([...temp]);
-                  validation();
-                }}
-                keyBoardType={d.keyBoardType as KeyboardType}
-                icon={d.icon}
-                valid={d.valid}
-                msg={d.msg}
-                id={d.id}
-                key={d.id}
-                value={d.value}
-                focus={d.focus}
-                editable={d.editable}
-                showVerifyBtn={d.showVerifyBtn}
-              /> 
+              <View key={"i" + i} style={styles.inputs}>
+                <Input
+                  placeHolder={d.placeHolder}
+                  onInput={(id: number, e: string)=>{
+                    let temp = valueBinder(inputList, id, e) as inputProps[]; 
+                    setInputList([...temp]);
+                    validation();
+                  }}
+                  keyBoardType={d.keyBoardType as KeyboardType}
+                  icon={d.icon}
+                  valid={d.valid}
+                  msg={d.msg}
+                  id={d.id}
+                  key={d.id}
+                  value={d.value}
+                  focus={d.focus}
+                  editable={d.editable}
+                  showVerifyBtn={d.showVerifyBtn}
+                  verifyBtnClicked={()=>{verifyBtnClicked()}}
+                />
+                {
+                  (d.showVerifyBtn && d.editable)? 
+                    <Text style={styles.verifyText} key={"text" + i}>You can verify phone number now or can do it later.</Text>
+                  : <></>
+                }
+                {
+                  (showOTPInput && d.name === "phoneNumber") ? 
+                    <PhoneCodeInput
+                      checkOTPClicked={(val: string)=>{checkOTPClicked(val)}}
+                      key={"otpInput" + i}
+                    />
+                  : <></>
+                }
+              </View>
             )
           })
         }
@@ -279,5 +345,16 @@ const styles = StyleSheet.create({
     calenderView:{
       width: "100%",
       marginHorizontal: 5
+    },
+    verifyText:{
+      color: borderColor,
+      fontSize: fontSize.small,
+      width: "100%",
+      textAlign: "center"
+    },
+    inputs:{
+      display: "flex",
+      flexDirection: "column",
+      gap: 5
     }
 })
