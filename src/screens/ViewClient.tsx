@@ -1,7 +1,7 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useState } from 'react'
 import IconSet from '../styles/icons/Icons'
-import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, textColorPrimary, verifyIconColor } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { key } from '../styles/constants'
 import { fomatFirstLetterCapital, makeCall, openWhatsapp, wordSplitter } from '../utils/helper'
@@ -85,13 +85,20 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, cli
   return (
     <View style={styles.viewClientScreen}>
         <View style={styles.detailView}>
-            <IconSet name='user-circle-o' size={90} color={iconColor}/>
+            {
+                clientData.profileImageUrl ?
+                    <Image
+                       source={{uri: clientData.profileImageUrl}}
+                       style={{height: 100, width: 100, borderRadius: 50}} 
+                    /> 
+                : <IconSet name='user-circle-o' size={90} color={iconColor}/>
+            }
             <View style={[styles.nameView]}>
                 <View style={styles.nameAndVerifyView}>
                     <Text style={styles.nameText}>{clientData.name.toUpperCase()}</Text>
                     {
                         clientData.phoneVerified ? 
-                            <IconSet name='ok-circle' size={15} color={"#12b100"}/>
+                            <IconSet name='ok-circle' color={verifyIconColor} size={15}/>
                         : <IconSet name='cancel-circled' size={17} color={borderColor}/>
                     }
                 </View>

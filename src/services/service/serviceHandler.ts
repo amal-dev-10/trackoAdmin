@@ -43,10 +43,12 @@ export const postData = async (url: string, body: any, byPassLoading: boolean = 
     return response?.data
 };
 
-export const patchData = async (url: string, body: any) => {
+export const patchData = async (url: string, body: any, byPassLoading: boolean = false) => {
     let response = null;
     try {
-        store.dispatch(setLoader(true));
+        if(!byPassLoading){
+            store.dispatch(setLoader(true));
+        }
         let axios = createApiInstance();
         store.dispatch(setApiCallAction({url: url, axios: axios.source}));
         response = await axios.api.patch(url, JSON.stringify(body), {timeout: 30000, cancelToken: axios.source.token});
@@ -61,10 +63,12 @@ export const patchData = async (url: string, body: any) => {
     return response?.data
 };
 
-export const deleteData = async (url: string) => {
+export const deleteData = async (url: string, byPassLoading: boolean = false) => {
     let response = null;
     try {
-        store.dispatch(setLoader(true));
+        if(!byPassLoading){
+            store.dispatch(setLoader(true));
+        }
         let axios = createApiInstance();
         store.dispatch(setApiCallAction({url: url, axios: axios.source}));
         response = await axios.api.delete(url, {timeout: 30000, cancelToken: axios.source.token});

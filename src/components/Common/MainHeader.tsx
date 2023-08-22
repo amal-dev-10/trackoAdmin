@@ -1,4 +1,4 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React from 'react'
 import IconSet from '../../styles/icons/Icons'
 import { borderColor, cardColor, iconColor } from '../../styles/colors'
@@ -33,7 +33,14 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
     <View style={styles.header}>
       <View style={styles.mainHeaderText}>
         <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7} onPress={()=>{openOverlay(8)}}>
-          <IconSet name='building' size={20} color={iconColor}/>
+          {
+            selectedBusiness.logoUrl ? 
+            <Image
+              source={{uri: selectedBusiness.logoUrl}}
+              style={{height: 40, width: 40, borderRadius: 20}}
+            />
+            : <IconSet name='building' size={20} color={iconColor}/>
+          }
         </TouchableOpacity>
         <TouchableOpacity style={[styles.orgDropDown]} onPress={()=>{gotoDashboard()}} activeOpacity={0.7}>
           <View style={styles.businessNameView}>

@@ -331,9 +331,6 @@ const styles = StyleSheet.create({
         gap: 20,
         borderRadius: 10,
         padding: 10,
-        // minHeight: "45%",
-        // maxHeight: "70%",
-        // height: "50%",
         width: "90%"
     },
     headerActivate:{

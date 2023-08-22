@@ -9,11 +9,12 @@ import { borderColor, iconColor } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
 import IconSet from '../styles/icons/Icons';
 import { iClient, iMembership } from '../interfaces/iClient';
-import { addNewClient, sendVerificationCode, updateClient, verifyOTPCode } from '../services/apiCalls/serviceCalls';
+import { addNewClient, sendVerificationCode, updateClient, uploadBusinessLogo, uploadClientProfileImage, verifyOTPCode } from '../services/apiCalls/serviceCalls';
 import { connect } from 'react-redux';
 import { Timestamp } from 'firebase/firestore';
-import { closeOverlayComponent, setAllClients, updateClientAction } from '../redux/actions';
+import { closeOverlayComponent, setAllClients, setLoader, updateClientAction } from '../redux/actions';
 import PhoneCodeInput from '../components/Common/PhoneCodeInput';
+import SelectImage from '../components/Common/SelectImage';
 
 type props = {
   selectedBusinessId: string,
@@ -22,15 +23,22 @@ type props = {
   mode: string,
   selectedClient: iMembership,
   updateClientDetail: any,
-  closeOverlay: any
+  closeOverlay: any,
+  showLoader: any
 }
 
-const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, selectedClient, updateClientDetail, closeOverlay}: props) => {
+type logoType = {
+  type: "camera" | "library" | "",
+  image: string
+}
+
+const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, selectedClient, updateClientDetail, closeOverlay, showLoader}: props) => {
   const [allValid, setAllValid] = useState(false as boolean);
   const [selectedDate, setSelectedDate] = useState("" as any);
   const [showCalender, setShowCalender] = useState(false);
   const [showOTPInput, setShowOTPInput] = useState(false as boolean);
   const [phoneVerified, setPhoneVerified] = useState(false as boolean);
+  const [logo, setLogo]= useState({} as logoType);
   const inputs = [
     {
       value: "",
@@ -92,18 +100,25 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
 
   const createNewClient = async ()=>{
     if(allValid){
+      showLoader(true);
+      let res: apiResponse | null = await uploadProfile();
       let data: iClient = {
         countryCode: "+91",
         name: inputList[0].value,
         phoneNumber: inputList[1].value,
         phoneVerified: phoneVerified,
-        dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date())
+        dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date()),
+        profileImageUrl: ""
+      };
+      if(res && res.status === 200 && res.data){
+        data.profileImageUrl = res.data;
       }
-      let resp: apiResponse = await addNewClient(selectedBusinessId, data);
+      let resp: apiResponse = await addNewClient(selectedBusinessId, data, true);
       if(resp?.status === 200 && Object.entries(resp.data).length){
         let temp = allClients;
         temp.concat([resp.data]);
         setClientToState(JSON.parse(JSON.stringify(temp)));
+        setLogo({} as logoType);
         let inputs = inputList.map((s)=>{
           s.showVerifyBtn = false;
           s.value = ""; 
@@ -116,17 +131,23 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
       }else if(resp?.status === 500 || resp?.status === undefined){
         showToast("Data fetch failed !");
       }
+      showLoader(false);
     }else{
-      showToast("Verify all details.")
+      showToast("Verify all details.");
     }
   }
 
   const updateClientClicked = async ()=>{
+    showLoader(true);
+    let res: apiResponse | null = await uploadProfile();
     let data = {
       name: inputList[0].value,
-      phoneVerified:phoneVerified
+      phoneVerified:phoneVerified,
     } as iClient;
-    let resp : apiResponse = await updateClient(selectedClient?.clientId || "", data);
+    if(res && res.status === 200 && res.data){
+      data.profileImageUrl = res.data;
+    }
+    let resp : apiResponse = await updateClient(selectedClient?.clientId || "", data, true);
     if(resp.status === 200){
       updateClientDetail({...resp.data});
       closeOverlay(9);
@@ -134,6 +155,19 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
     }else{
       showToast("Something went wrong.")
     }
+    showLoader(false);
+  }
+
+  const uploadProfile = async ()=>{
+    let res: apiResponse | null = null;
+    if(logo.image && logo.image != selectedClient?.profileImageUrl){
+      res = await uploadClientProfileImage(logo.image);
+    }else if(logo.image === selectedClient?.profileImageUrl){
+    }
+    else{
+      showToast("No image selected.")
+    }
+    return res;
   }
 
   const verifyBtnClicked = async ()=>{
@@ -166,15 +200,12 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
     }
   }
 
-  useEffect(()=>{
-    validation();
-  }, [selectedDate])
+  useEffect(()=>{ validation(); }, [selectedDate])
 
   useEffect(()=>{
     if(mode === "edit"){
+      setLogo({image: selectedClient?.profileImageUrl || "", type: "library"});
       let inputIndex = inputs.findIndex((x)=>{return x.name === "clientName"});
-      if(inputIndex > -1){
-      }
       let tempInput = inputs[inputIndex]
       setInputList([tempInput]);
       let temp = inputList.map((x)=>{
@@ -198,11 +229,26 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
       //   selectedDate(new Date(selectedClient.dobDate))
       // }
     }
+    setLogo({} as logoType);
   }, [])
 
   return (
     <View style={styles.addClientScreen}>
       <View style={styles.inputView}>
+        <View style={styles.profileImageRow}>
+          <SelectImage 
+            text='Open Camera' 
+            getImageData={(img: string)=>{setLogo({type: "camera", image: img})}} 
+            previewImageList={logo.type === "camera" ? logo.image ? [logo.image] : [] : []}
+            mode="camera"
+          />
+          <SelectImage 
+            text='Open Library' 
+            getImageData={(img: string)=>{setLogo({type: "library", image: img})}} 
+            previewImageList={logo.type === "library" ? logo.image ? [logo.image] : [] : []}
+            mode="library"
+          />
+        </View>
         {
           inputList.map((d, i: number)=>{
             return (
@@ -294,7 +340,8 @@ const mapStateToProps = (state: any)=>({
 const mapDispatchToProps = (dispatch: any)=>({
   setClientToState: (data: iMembership[])=>dispatch(setAllClients(data)),
   updateClientDetail: (data: any)=>{dispatch(updateClientAction(data))},
-  closeOverlay: (id: number)=>{dispatch(closeOverlayComponent(id))}
+  closeOverlay: (id: number)=>{dispatch(closeOverlayComponent(id))},
+  showLoader: (show: boolean)=>{dispatch(setLoader(show))}
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(AddClients)
@@ -356,5 +403,13 @@ const styles = StyleSheet.create({
       display: "flex",
       flexDirection: "column",
       gap: 5
+    },
+    profileImageRow:{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 10,
+      justifyContent: "flex-start",
+      width: "100%"
     }
 })

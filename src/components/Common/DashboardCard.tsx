@@ -1,4 +1,4 @@
-import { Animated, StyleSheet, Text, View } from 'react-native'
+import { Animated, StyleSheet, Text, View, Image } from 'react-native'
 import React, { useEffect } from 'react'
 import { orgProps } from '../../interfaces/common';
 import Icon from 'react-native-vector-icons/FontAwesome'
@@ -9,7 +9,15 @@ import { TouchableOpacity } from 'react-native';
 const DashboardCard = (props: orgProps) => {
   return (
     <TouchableOpacity style={[styles.card]} onPress={()=>{props.onPress()}}  activeOpacity={0.7}>
-        <Icon size={50} name={props.icon} color={textColorPrimary}/>
+        {
+            props.logo ? 
+            <Image
+              source={{uri: props.logo}}
+              style={{height: 50, width: 50, borderRadius: 25}}
+            />
+          : 
+            <Icon size={50} name={props.icon} color={textColorPrimary}/>
+        }
         <View style={styles.details}>
             <Text style={styles.cardTitle}>{props.orgName}</Text>
             <Text style={styles.id}>{props.location.toLocaleLowerCase()}</Text>

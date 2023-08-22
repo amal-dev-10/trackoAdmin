@@ -132,6 +132,13 @@ export const setSelectedBusiness = (payload: ibusiness)=>{
   }
 }
 
+export const updateBusinessAction = (payload: ibusiness)=>{
+  return {
+    type: "UPDATE_BUSINESS",
+    payload: payload
+  }
+}
+
 // clients
 
 export const setAllClients = (payload: iMembership[])=>{

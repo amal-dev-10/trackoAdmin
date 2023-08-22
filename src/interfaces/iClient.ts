@@ -8,7 +8,8 @@ export type iClient = {
     phoneVerified: boolean,
     createdDate?: Timestamp,
     dobDate?: Date,
-    uid?: string
+    uid?: string,
+    profileImageUrl?: string
 }
 
 export type iMembership = {
@@ -17,6 +18,7 @@ export type iMembership = {
     since: string,
     clientId: string,
     phoneVerified: boolean,
+    profileImageUrl?: string,
     memberShipDetails: iMembershipDetails
 }
 
@@ -42,7 +44,8 @@ export type iExpiredData = {
     countryCode: string,
     notifiedOn?: Timestamp,
     notified?: boolean,
-    phoneVerified: boolean
+    phoneVerified: boolean,
+    profileImageUrl?: string
 }
 
 export type iFilterQuery = {

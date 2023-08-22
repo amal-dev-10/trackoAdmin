@@ -1,8 +1,8 @@
-import { StyleSheet, Text, View, Dimensions, TouchableOpacity } from 'react-native'
+import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { getHourGap, openWhatsapp, shadowGenerator, showToast } from '../../utils/helper'
 import IconSet from '../../styles/icons/Icons'
-import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, verifyIconColor } from '../../styles/colors'
 import { key } from '../../styles/constants'
 import { fontSize } from '../../styles/fonts'
 import { iExpiredData } from '../../interfaces/iClient'
@@ -83,13 +83,20 @@ const ExpiryCard = ({data, mode, openOverlay, setId, selectable, longPressed, ch
           : <></>
         }
         <View style={[styles.imageSection, styles.common]}>
-          <IconSet name='user-o' size={60} color={iconColor}/>
+          {
+            ended.profileImageUrl ?
+            <Image
+               source={{uri: ended.profileImageUrl}}
+               style={{height: 60, width: 60, borderRadius: 40}} 
+            /> 
+            : <IconSet name='user-o' size={60} color={iconColor}/>
+          }
           <Text style={styles.nameTag} numberOfLines={1} ellipsizeMode='tail'>{ended.name.toUpperCase()}</Text>
           {
             ended.phoneVerified ? 
               <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 5}}>
                 <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>Verified</Text>
-                <IconSet name='ok-circle' size={10} color={"#12b100"}/>
+                <IconSet name='ok-circle' color={verifyIconColor} size={10}/>
               </View>
             : <></>
           }

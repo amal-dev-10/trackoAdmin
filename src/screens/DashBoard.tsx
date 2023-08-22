@@ -102,6 +102,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
                   <DashboardCard
                     icon={"building"}
                     location={data?.location || ""}
+                    logo={data?.logoUrl || ""}
                     orgName={data.name}
                     onPress={()=>{gotoDashboard(data)}}
                     key={i}

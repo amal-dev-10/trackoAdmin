@@ -1,6 +1,6 @@
 import { Dimensions, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useRef, useState } from 'react'
-import { borderColor, goldColor, iconColor, memberShipTextColor } from '../../styles/colors'
+import { borderColor, goldColor, iconColor, memberShipTextColor, verifyIconColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import { iMembership } from '../../interfaces/iClient';
 import Svg, { Defs, G, Path } from 'react-native-svg';
@@ -42,7 +42,17 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
     >
         <View style={[styles.card, {height: cardDimension.height, width: cardDimension.width}]}>
             <View style={styles.nameView}>
-                <Text style={[styles.text, {fontSize: fontSize.small}]}>MEMBERSHIP CARD</Text>
+                <View style={styles.topLeftView}>
+                    <Text style={[styles.text, {fontSize: fontSize.small}]}>MEMBERSHIP CARD</Text>
+                    {
+                        membershipData.phoneVerified ? 
+                            <View style={styles.verifiedView}>
+                                <Text style={styles.verifyText}>Verified</Text>
+                                <IconSet name='ok-circle' color={verifyIconColor} size={12}/>
+                            </View>
+                        : <></>
+                    }
+                </View>
                 <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 5}}>
                     <Text style={[styles.phoneNumber, {fontSize: fontSize.small}]}>{
                         membershipData.phoneNumber.slice(0, 6) + "\n" + membershipData.phoneNumber.slice(6) 
@@ -237,5 +247,20 @@ const styles = StyleSheet.create({
         fontSize: fontSize.medium,
         color: goldColor,
         maxWidth: "80%"
+    },
+    verifiedView:{
+        display: "flex",
+        flexDirection: "row",
+        alignItems: "center",
+        gap: 5
+    },
+    verifyText:{
+        color: borderColor,
+        fontSize: fontSize.small
+    },
+    topLeftView:{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "flex-start",
     }
 })

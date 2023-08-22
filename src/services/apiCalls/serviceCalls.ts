@@ -1,8 +1,11 @@
 
 import { ibusiness } from "../../interfaces/business";
+import { apiResponse } from "../../interfaces/common";
 import { iClient, iFilterQuery, iMembershipDetails } from "../../interfaces/iClient";
 import store from "../../redux/store";
 import { deleteData, getData, patchData, postData } from "../service/serviceHandler";
+import storage from '@react-native-firebase/storage';
+
 
 export const getOwnerById = async (id: string)=>{
     let res = null;
@@ -48,21 +51,11 @@ export const getBusinessById = async (id: string)=>{
     return res
 }
 
-export const addNewBusiness = async (data: ibusiness)=>{
+export const updateBusiness = async (data: any, byPassLoading: boolean = false)=>{
     let res = null;
     try{
-        res = await postData("business/business", data)
-    }
-    catch(err){
-        console.log(err);
-    }
-    return res
-}
-
-export const addNewClient = async (id: string ,data: iClient)=>{
-    let res = null;
-    try{
-        res = await postData(`client/client/${id}`, data)
+        let st = store.getState();;
+        res = await patchData(`business/business/${st.dashboard.selectedBusiness?.uid}`, {data}, byPassLoading);
     }
     catch(err){
         console.log(err)
@@ -70,10 +63,32 @@ export const addNewClient = async (id: string ,data: iClient)=>{
     return res
 }
 
-export const updateClient = async (id: string ,data: iClient)=>{
+export const addNewBusiness = async (data: ibusiness, byPassLoading: boolean = false)=>{
     let res = null;
     try{
-        res = await patchData(`client/client/${id}`, data)
+        res = await postData("business/business", data, byPassLoading)
+    }
+    catch(err){
+        console.log(err);
+    }
+    return res
+}
+
+export const addNewClient = async (id: string , data: iClient, byPassLoading: boolean = false)=>{
+    let res = null;
+    try{
+        res = await postData(`client/client/${id}`, data, byPassLoading)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const updateClient = async (id: string ,data: iClient, byPassLoading: boolean = false)=>{
+    let res = null;
+    try{
+        res = await patchData(`client/client/${id}`, data, byPassLoading)
     }
     catch(err){
         console.log(err)
@@ -262,6 +277,44 @@ export const verifyOTPCode = async(phoneNumber: string, code: string)=>{
             phoneNumber: phoneNumber,
             code: code
         });
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const uploadBusinessLogo = async (uri: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        const ref = storage().ref(`business/${st.dashboard.selectedBusiness?.uid}/profileImage.png`);
+        await ref.putFile(uri);
+        let url = await ref.getDownloadURL();
+        res = {
+            data: url,
+            status: 200,
+            message: ""
+        } as apiResponse
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const uploadClientProfileImage = async (uri: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        const ref = storage().ref(`client/${new Date().getTime()}/profileImage.png`);
+        await ref.putFile(uri);
+        let url = await ref.getDownloadURL();
+        res = {
+            data: url,
+            status: 200,
+            message: ""
+        } as apiResponse
     }
     catch(err){
         console.log(err)

@@ -23,6 +23,20 @@ export const businessReducer = (state: props = initialState, action: actionInter
                 ...state,
                 selectedBusiness: action.payload as ibusiness
             }
+        case "UPDATE_BUSINESS":
+            let d = action.payload as ibusiness;
+            let temp = state.businesses.map((x)=>{
+                if(x.uid === d.uid){
+                    return d
+                }else{
+                    return x
+                }
+            });
+            return {
+                ...state,
+                businesses: JSON.parse(JSON.stringify(temp)),
+                selectedBusiness: {...action.payload} as ibusiness
+            }
         default:
             return state
     }

@@ -11,6 +11,7 @@ export const memberShipTextColor = "gray";
 export const goldColor = "#FFAC00";
 export const amountColor = "#00C113";
 export const unitColor = "#8BB21B"
+export const verifyIconColor = "#232323"
 
 
 // export const primaryColor = '#FFFFFF';

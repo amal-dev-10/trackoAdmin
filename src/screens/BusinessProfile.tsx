@@ -1,4 +1,4 @@
-import { ScrollView, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
@@ -105,12 +105,20 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
           </View>
           <View style={[styles.column, styles.right]}>
             <View style={styles.profileImage}>
-              <IconSet name='user-circle-o' size={30} color={iconColor}/>
+              {
+                business.logoUrl ? 
+                  <Image
+                    source={{uri: business.logoUrl}}
+                    style={{height: 50, width: 50, borderRadius: 25}}
+                  />
+                : 
+                <IconSet name='user-circle-o' size={30} color={iconColor}/>
+              }
             </View>
           </View>
         </View>
         <View style={[styles.row, styles.secondRow]}>
-          <TouchableOpacity style={[styles.profileBtn, styles.row]} activeOpacity={0.7}>
+          <TouchableOpacity style={[styles.profileBtn, styles.row]} activeOpacity={0.7} onPress={()=>{openOverlay(12)}}>
             <IconSet name='pencil' size={14} color={iconColor}/>
             <Text style={styles.roundBtnText}>EDIT</Text>
           </TouchableOpacity>

@@ -20,7 +20,8 @@ export type orgProps = {
     icon: string,
     orgName: string,
     location: string,
-    onPress: any
+    onPress: any,
+    logo: string
 }
 
 export type bottomTabProps = {
