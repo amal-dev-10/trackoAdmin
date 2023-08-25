@@ -1,6 +1,6 @@
 // Bottom navigation actions
 
-import { iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
+import { iBusinessSettings, iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
 import { iApiCall, iTransactions, packagesProps } from "../../interfaces/common";
 import { iFilters, iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
@@ -320,6 +320,13 @@ export const completeApiCallAction = (payload: string)=>{
 export const cancelApiCall = (payload: string)=>{
   return {
     type: "CANCEL_API_CALL",
+    payload: payload
+  }
+}
+
+export const updateBusinessSettingsAction = (payload: iBusinessSettings)=>{
+  return {
+    type: "UPDATE_BUSINESS_SETTINGS",
     payload: payload
   }
 }

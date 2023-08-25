@@ -17,6 +17,7 @@ import ActivateMembership from '../components/Common/ActivateMembership';
 import BusinessProfile from './BusinessProfile';
 import ExpiredMembership from './ExpiredMembership';
 import EditBusiness from './EditBusiness';
+import BusinessSettings from './BusinessSettings';
 
 type props={
     overlayData: overlayComponent,
@@ -80,6 +81,10 @@ const Overlay = ({overlayData, closeOverlay, showModal, openedList}: props) => {
                 {
                     overlayData.id === 12 &&
                     <EditBusiness/>
+                }
+                {
+                    overlayData.id === 13 &&
+                    <BusinessSettings/>
                 }
             </View>
         </View>

@@ -1,6 +1,7 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth"
 import { CancelTokenSource } from "axios"
 import { Timestamp } from "firebase/firestore"
+import { ibusiness } from "./business"
 
 export type inputProps = {
     value: string,
@@ -17,11 +18,12 @@ export type inputProps = {
 }
 
 export type orgProps = {
-    icon: string,
-    orgName: string,
-    location: string,
+    // icon: string,
+    // orgName: string,
+    // location: string,
     onPress: any,
-    logo: string
+    // logo: string,
+    data: ibusiness
 }
 
 export type bottomTabProps = {

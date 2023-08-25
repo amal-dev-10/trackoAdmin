@@ -1,6 +1,6 @@
 import { StyleSheet, Text, View, Dimensions, TouchableOpacity, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { getHourGap, openWhatsapp, shadowGenerator, showToast } from '../../utils/helper'
+import { formatTime, getHourGap, openWhatsapp, shadowGenerator, showToast } from '../../utils/helper'
 import IconSet from '../../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, verifyIconColor } from '../../styles/colors'
 import { key } from '../../styles/constants'
@@ -156,7 +156,7 @@ const ExpiryCard = ({data, mode, openOverlay, setId, selectable, longPressed, ch
               {
                 getHourGap(notifiedOn.getTime()) >= 1 ? 
                   <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>{
-                    `Last notified: ${getHourGap(notifiedOn.getTime())} hours ago`
+                    `Last notified: ${formatTime(getHourGap(notifiedOn.getTime()))} ago`
                   }</Text>
                 : <Text style={{fontSize: fontSize.xSmall, color: borderColor}}>{
                   "Last notified: few minutes ago"

@@ -121,3 +121,15 @@ export const getHourGap = (milliseconds: number)=>{
     let hours = (now - notified) / (1000 * 60 * 60);
     return Math.floor(hours)
 }
+
+export const formatTime = (durationInHours: number)=> {
+    if (durationInHours < 1) {
+      return `${Math.round(durationInHours * 60)} mins`;
+    } else if (durationInHours < 24) {
+      return `${Math.round(durationInHours)} hrs`;
+    } else if (durationInHours < 24 * 30) {
+      return `${Math.round(durationInHours / 24)} days`;
+    } else {
+      return `${Math.round(durationInHours / (24 * 30))} months`;
+    }
+  }

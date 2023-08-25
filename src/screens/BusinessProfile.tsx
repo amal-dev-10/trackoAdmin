@@ -24,16 +24,16 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
     {
       buttons: [
         {name: "All Transactions", icon: "exchange"},
-        {name: "Payments", icon: "credit-card"},
+        // {name: "Payments", icon: "credit-card"},
       ],
       title: "MONEY"
     },
     {
       buttons: [
-        {name: "Gallery", icon: "picture"},
+        // {name: "Gallery", icon: "picture"},
         {name: "Settings", icon: "cog-outline"},
-        {name: "Share", icon: "share"},
-        {name: "Deactivate Account", icon: "cancel-circled-outline"},
+        // {name: "Share", icon: "share"},
+        // {name: "Deactivate Account", icon: "cancel-circled-outline"},
       ],
       title: "MORE"
     }
@@ -65,7 +65,12 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
       case "alltransactions":
         mode("all");
         openOverlay(1);
-        break
+        break;
+      case "settings":
+        openOverlay(13);
+        break; 
+      default:
+        break;
     }
   }
 

@@ -99,7 +99,7 @@ const ViewClient = ({showActivatePack, clientData, openOverlay, setId, mode, cli
                     {
                         clientData.phoneVerified ? 
                             <IconSet name='ok-circle' color={verifyIconColor} size={15}/>
-                        : <IconSet name='cancel-circled' size={17} color={borderColor}/>
+                        : <></>
                     }
                 </View>
                 <Text style={styles.phoneText}>{clientData.phoneNumber}</Text>

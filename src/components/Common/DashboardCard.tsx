@@ -1,26 +1,49 @@
-import { Animated, StyleSheet, Text, View, Image } from 'react-native'
-import React, { useEffect } from 'react'
+import { StyleSheet, Text, View, Image } from 'react-native'
+import React from 'react'
 import { orgProps } from '../../interfaces/common';
 import Icon from 'react-native-vector-icons/FontAwesome'
-import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors';
+import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary, verifyIconColor } from '../../styles/colors';
 import { fontSize } from '../../styles/fonts';
 import { TouchableOpacity } from 'react-native';
+import IconSet from '../../styles/icons/Icons';
+import { showToast } from '../../utils/helper';
 
 const DashboardCard = (props: orgProps) => {
+  const cardClicked = ()=>{
+    if(props.data.verified){
+      props.onPress()
+    }else{
+      showToast("Buiness account not verified yet.")
+    }
+  }
   return (
-    <TouchableOpacity style={[styles.card]} onPress={()=>{props.onPress()}}  activeOpacity={0.7}>
+    <TouchableOpacity style={[styles.card]} onPress={()=>{cardClicked()}} activeOpacity={0.7}>
         {
-            props.logo ? 
+            props.data.logoUrl ? 
             <Image
-              source={{uri: props.logo}}
+              source={{uri: props.data.logoUrl}}
               style={{height: 50, width: 50, borderRadius: 25}}
             />
           : 
-            <Icon size={50} name={props.icon} color={textColorPrimary}/>
+            <Icon size={50} name={"building"} color={textColorPrimary}/>
         }
         <View style={styles.details}>
-            <Text style={styles.cardTitle}>{props.orgName}</Text>
-            <Text style={styles.id}>{props.location.toLocaleLowerCase()}</Text>
+            {
+              <View style={styles.orgNameView}>
+                <Text style={styles.cardTitle}>{props.data.name?.toUpperCase()}</Text>
+                {
+                  props.data.verified ? 
+                      <IconSet name='ok-circle' color={verifyIconColor} size={15}/>
+                  : <></>
+                }
+              </View>
+            }
+            <Text style={styles.id}>{props.data.location.toLocaleLowerCase()}</Text>
+            {
+              !props.data.verified ? 
+                <Text style={styles.status}>{`Status: Pending verification`}</Text>
+              : <></>
+            }
         </View>
     </TouchableOpacity>
   )
@@ -56,5 +79,15 @@ const styles = StyleSheet.create({
     id:{
         color: iconColor,
         fontSize: fontSize.small
+    },
+    orgNameView:{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      gap: 5
+    },
+    status: {
+      fontSize: fontSize.xSmall,
+      color: borderColor
     }
 })

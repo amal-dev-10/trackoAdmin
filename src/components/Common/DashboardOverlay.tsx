@@ -46,6 +46,18 @@ const DashboardOverlay = (props:overlayProps) => {
             focus: false,
             id: 1,
             editable: true
+          },
+          {
+            value: "",
+            msg: "",
+            placeHolder: "Contact Number",
+            keyBoardType: 'default',
+            icon: 'cellphone',
+            valid: false,
+            name: "contactNumber",
+            focus: false,
+            id: 2,
+            editable: true
           }
         ] as inputProps[]);
         
@@ -55,6 +67,13 @@ const DashboardOverlay = (props:overlayProps) => {
                 x.valid = true;
             }else{
                 x.valid = false;
+            }
+            if(x.name === "contactNumber"){
+                if(x.value.length === 10){
+                    x.valid = true;
+                }else{
+                    x.valid = false;
+                }
             }
             return x
         });
@@ -69,6 +88,8 @@ const DashboardOverlay = (props:overlayProps) => {
                 name: inputList[0].value,
                 location: inputList[1].value,
                 verified: false,
+                contactNumber: inputList[2].value,
+                countryCode: "+91"
             }
             try{
                 let resp: apiResponse = await addNewBusiness(data);
@@ -84,6 +105,8 @@ const DashboardOverlay = (props:overlayProps) => {
             catch(err){
                 console.log(err)
             }
+        }else{
+            showToast("Fill all Details.")
         }
     }
 

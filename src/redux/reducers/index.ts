@@ -20,6 +20,7 @@ import { routeReducer } from './routeReducer';
 import { confirmationReducer } from './confirmReducer';
 import { clientFilters } from './clientFilter';
 import { apiCallsReducer } from './apiCallsReducer';
+import { businessSettingsReducer } from './businessSettings';
 
 const rootReducer = combineReducers({
   bottomTab: bottomTabReducer,
@@ -40,7 +41,8 @@ const rootReducer = combineReducers({
   route: routeReducer,
   confirmation: confirmationReducer,
   clientFilter: clientFilters,
-  api: apiCallsReducer
+  api: apiCallsReducer,
+  businessSettings: businessSettingsReducer
 });
 
 export default rootReducer;

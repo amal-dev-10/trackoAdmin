@@ -9,7 +9,10 @@ export type ibusiness = {
     ownerId?: string,
     verified: boolean,
     location: string,
-    rating?: string
+    rating?: string,
+    settings?: string,
+    contactNumber?: string,
+    countryCode?: string
 }
 
 export type mainStat = {
@@ -53,3 +56,10 @@ export type iMessageResponse = {
     errorMessage: string,
     clientId: string
 }
+
+export type iBusinessSettings = {  
+    name: string,
+    knowMore: string,
+    enabled: boolean,
+    id: string
+  }

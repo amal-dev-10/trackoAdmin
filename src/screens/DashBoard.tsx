@@ -12,8 +12,8 @@ import { ScrollView } from 'react-native-gesture-handler'
 import { resetStateAction } from '../redux/actions/authActions'
 import { connect } from 'react-redux'
 import { getAllBusiness } from '../services/apiCalls/serviceCalls'
-import { setAllBusinesses, setOverlayComponent, setSelectedBusiness } from '../redux/actions'
-import { ibusiness } from '../interfaces/business'
+import { setAllBusinesses, setOverlayComponent, setSelectedBusiness, updateBusinessSettingsAction } from '../redux/actions'
+import { iBusinessSettings, ibusiness } from '../interfaces/business'
 import { navigate } from '../navigations/NavigationService'
 import IconSet from '../styles/icons/Icons'
 import NoData from '../components/Common/NoData'
@@ -23,10 +23,13 @@ type props = {
   allBusiness: any[],
   setAllBusiness: any,
   selectBusiness: any,
-  openOverlay: any
+  openOverlay: any,
+  updateSettings: any,
+  selectedBusiness: ibusiness,
+  settings: iBusinessSettings[]
 }
 
-const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay}: props) => {
+const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay, selectedBusiness, updateSettings, settings}: props) => {
 
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
@@ -38,6 +41,15 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
   };
 
   const gotoDashboard = (businessData: ibusiness)=>{
+    let temp = settings;
+    let s = JSON.parse(selectedBusiness?.settings || "[]") as {id: string, enabled: boolean}[]
+    s.forEach((x)=>{
+      let index: number = temp.findIndex((d)=>{return d.id === x.id});
+      if(index > -1){
+        temp[index].enabled = x.enabled
+      }
+    });
+    updateSettings([...temp]);
     setRoute("Home");
     selectBusiness(businessData);
     navigate("Bottom");
@@ -100,10 +112,11 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
               allBusiness.map((data: ibusiness, i:number)=>{
                 return(
                   <DashboardCard
-                    icon={"building"}
-                    location={data?.location || ""}
-                    logo={data?.logoUrl || ""}
-                    orgName={data.name}
+                    // icon={"building"}
+                    // location={data?.location || ""}
+                    // logo={data?.logoUrl || ""}
+                    // orgName={data.name}
+                    data={data}
                     onPress={()=>{gotoDashboard(data)}}
                     key={i}
                   />
@@ -138,12 +151,15 @@ const mapDispatchToProps = (dispatch: any)=>({
   resetAuthState: ()=>{dispatch(resetStateAction())},
   setAllBusiness: (businessArray: any[])=>{dispatch(setAllBusinesses(businessArray))},
   selectBusiness: (businessData: any)=>{dispatch(setSelectedBusiness(businessData))},
-  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))}
+  openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
+  updateSettings: (data: iBusinessSettings)=>{dispatch(updateBusinessSettingsAction(data))}
 });
 
 const mapStateToProps = (state: any)=>({
   fetchData: state.fetch,
-  allBusiness: state.dashboard.businesses
+  allBusiness: state.dashboard.businesses,
+  selectedBusiness: state.dashboard.selectedBusiness,
+  settings: state.businessSettings.settings,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashBoard)

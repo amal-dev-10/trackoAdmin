@@ -8,12 +8,12 @@ type props = {
 let initialState = {
     profileDetails: {},
     buttons: [
-        {
-            icon: "exchange",
-            name: "ALL TRANSACTIONS",
-            id: 3,
-            subButtons: []
-        },
+        // {
+        //     icon: "exchange",
+        //     name: "ALL TRANSACTIONS",
+        //     id: 3,
+        //     subButtons: []
+        // },
         {
             icon: "home-1",
             name: "ABOUT",
@@ -32,12 +32,12 @@ let initialState = {
                 }
             ]
         },
-        {
-            icon: "cog-outline",
-            name: "SETTINGS",
-            id: 5,
-            subButtons: []
-        },
+        // {
+        //     icon: "cog-outline",
+        //     name: "SETTINGS",
+        //     id: 5,
+        //     subButtons: []
+        // },
         {
             icon: "logout",
             name: "LOGOUT",

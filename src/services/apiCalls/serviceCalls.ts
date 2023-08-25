@@ -284,6 +284,18 @@ export const verifyOTPCode = async(phoneNumber: string, code: string)=>{
     return res
 }
 
+export const updateBusinessSettings = async(data: any, byPassLoading: boolean = true)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData(`business/settings/${st.dashboard.selectedBusiness?.uid}`, data, byPassLoading);
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
 export const uploadBusinessLogo = async (uri: string)=>{
     let res = null;
     try{
