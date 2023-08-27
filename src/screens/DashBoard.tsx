@@ -1,6 +1,6 @@
 import { BackHandler, StyleSheet, View, LayoutAnimation, Animated } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { container, setRoute } from '../utils/helper'
+import { container, setRoute, showToast } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { textColorPrimary } from '../styles/colors'
@@ -30,7 +30,7 @@ type props = {
 }
 
 const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay, selectedBusiness, updateSettings, settings}: props) => {
-
+  let clickCount: number = 0;
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
   const [servieMsg, setServiceMsg] = useState("" as string);
@@ -82,7 +82,17 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
   useEffect(()=>{
     setRoute("Dashboard")
     const backAction = ()=>{
-      return true
+      clickCount = clickCount + 1;
+      if(clickCount === 2){
+        BackHandler.exitApp();
+        clickCount = 0
+      }else{
+        showToast("Back press again to exit the app.")
+        setTimeout(()=>{
+          clickCount = 0;
+        }, 2000)
+      }
+      return false
     }
     start();
     let backHandler = BackHandler.addEventListener("hardwareBackPress", backAction)

@@ -95,7 +95,7 @@ const Clients = ({clients, setClients, openOverlay, setDropDownData, filterActiv
 
   useEffect(()=>{
     setRoute("Clients");
-    if(!clients.length){
+    if(!clients.length || !filterActive){
       start();
     }
   }, [])

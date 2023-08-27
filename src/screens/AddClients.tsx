@@ -228,8 +228,9 @@ const AddClients = ({selectedBusinessId, allClients, setClientToState, mode, sel
       // if(selectedClient?.dobDate){
       //   selectedDate(new Date(selectedClient.dobDate))
       // }
+    }else{
+      setLogo({} as logoType);
     }
-    setLogo({} as logoType);
   }, [])
 
   return (

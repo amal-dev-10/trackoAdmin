@@ -48,7 +48,7 @@ const EditBusiness = ({updateBusinessDetail, selectedBusiness, showLoader}: prop
         }
         else{
             setDataChanged(false);
-            showToast("No image selected.")
+            // showToast("No image selected.")
         }
     }, [logo]);
   return (

@@ -69,7 +69,7 @@ const Login = ({signInWithPhoneNumber}: props) => {
   return (
     <SafeAreaView style={[container, styles.loginView]}>
       <View style={styles.brandHeader}>
-        <IconSet name='tracko-logo' size={23} color={textColorPrimary}/>
+        <IconSet name='tracko-logo' size={20} color={textColorPrimary}/>
         {/* <Text style={styles.logo}>TRACKO</Text> */}
       </View>
       <View style={styles.loginTexts}>

@@ -1,6 +1,6 @@
 import { ScrollView, StyleSheet, Text, TouchableOpacity, View, Image } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary } from '../styles/colors'
+import { borderColor, cardColor, goldColor, iconColor, primaryColor, textColorPrimary, textColorSecondary, verifyIconColor } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
 import { ibusiness } from '../interfaces/business'
@@ -89,12 +89,12 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
         <Text style={styles.title}>BUSINESS PROFILE</Text>
         <View style={[styles.row,styles.spaceBetween, styles.profileCard]}>
           <View style={[styles.column, styles.left, {flex: 1}]}>
-            <View style={styles.row}>
+            <View style={[styles.row, {width: "100%"}]}>
               <Text style={styles.nameText} numberOfLines={1} ellipsizeMode='tail'>{business.name.toUpperCase()}</Text>
-              {
+              {/* {
                 business.verified &&
-                <IconSet name='phone' color={textColorPrimary} size={20}/>
-              }
+                <IconSet name='ok-circle' color={verifyIconColor} size={20}/>
+              } */}
             </View>
             <Text style={styles.phoneText}>{fomatFirstLetterCapital(business.location)}</Text>
             {
@@ -185,7 +185,7 @@ const styles = StyleSheet.create({
     display: "flex",
     flexDirection: "row",
     alignItems: "center",
-    gap: 5
+    gap: 10
   },
   spaceBetween:{
     justifyContent: "space-between"
@@ -215,7 +215,8 @@ const styles = StyleSheet.create({
     fontSize: fontSize.medium,
     fontWeight: "500",
     color: textColorSecondary,
-    width: "100%"
+    minWidth: "85%",
+    maxWidth: "90%"
   },
   phoneText:{
     fontSize: fontSize.small,

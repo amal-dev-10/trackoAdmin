@@ -1,5 +1,5 @@
 import { BackHandler, StyleSheet, View } from 'react-native';
-import { container, tabBarHeight } from '../utils/helper';
+import { container, showToast, tabBarHeight } from '../utils/helper';
 import MainHeader from '../components/Common/MainHeader';
 import BottomTab from '../components/Common/BottomTab';
 import { primaryColor } from '../styles/colors';
@@ -11,7 +11,7 @@ import Requests from '../screens/Requests';
 import Insights from '../screens/Insights';
 import Packages from '../screens/Packages';
 import { setLoader } from '../redux/actions';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import MainLoader from '../components/Loader/MainLoader';
 
 type bottomTabPropsInt = {
@@ -20,8 +20,20 @@ type bottomTabPropsInt = {
 }
 
 const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
+  let clickCount: number = 0
+
   useEffect(()=>{
     BackHandler.addEventListener("hardwareBackPress", ()=>{
+      clickCount = clickCount + 1;
+      if(clickCount === 2){
+        BackHandler.exitApp();
+        clickCount = 0
+      }else{
+        showToast("Back press again to exit the app.")
+        setTimeout(()=>{
+          clickCount = 0;
+        }, 2000)
+      }
       return false
     })
   }, [])

@@ -49,15 +49,14 @@ export const authReducer = (state: props = initialState, action: actionInterface
                 }
             }
         case "PHONE_AUTH_SUCCESS":
-            let temp = {
+            return {
                 ...state,
-                data:{
+                data: {
                     ...state.data,
-                    loading: false,
+                    loading: false
                 },
                 user: JSON.parse(JSON.stringify(action.payload))
             }
-            return {...JSON.parse(JSON.stringify(temp))}
         case "PHONE_AUTH_FAILURE":
             return {
                 ...state,

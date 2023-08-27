@@ -5,6 +5,7 @@ import { apiResponse, iOwner } from '../../interfaces/common';
 import { getOwnerById } from '../../services/apiCalls/serviceCalls';
 import { showToast } from '../../utils/helper';
 import { closeOverlayComponent, resetReducerAction } from '.';
+import { Timestamp } from 'firebase/firestore';
 
 export const isAuthenticatedAction = (is: boolean)=>({
     type: "SETISAUTHENTICATED",
@@ -75,6 +76,14 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
                 dispatch(setTokenAction(token))
                 let res: apiResponse = await getOwnerById(user.user?.uid || "");
                 if(res.status === 404){
+                    dispatch(phoneAuthSuccess({
+                        name: "",
+                        createdDate: Timestamp.now(),
+                        phoneNumber: user.user?.phoneNumber?.replace("+91", "") || "",
+                        phoneVerified: true,
+                        rating: "",
+                        uid: user.user.uid
+                    }));
                     navigate("Signup");
                 }else if(res.status === 200){
                     dispatch(phoneAuthSuccess(res.data));

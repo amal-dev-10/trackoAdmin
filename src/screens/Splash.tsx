@@ -9,6 +9,7 @@ import IconSet from '../styles/icons/Icons'
 import { textColorPrimary } from '../styles/colors'
 import { apiResponse, iOwner } from '../interfaces/common'
 import { getOwnerById } from '../services/apiCalls/serviceCalls'
+import { Timestamp } from 'firebase/firestore'
 
 type props = {
   setIsAuthenticated: any,
@@ -30,7 +31,16 @@ const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
             setOwner(res.data);
             navigate("MainStack");
           }else{
-            showToast("Something went wrong.")
+            setOwner({
+              name: "",
+              createdDate: Timestamp.now(),
+              phoneNumber: user?.phoneNumber?.replace("+91", "") || "",
+              phoneVerified: true,
+              rating: "",
+              uid: user?.uid || ""
+            });
+            navigate("AuthStack");
+            navigate("Signup");
           }
         }else{
           setIsAuthenticated(false);
@@ -59,7 +69,7 @@ const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
 const mapDipatchToProps = (dispatch: any)=>({
   setIsAuthenticated: (is: boolean)=>{dispatch(isAuthenticatedAction(is))},
   setToken: (token: string)=>{dispatch(setTokenAction(token))},
-  setOwner: (data: iOwner)=>{dispatch(phoneAuthSuccess(data))}
+  setOwner: (data: iOwner)=>{dispatch(phoneAuthSuccess(data))},
 })
 
 export default connect(null, mapDipatchToProps)(Splash)

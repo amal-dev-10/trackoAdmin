@@ -1,5 +1,5 @@
 import { Dimensions, Linking, ToastAndroid } from 'react-native';
-import { iconColor, primaryColor } from '../styles/colors';
+import { primaryColor } from '../styles/colors';
 import store from '../redux/store';
 import { setRouteNameAction } from '../redux/actions';
 
@@ -53,11 +53,13 @@ export const tabBarHeight = windowHeight * TAB_BAR_HEIGHT_RATIO;
 
 
 export const showToast = (msg: string)=>{
-    ToastAndroid.showWithGravity(
+    ToastAndroid.showWithGravityAndOffset(
         msg, 
         ToastAndroid.SHORT, 
         ToastAndroid.CENTER,
-    );
+        0,
+        0
+    )
 }
 
 export const makeCall = async (phoneNumber: string) => {

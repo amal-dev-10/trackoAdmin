@@ -15,7 +15,7 @@ import { getOwnerById, saveOwner } from '../../services/apiCalls/serviceCalls'
 import { phoneAuthSuccess } from '../../redux/actions/authActions'
 
 type props = {
-  user: FirebaseAuthTypes.UserCredential,
+  user: iOwner,
   setOwner: any
 }
 
@@ -28,7 +28,7 @@ const SignUp = ({user, setOwner}: props) => {
         placeHolder: "Phone Number",
         keyBoardType: 'phone-pad',
         icon: 'cellphone',
-        valid: false,
+        valid: true,
         name: "phoneNumber",
         focus: true,
         id: 0,
@@ -53,13 +53,6 @@ const SignUp = ({user, setOwner}: props) => {
     const validation = ()=>{
       let temp = inputList.map((d)=>{
         switch(d.name){
-          case "phoneNumber":
-            if(d.value.length === 13){
-              d.valid = true;
-            }else{
-              d.valid = false;
-            }
-            break;
           case "name":
             if(d.value.length >= 3 && d.value.length <= 20){
               d.valid = true
@@ -79,10 +72,10 @@ const SignUp = ({user, setOwner}: props) => {
 
     const signUpClicked = async ()=>{
       if(allInputTrue){
-        if(user.user?.phoneNumber){
+        if(user?.phoneNumber){
           let data = {
-            phoneNumber: user.user.phoneNumber,
-            uid: user.user.uid,
+            phoneNumber: user.phoneNumber,
+            uid: user.uid,
             name: inputList[1].value,
             phoneVerified: true
           }
@@ -103,7 +96,7 @@ const SignUp = ({user, setOwner}: props) => {
 
     useEffect(()=>{
       let temp = inputList;
-      temp[0].value = user.user.phoneNumber || "";
+      temp[0].value = user?.phoneNumber || "";
       setInputList([...temp])
     }, [])
   return (
@@ -150,7 +143,7 @@ const SignUp = ({user, setOwner}: props) => {
 }
 
 const mapStateToProps = (state: any)=>({
-  user: state.auth.data.user || "",
+  user: state.auth.user || "",
 });
 
 const mapDispatchToProps = (dispatch: any)=>({

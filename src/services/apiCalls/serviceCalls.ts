@@ -54,7 +54,7 @@ export const getBusinessById = async (id: string)=>{
 export const updateBusiness = async (data: any, byPassLoading: boolean = false)=>{
     let res = null;
     try{
-        let st = store.getState();;
+        let st = store.getState();
         res = await patchData(`business/business/${st.dashboard.selectedBusiness?.uid}`, {data}, byPassLoading);
     }
     catch(err){
@@ -85,10 +85,11 @@ export const addNewClient = async (id: string , data: iClient, byPassLoading: bo
     return res
 }
 
-export const updateClient = async (id: string ,data: iClient, byPassLoading: boolean = false)=>{
+export const updateClient = async (id: string , data: iClient, byPassLoading: boolean = false)=>{
     let res = null;
     try{
-        res = await patchData(`client/client/${id}`, data, byPassLoading)
+        let st = store.getState();
+        res = await patchData(`client/client/${id}/${st.dashboard.selectedBusiness?.uid}`, data, byPassLoading)
     }
     catch(err){
         console.log(err)
