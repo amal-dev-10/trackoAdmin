@@ -98,6 +98,7 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
             }
         }
         catch(err: any){
+            showToast("Invalid OTP");
             dispatch(phoneAuthFailure(err?.message || "Invalid OTP"))
         }
     }

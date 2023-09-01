@@ -6,7 +6,7 @@ const createApiInstance = ()=>{
   const token = (<any>s.auth).data.token;
   let source = axios.CancelToken.source();
   const api: AxiosInstance = axios.create({
-      baseURL: 'http://192.168.1.8:3000/api',
+      baseURL: 'http://trackoapi-env.eba-esdsr73m.us-east-1.elasticbeanstalk.com/api',
       headers: {
         'Content-Type': 'application/json',
         "Authorization": `Bearer ${token || ""}`
