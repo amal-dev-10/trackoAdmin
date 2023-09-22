@@ -6,26 +6,25 @@ import {
 import { Provider } from 'react-redux';
 import store from './src/redux/store';
 import RootNavigator from './src/navigations/RootNavigator';
-import FontAwesome from 'react-native-vector-icons/FontAwesome';
-import { primaryColor, textColorPrimary } from './src/styles/colors';
+import { primaryColor } from './src/styles/colors';
+import { StripeProvider } from '@stripe/stripe-react-native';
+import Config from 'react-native-config';
+
 
 function App(): JSX.Element {
-  useEffect(() => {
-    const loadCustomFont = async () => {
-      await FontAwesome.loadFont(); // Load the custom font
-      // You can also load other custom fonts if you have more
-    };
-
-    loadCustomFont();
-  }, []);
+  const stripePublishableKey = Config.STRIPE_PUBLISHABLE_KEY;
   return (
-    <Provider store={store}> 
-        <StatusBar
-          barStyle={'light-content'}
-          backgroundColor={primaryColor}
-        />
-        <RootNavigator/>
-    </Provider>
+    <StripeProvider
+      publishableKey={stripePublishableKey || ''}
+    >
+      <Provider store={store}> 
+          <StatusBar
+            barStyle={'light-content'}
+            backgroundColor={primaryColor}
+          />
+          <RootNavigator/>
+      </Provider>
+    </StripeProvider>
   );
 }
 
