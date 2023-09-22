@@ -11,6 +11,7 @@ import PackageCard from '../components/Common/PackageCard'
 import { getPackages } from '../services/apiCalls/serviceCalls'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import { key } from '../styles/constants'
+import TutorialView from '../components/Common/TutorialView'
 
 type props = {
   allPackages?: packagesProps[],
@@ -21,11 +22,15 @@ type props = {
 
 const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) => {
 
+  const [fetchFailed, setFetchFailed] = useState<boolean>(false);
+
   const getSavedPackages = async ()=>{
     let resp: apiResponse = await getPackages(businessId);
     if(resp?.status === 200){
+      setFetchFailed(false);
       mapPackage(resp.data);
     }else if(resp?.status === 500 || resp?.status === undefined){
+      setFetchFailed(true);
       showToast("Data fetch failed !")
     }
   }
@@ -111,9 +116,13 @@ const Packages = ({allPackages, businessId, mapPackage, addNewTemplate}: props) 
                 )
               })
             }
-            {/* <View style={styles.scrollerView}>
-            </View> */}
           </ScrollView>
+          : 
+          !fetchFailed ? 
+            <TutorialView 
+              title={'What is this Screen?'} 
+              subTitle={'This is the screen where you can add different subscription packs that are set up for the business. Later you can assign these packs to your clients in the clients screen. '}
+            />   
           : <></>
         }
       </ScrollView>

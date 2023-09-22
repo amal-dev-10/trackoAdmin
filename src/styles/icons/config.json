@@ -225,6 +225,42 @@
       "src": "typicons"
     },
     {
+      "uid": "d4816c0845aa43767213d45574b3b145",
+      "css": "history",
+      "code": 61914,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "f279f25007794fa6837ff78fe94b216e",
+      "css": "money",
+      "code": 61654,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "4b2321afcbe0505a70b80abd5c25e09b",
+      "css": "paper-plane-empty",
+      "code": 61913,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "9c9f0a69d4abbeb5ff9d779df7679356",
+      "css": "question-circle-o",
+      "code": 62108,
+      "src": "fontawesome"
+    },
+    {
+      "uid": "8663320a860b00f26e94d3d15c9ba99a",
+      "css": "clock",
+      "code": 59411,
+      "src": "entypo"
+    },
+    {
+      "uid": "9a76bc135eac17d2c8b8ad4a5774fc87",
+      "css": "download",
+      "code": 59418,
+      "src": "fontawesome"
+    },
+    {
       "uid": "ac6caa6690695e54771e4e68edbc43ea",
       "css": "bronzepack",
       "code": 59409,

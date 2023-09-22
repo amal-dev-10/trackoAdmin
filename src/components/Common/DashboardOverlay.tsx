@@ -99,7 +99,7 @@ const DashboardOverlay = (props:overlayProps) => {
                     props.setBusiness(temp);
                     props.close();
                 }else if(resp?.status === 500 || resp?.status === undefined){
-                    showToast("Data fetch failed !")
+                    showToast(resp.message);
                 }
             }
             catch(err){
@@ -111,7 +111,12 @@ const DashboardOverlay = (props:overlayProps) => {
     }
 
   return (
-    <Modal transparent visible={props.show} onRequestClose={()=>{props.close()}}>
+    <Modal 
+        transparent 
+        visible={props.show} 
+        onRequestClose={()=>{props.close()}}
+        animationType='slide'
+    >
         <BlurView
             style={{flex:1}}
             blurType="dark"

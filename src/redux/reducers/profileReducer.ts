@@ -8,14 +8,27 @@ type props = {
 let initialState = {
     profileDetails: {},
     buttons: [
-        // {
-        //     icon: "exchange",
-        //     name: "ALL TRANSACTIONS",
-        //     id: 3,
-        //     subButtons: []
-        // },
         {
-            icon: "home-1",
+            icon: "money",
+            name: "PAYMENTS",
+            id: 15,
+            subButtons: []
+        },
+        {
+            icon: "paper-plane-empty",
+            name: "SUBSCRIPTION",
+            id: 2,
+            opened: false,
+            subButtons: [
+                {
+                    icon: "history",
+                    name: "HISTORY",
+                    id: 17,
+                },
+            ]
+        },
+        {
+            icon: "question-circle-o",
             name: "ABOUT",
             id: 1,
             opened: false,

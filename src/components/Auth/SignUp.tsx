@@ -45,6 +45,18 @@ const SignUp = ({user, setOwner}: props) => {
         focus: false,
         id: 1,
         editable: true
+      },
+      {
+        value: "",
+        msg: "",
+        placeHolder: "Email Id",
+        keyBoardType: 'default',
+        icon: 'signature-freehand',
+        valid: false,
+        name: "emailId",
+        focus: false,
+        id: 2,
+        editable: true
       }
     ] as inputProps[]);
 
@@ -55,6 +67,13 @@ const SignUp = ({user, setOwner}: props) => {
         switch(d.name){
           case "name":
             if(d.value.length >= 3 && d.value.length <= 20){
+              d.valid = true
+            }else{
+              d.valid = false
+            }
+            break;
+          case "emailId":
+            if(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/.test(d.value)){
               d.valid = true
             }else{
               d.valid = false
@@ -77,7 +96,8 @@ const SignUp = ({user, setOwner}: props) => {
             phoneNumber: user.phoneNumber,
             uid: user.uid,
             name: inputList[1].value,
-            phoneVerified: true
+            phoneVerified: true,
+            emailId: inputList[2].value
           }
           let res: apiResponse | null = await saveOwner(data);
           if(res?.status === 200){

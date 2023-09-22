@@ -56,8 +56,8 @@ const MainStack = ({allOverlays}: props) => {
   return (
     <>
       <mainStack.Navigator initialRouteName='Dashboard' screenOptions={config}>
-          <mainStack.Screen name='Dashboard' component={DashBoard}/>
-          <mainStack.Screen name='Bottom' component={BottomNavigator}/>
+        <mainStack.Screen name='Dashboard' component={DashBoard}/>
+        <mainStack.Screen name='Bottom' component={BottomNavigator}/>
       </mainStack.Navigator>
       {
         allOverlays.map((data, i: number)=>{

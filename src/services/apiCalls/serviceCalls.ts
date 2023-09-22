@@ -1,7 +1,7 @@
 
 import { ibusiness } from "../../interfaces/business";
-import { apiResponse } from "../../interfaces/common";
-import { iClient, iFilterQuery, iMembershipDetails } from "../../interfaces/iClient";
+import { apiResponse, iOwner, iStripeCustomer } from "../../interfaces/common";
+import { iClient, iFilterQuery } from "../../interfaces/iClient";
 import store from "../../redux/store";
 import { deleteData, getData, patchData, postData } from "../service/serviceHandler";
 import storage from '@react-native-firebase/storage';
@@ -319,7 +319,6 @@ export const uploadBusinessLogo = async (uri: string)=>{
 export const uploadClientProfileImage = async (uri: string)=>{
     let res = null;
     try{
-        let st = store.getState();
         const ref = storage().ref(`client/${new Date().getTime()}/profileImage.png`);
         await ref.putFile(uri);
         let url = await ref.getDownloadURL();
@@ -328,6 +327,160 @@ export const uploadClientProfileImage = async (uri: string)=>{
             status: 200,
             message: ""
         } as apiResponse
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getSubsriptionPlans = async ()=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`subscription/plan/${(<iOwner>(<any>st.auth).user)?.stripeCustomerId}`)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const createSubscription = async (priceId: string, paymentMethodId: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData('subscription/createSubscription', {
+            priceId: priceId,
+            userId: (<iOwner>(<any>st.auth).user)?.uid,
+            paymentMethodId: paymentMethodId
+        })
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const updateSubscriptionPayment = async (subscriptionId: string, paymentMethodId: string, byPassLoading: boolean)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData('subscription/updateSubscriptionPayment', {
+            subscriptionId: subscriptionId,
+            paymentMethodId: paymentMethodId
+        }, byPassLoading)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const createTransaction = async (data: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData('subscription/createTransaction', {
+            // subscriptionId: subscriptionId,
+            userId: (<iOwner>(<any>st.auth).user)?.uid
+        })
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getAllSavedCards = async ()=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`subscription/getSavedCards/${(<iOwner>(<any>st.auth).user)?.stripeCustomerId}`)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const createStripeCustomer = async (data: iStripeCustomer)=>{
+    let res = null;
+    try{
+        res = await postData(`subscription/createStripeCustomer`, data)
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const addCardToCustomer = async (data: any)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData(`subscription/addCardToCustomer`, {
+            ...data,
+            customerId: (<iOwner>(<any>st.auth).user)?.stripeCustomerId
+        })
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const setACardToDefault = async (data: any)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await patchData(`subscription/card`, {
+            ...data,
+            customerId: (<iOwner>(<any>st.auth).user)?.stripeCustomerId
+        })
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const removeCard = async (data: any)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        let customerId: string | undefined = (<iOwner>(<any>st.auth).user)?.stripeCustomerId;
+        let paymentMethodId: string | undefined = data.paymentMethodId;
+        if(paymentMethodId && customerId){
+            res = await deleteData(`subscription/card/${customerId}/${paymentMethodId}`);
+        }
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const cancelMySubscription = async (data: any)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData(`subscription/cancel`, {
+            customerId: (<iOwner>(<any>st.auth).user)?.stripeCustomerId,
+            ...data
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getStripeTransactions = async ()=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`subscription/transactions/${(<iOwner>(<any>st.auth).user)?.stripeCustomerId}`);
     }
     catch(err){
         console.log(err)

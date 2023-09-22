@@ -2,11 +2,11 @@ import axios, { AxiosInstance } from 'axios';
 import store from '../../redux/store';
 
 const createApiInstance = ()=>{
-  let s = store.getState();
+  let s: any = store.getState();
   const token = (<any>s.auth).data.token;
   let source = axios.CancelToken.source();
   const api: AxiosInstance = axios.create({
-      baseURL: 'http://trackoapi-env.eba-esdsr73m.us-east-1.elasticbeanstalk.com/api',
+      baseURL: 'http://192.168.1.4:3000/api',
       headers: {
         'Content-Type': 'application/json',
         "Authorization": `Bearer ${token || ""}`

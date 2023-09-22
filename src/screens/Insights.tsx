@@ -3,15 +3,16 @@ import { Dropdown } from 'react-native-element-dropdown';
 import React, { useEffect, useState } from 'react'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors';
 import { fontSize } from '../styles/fonts';
-import { apiResponse, dropDownProps } from '../interfaces/common';
+import { apiResponse, dropDownProps, iOwner } from '../interfaces/common';
 import { connect } from 'react-redux';
 import { iFinanceInsight, iMembershipInsight, mainStat } from '../interfaces/business';
-import { setFinanceInsightAction, setMembershipInsightAction } from '../redux/actions';
+import { setFinanceInsightAction, setMembershipInsightAction, setOverlayComponent } from '../redux/actions';
 import { getInsights } from '../services/apiCalls/serviceCalls';
 import { calculateDaysBetweenDates, container, setRoute, showToast } from '../utils/helper';
 import NoData from '../components/Common/NoData';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import AreaChart from '../components/Charts/AreaChart';
+import NoAccessView from '../components/Common/NoAccessView';
 
 type props = {
   yearData: dropDownProps[],
@@ -19,7 +20,9 @@ type props = {
   setMembershipInsight: any,
   membershipInsight: iMembershipInsight,
   financeInsight: iFinanceInsight,
-  setFinanceInsight: any
+  setFinanceInsight: any,
+  ownerDetail: iOwner,
+  openOverlay: any
 }
 
 type iStats = {
@@ -29,7 +32,7 @@ type iStats = {
   totalSubscribers: number
 }
 
-const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight, financeInsight, setFinanceInsight}: props) => {
+const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight, financeInsight, setFinanceInsight, ownerDetail, openOverlay}: props) => {
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
   const [showStartCalender, setShowStartCalender] = useState(false as boolean);
   const [showEndCalender, setShowEndCalender] = useState(false as boolean);
@@ -38,6 +41,7 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
   const [end, setEnd] = useState("" as any);
   const [insightData, setInsightData] = useState([] as mainStat[]);
   const [reload, setReload] = useState(false as boolean);
+  const [grantAccess, setGrantAccess] = useState<boolean>(false);
   const chartTypeData = [
     {label: "REVENUE INSIGHT", value: "revenueInsight"},
     {label: "NEW CLIENT INSIGHT", value: "newClientInsight"},
@@ -170,7 +174,12 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
   }, [reload]);
 
   useEffect(()=>{
+    setGrantAccess(JSON.parse(ownerDetail?.subscription?.roles?.insightEligible || "false"))
+  }, [ownerDetail])
+
+  useEffect(()=>{
     setRoute("Insights");
+    setGrantAccess(JSON.parse(ownerDetail?.subscription?.roles?.insightEligible || "false"))
   },[])
 
   return (
@@ -298,6 +307,15 @@ const Insights = ({yearData, monthData, setMembershipInsight, membershipInsight,
           />
         : <></>
       }
+      {
+        !grantAccess &&
+        <NoAccessView
+          buttonClicked={()=>{openOverlay(14)}}
+          buttonText='Upgrade Now'
+          subTitle='Upgrade your plan to enjoy full access.'
+          title='ACCESS DENIED'
+        />
+      }
     </View>
   )
 }
@@ -306,12 +324,14 @@ const mapStateToProps = (state: any)=>({
   monthData: state.dropDown.months,
   yearData: state.dropDown.years,
   membershipInsight: state.insight.membershipInsight,
-  financeInsight: state.insight.financeInsight
+  financeInsight: state.insight.financeInsight,
+  ownerDetail: state.auth.user,
 })
 
 const mapDispatchToProps = (dispatch: any)=>({
   setMembershipInsight: (d: iMembershipInsight)=>{dispatch(setMembershipInsightAction(d))},
-  setFinanceInsight: (d: iFinanceInsight)=>{dispatch(setFinanceInsightAction(d))}
+  setFinanceInsight: (d: iFinanceInsight)=>{dispatch(setFinanceInsightAction(d))},
+  openOverlay: (componentId: number)=>{dispatch(setOverlayComponent(componentId))},
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Insights)

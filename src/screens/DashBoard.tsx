@@ -1,12 +1,12 @@
-import { BackHandler, StyleSheet, View, LayoutAnimation, Animated } from 'react-native'
+import { BackHandler, StyleSheet, View, LayoutAnimation, Text } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, setRoute, showToast } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
 import AntDesign from 'react-native-vector-icons/AntDesign'
-import { textColorPrimary } from '../styles/colors'
+import { borderColor, cardColor, iconColor, textColorPrimary } from '../styles/colors'
 import { TouchableOpacity } from 'react-native'
 import DashboardCard from '../components/Common/DashboardCard'
-import { apiResponse } from '../interfaces/common'
+import { apiResponse, iOwner } from '../interfaces/common'
 import DashboardOverlay from '../components/Common/DashboardOverlay'
 import { ScrollView } from 'react-native-gesture-handler'
 import { resetStateAction } from '../redux/actions/authActions'
@@ -17,6 +17,8 @@ import { iBusinessSettings, ibusiness } from '../interfaces/business'
 import { navigate } from '../navigations/NavigationService'
 import IconSet from '../styles/icons/Icons'
 import NoData from '../components/Common/NoData'
+import { fontSize } from '../styles/fonts'
+import Button from '../components/Common/Button'
 
 type props = {
   resetAuthState: any,
@@ -26,10 +28,11 @@ type props = {
   openOverlay: any,
   updateSettings: any,
   selectedBusiness: ibusiness,
-  settings: iBusinessSettings[]
+  settings: iBusinessSettings[],
+  ownerDetail: iOwner
 }
 
-const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay, selectedBusiness, updateSettings, settings}: props) => {
+const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness, openOverlay, selectedBusiness, updateSettings, settings, ownerDetail}: props) => {
   let clickCount: number = 0;
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
@@ -107,16 +110,41 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
           subTitle='Hear you can find all your organizations'
         />
         <View style={styles.rightBtnView}>
-          <TouchableOpacity onPress={()=>{toggleOverlay()}}>
-            <AntDesign size={25} name='plus' color={textColorPrimary}/>
-          </TouchableOpacity>
+          {
+            (ownerDetail?.subscription && ownerDetail?.subscription?.status === "active") &&
+            <TouchableOpacity onPress={()=>{toggleOverlay()}}>
+              <AntDesign size={25} name='plus' color={textColorPrimary}/>
+            </TouchableOpacity>
+          }
           <TouchableOpacity onPress={()=>{openOverlay(2)}}>
             <IconSet name='user-circle-o' color={textColorPrimary} size={35}/>
           </TouchableOpacity>
         </View>
       </View>
         {
-          allBusiness.length ?
+          (ownerDetail.subscription === undefined || ownerDetail.subscription.status != "active") &&
+          <View style={styles.subscriptionView}>
+            <View style={styles.container}>
+              <View style={styles.headerActivate}>
+                  <Text style={styles.title}>Subscribe Now</Text>
+              </View>
+              <View style={styles.detail}>
+                <Text style={styles.desc}>{
+                  "Unlock all the powers of TRACKO ADMIN. Choose from the variety of monthly or yearly subscription plan according to your budget. SUBSCRIBE NOW!"
+                }</Text>
+              </View>
+              <View style={styles.footer}>
+                  <Button
+                      onTouch={()=>{openOverlay(14)}}
+                      text='Upgrade'
+                      width='50%'
+                  />
+              </View>
+            </View>
+          </View>
+        }
+        {
+          (allBusiness.length && !(ownerDetail.subscription === undefined || ownerDetail.subscription.status != "active")) ?
           <ScrollView contentContainerStyle={styles.cardView} showsVerticalScrollIndicator={false}>
             {
               allBusiness.map((data: ibusiness, i:number)=>{
@@ -136,7 +164,7 @@ const DashBoard = ({resetAuthState, allBusiness, setAllBusiness, selectBusiness,
           </ScrollView> : <></>
         }
         {
-          fetchFailed != undefined &&
+          (fetchFailed != undefined && (ownerDetail.subscription && ownerDetail.subscription.status === "active")) &&
           <NoData 
             text={servieMsg} 
             onTouch={(button: string)=>{button === "Register" ? toggleOverlay() : ""}} 
@@ -170,6 +198,7 @@ const mapStateToProps = (state: any)=>({
   allBusiness: state.dashboard.businesses,
   selectedBusiness: state.dashboard.selectedBusiness,
   settings: state.businessSettings.settings,
+  ownerDetail: state.auth.user,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(DashBoard)
@@ -203,5 +232,54 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     gap: 15,
     alignItems: "center"
+  },
+  desc:{
+    color: borderColor,
+    fontSize: fontSize.small,
+    textAlign: "center"
+  },
+  container:{
+    backgroundColor: cardColor,
+    elevation: 3,
+    display: "flex",
+    flexDirection: "column",
+    gap: 20,
+    borderRadius: 10,
+    padding: 10,
+    width: "90%"
+  },
+  headerActivate:{
+      display: "flex",
+      justifyContent: "center",
+      alignItems: "center",
+      paddingVertical: 10,
+      borderBottomColor: "#1d1d1d",
+      borderBottomWidth: 2
+  },
+  detail:{
+      // flex: 1,
+      display: "flex",
+      justifyContent:"center",
+      alignItems:"center",
+      flexDirection: "column",
+      gap: 10,
+  },
+  title:{
+      color: iconColor,
+      fontSize: fontSize.medium
+  },
+  footer:{
+      display: "flex",
+      flexDirection: "row",
+      alignItems: "center",
+      justifyContent: "center",
+      paddingVertical: 10
+  },
+  subscriptionView:{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: 'center',
+    flex: 1,
+    width: "100%"
   }
 })

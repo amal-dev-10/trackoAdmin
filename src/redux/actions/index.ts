@@ -1,7 +1,7 @@
 // Bottom navigation actions
 
 import { iBusinessSettings, iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
-import { iApiCall, iTransactions, packagesProps } from "../../interfaces/common";
+import { iApiCall, iOwner, iStripeTransaction, iSubscription, iTransactions, packagesProps } from "../../interfaces/common";
 import { iFilters, iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
 import store from "../store";
@@ -327,6 +327,34 @@ export const cancelApiCall = (payload: string)=>{
 export const updateBusinessSettingsAction = (payload: iBusinessSettings)=>{
   return {
     type: "UPDATE_BUSINESS_SETTINGS",
+    payload: payload
+  }
+}
+
+export const setSubscriptionDetailAction = (payload: iSubscription[])=>{
+  return {
+    type: "SET_SUBSCRIPTION_DETAILS",
+    payload: payload
+  }
+}
+
+export const setSavedCardsAction = (payload: any[])=>{
+  return {
+    type: "SET_SAVED_CARDS",
+    payload: payload
+  }
+}
+
+export const setStripeTransaction = (payload: iStripeTransaction[])=>{
+  return {
+    type: "SET_STRIPE_TRANSACTIONS",
+    payload: payload
+  }
+}
+
+export const updateOwnerAction = (payload: iOwner)=>{
+  return {
+    type: "UPDATE_OWNER",
     payload: payload
   }
 }

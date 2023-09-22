@@ -106,6 +106,11 @@ export const authReducer = (state: props = initialState, action: actionInterface
                 return {...initialState}
             }
             return state
+        case "UPDATE_OWNER":
+            return {
+                ...state,
+                user: JSON.parse(JSON.stringify(action.payload))
+            }
         default:
             return state
     }

@@ -27,10 +27,11 @@ const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
           setToken(token);
           setIsAuthenticated(true);
           let res: apiResponse = await getOwnerById(user?.uid || "");
-          if(res?.status === 200){
-            setOwner(res.data);
+          if(res && res?.status === 200){
+            let ownerData = res.data as iOwner;
+            setOwner(ownerData);
             navigate("MainStack");
-          }else{
+          }else if(res != undefined){
             setOwner({
               name: "",
               createdDate: Timestamp.now(),
@@ -41,6 +42,8 @@ const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
             });
             navigate("AuthStack");
             navigate("Signup");
+          }else{
+            showToast("Failed to load the app")
           }
         }else{
           setIsAuthenticated(false);

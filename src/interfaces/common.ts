@@ -119,7 +119,12 @@ export type iOwner = {
     phoneNumber: string,
     phoneVerified: boolean,
     uid: string,
-    rating: string
+    rating: string,
+    stripeCustomerId?: string,
+    emailId?: string,
+    subscription?: iSubscriptionData,
+    subscribedData?: iSubscribedData,
+    eligibleForTrial?: boolean
 }
 
 export type apiResponse = {
@@ -151,3 +156,68 @@ export type iApiCall = {
     url: string, 
     axios: CancelTokenSource
 }
+
+export type iSubscription = {
+    id: string,
+    object: string,
+    active: boolean,
+    attributes: string[],
+    created: number,
+    default_price: string,
+    description: null,
+    features: any[],
+    images: string[],
+    livemode: boolean,
+    metadata: {},
+    name: string,
+    package_dimensions: null,
+    shippable: null | boolean,
+    statement_descriptor: null | string,
+    tax_code: null | string,
+    type: string,
+    unit_label: null | string,
+    updated: number,
+    url: null | string,
+    priceData: any
+}
+
+export type iStripeCustomer = {
+    name: string,
+    emailId: string,
+}
+
+export type iRoleMetaData = {
+    msgQuota: string,
+    businessQuota: string,
+    packageQuota: string,
+    insightEligible: string
+}
+
+export type iSubscriptionData = {
+    status: string,
+    id: string,
+    canceledAt?: number,
+    expiresOn?: number, 
+    nextInvoice?: number,
+    startDate?: number,
+    trialEnd?: number,
+    priceId?: string,
+    roles?: iRoleMetaData
+}
+
+export type iSubscribedData = {
+    name: string,
+    id: string
+}
+
+export type iStripeTransaction = {
+    amount: number;
+    amountRefunded: number;
+    description: string | null;
+    receiptUrl: string | null;
+    refunded: boolean;
+    status:  "failed" | "pending" | "succeeded";
+    invoice: string | null;
+    id: string;
+    created: number
+} 

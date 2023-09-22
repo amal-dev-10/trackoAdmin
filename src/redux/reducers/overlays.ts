@@ -22,6 +22,10 @@ let initialState: stateInterface = {
         {id: 11, name: "EXPIRED MEMBERSHIP", screenName: "expiredMembership"},
         {id: 12, name: "EDIT BUSINESS", screenName: "editBusiness"},
         {id: 13, name: "SETTINGS", screenName: "businessSettings"},
+        {id: 14, name: "", screenName: "subscriptions"},
+        {id: 15, name: "", screenName: "paymentMethod"},
+        {id: 16, name: "", screenName: "addCard"},
+        {id: 17, name: "HISTORY", screenName: "stripeTransactions"},
     ],
 }
 

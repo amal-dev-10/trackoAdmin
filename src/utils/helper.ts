@@ -134,4 +134,14 @@ export const formatTime = (durationInHours: number)=> {
     } else {
       return `${Math.round(durationInHours / (24 * 30))} months`;
     }
-  }
+}
+
+export const openLink = (link:string | null)=>{
+    if(link){
+      Linking.openURL(link).then((x)=>{
+        showToast("Link opened.")
+      }).catch((err)=>{
+        showToast("Couldn't complete the request.")
+      })
+    }
+}

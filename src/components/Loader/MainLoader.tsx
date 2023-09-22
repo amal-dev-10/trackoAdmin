@@ -84,7 +84,7 @@ const MainLoader = ({showLoader, overlays, routeName}: props) => {
                 </View>
             </Modal> 
         :
-        (activityLoaderTabs.includes(routeName) || overlays.length) ?
+        ((activityLoaderTabs.includes(routeName) || !routeName) || overlays.length) ?
             <Loading/>
         : <></>
     : <></>
