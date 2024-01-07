@@ -34,6 +34,7 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
         <View style={[styles.profileCard, shadowGenerator()]}>
             <View style={styles.details}>
                 <Text style={styles.textName}>{ownerDetail?.name}</Text>
+                <Text style={styles.phoneNumberText}>{ownerDetail?.phoneNumber}</Text>
                 <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' size={15} color={iconColor}/>
                     <Text style={styles.profileEdit}>Edit Profile</Text>
@@ -224,5 +225,9 @@ const styles = StyleSheet.create({
     subButton:{
         width: "80%",
         justifyContent: "flex-start"
+    },
+    phoneNumberText:{
+        color: borderColor,
+        fontSize: fontSize.small
     }
 })

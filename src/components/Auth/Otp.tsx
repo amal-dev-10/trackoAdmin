@@ -208,7 +208,8 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   resendPara:{
-    fontSize: fontSize.small
+    fontSize: fontSize.small,
+    color: iconColor
   },
   resendBtn:{
     color: textColorPrimary

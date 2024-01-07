@@ -18,6 +18,7 @@ import BusinessProfile from './BusinessProfile';
 import ExpiredMembership from './ExpiredMembership';
 import EditBusiness from './EditBusiness';
 import BusinessSettings from './BusinessSettings';
+import PrivacyPolicy from './PrivacyPolicy';
 
 type props={
     overlayData: overlayComponent,
@@ -57,6 +58,10 @@ const Overlay = ({overlayData, closeOverlay, showModal, openedList}: props) => {
                 {
                     overlayData.id === 4 &&
                     <TermsAndConditions/> //terms and conditions
+                }
+                {
+                    overlayData.id === 10 &&
+                    <PrivacyPolicy/>
                 }
                 {
                     overlayData.id === 5 &&

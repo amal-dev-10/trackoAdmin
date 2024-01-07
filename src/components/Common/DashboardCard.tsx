@@ -62,7 +62,8 @@ const styles = StyleSheet.create({
         alignItems: "center",
         borderRadius: 10,
         backgroundColor: cardColor,
-        elevation: 2
+        elevation: 2,
+        marginBottom: 6
     },
     details:{
         display: "flex",

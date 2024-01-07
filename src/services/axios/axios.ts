@@ -1,5 +1,7 @@
 import axios, { AxiosInstance } from 'axios';
 import store from '../../redux/store';
+import Config from 'react-native-config';
+
 
 const createApiInstance = ()=>{
   let s = store.getState();

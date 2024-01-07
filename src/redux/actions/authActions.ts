@@ -73,7 +73,7 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
             let user = await confirm.confirm(code);
             if(user){
                 let token: string = await user.user.getIdToken();
-                dispatch(setTokenAction(token))
+                dispatch(setTokenAction(token));
                 let res: apiResponse = await getOwnerById(user.user?.uid || "");
                 if(res.status === 404){
                     dispatch(phoneAuthSuccess({
@@ -98,7 +98,7 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
             }
         }
         catch(err: any){
-            showToast("Invalid OTP");
+            showToast("Something went wrong");
             dispatch(phoneAuthFailure(err?.message || "Invalid OTP"))
         }
     }

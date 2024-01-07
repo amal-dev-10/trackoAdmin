@@ -27,7 +27,7 @@ let initialState = {
                 },
                 {
                     icon: "user-secret",
-                    name: "DATA PRIVACY",
+                    name: "PRIVACY POLICY",
                     id: 10,
                 }
             ]

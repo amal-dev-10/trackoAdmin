@@ -37,6 +37,11 @@ export const businessReducer = (state: props = initialState, action: actionInter
                 businesses: JSON.parse(JSON.stringify(temp)),
                 selectedBusiness: {...action.payload} as ibusiness
             }
+        case "RESET_SELECTED_BUSINESS":
+            return {
+                ...state,
+                selectedBusiness: null
+            }
         default:
             return state
     }

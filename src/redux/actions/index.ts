@@ -331,5 +331,12 @@ export const updateBusinessSettingsAction = (payload: iBusinessSettings)=>{
   }
 }
 
+export const resetSelectedBusinessAction = ()=>{
+  return {
+    type: "RESET_SELECTED_BUSINESS",
+    payload: null
+  }
+}
+
 
 

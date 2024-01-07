@@ -236,7 +236,7 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
               showTools &&
               <View style={styles.allToolsView}>
                 <TouchableOpacity activeOpacity={0.7} onPress={()=>{sendSMSClicked()}} style={styles.btn}>
-                  <Text style={styles.btnText}>SEND SMS</Text>
+                  <Text style={styles.btnText}>SEND ALERT</Text>
                 </TouchableOpacity>
               </View>
             }
@@ -245,7 +245,7 @@ const ExpiredMembership = ({setProperties, showModal, confirmation, setConfirm}:
       }
       <View style={styles.scroller}>
         <ScrollView
-          showsHorizontalScrollIndicator={false} 
+          showsVerticalScrollIndicator={false} 
           style={styles.scrollView}
           contentContainerStyle={{paddingTop: 15}}
         >

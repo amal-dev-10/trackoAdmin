@@ -27,7 +27,8 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
     const [placeText, setPlaceText] = useState(placeHolder as string);
     const [showValid, setShowValid] = useState(false as boolean);
     const [edit, setEdit] = useState(editable as boolean)
-    const input = useRef<TextInput>(null);
+    const input = useRef<TouchableOpacity>(null);
+    const textInput = useRef<TextInput>(null);
     const [v, setV] = useState(valid as boolean);
 
     useEffect(()=>{
@@ -44,7 +45,7 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
         }
     }, [f])
   return (
-    <View style={[styles.inputView, f ? [styles.focused, shadowGenerator(2, 2)] : styles.unFocused]} ref={input}>
+    <TouchableOpacity style={[styles.inputView, f ? [styles.focused, shadowGenerator(2, 2)] : styles.unFocused]} ref={input} onPress={()=>{textInput.current?.focus();}}>
         {
             (f || value) ?
             <Text style={styles.focusedText}>{f || value ? placeText : ""}</Text> : <></>
@@ -62,6 +63,7 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
                 keyboardType={keyBoardType}
                 value={value}
                 editable={edit}
+                ref={textInput}
             />
             {
                 showValid ?
@@ -83,7 +85,7 @@ const Input = ({placeHolder, onInput, keyBoardType, icon, valid, msg, id, value,
                 <Text style={styles.msg}>{"* " + msg}</Text>
             : <></>
         }
-    </View>
+    </TouchableOpacity>
   )
 }
 
@@ -111,7 +113,8 @@ const styles = StyleSheet.create({
     },
     focusedText:{
         fontSize: fontSize.xSmall,
-        marginLeft: 30
+        marginLeft: 30,
+        color: iconColor
     },
     input:{
         flex: 1,

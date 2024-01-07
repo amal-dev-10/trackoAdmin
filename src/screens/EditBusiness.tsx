@@ -25,7 +25,7 @@ const EditBusiness = ({updateBusinessDetail, selectedBusiness, showLoader}: prop
         let resp: apiResponse | null = await uploadBusinessLogo(logo);
         if(resp?.data){
             let response: apiResponse = await updateBusiness({logoUrl: resp.data} as ibusiness, true);
-            if(response.status === 200){
+            if(response?.status === 200){
                 updateBusinessDetail({...selectedBusiness, ...response.data} as ibusiness)
                 showToast("Updated Successfully");
             }else{
