@@ -44,7 +44,7 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
 
   const gotoDashboard = (businessData: ibusiness)=>{
     let temp = settings;
-    let s = JSON.parse(selectedBusiness?.settings || "[]") as {id: string, enabled: boolean}[]
+    let s = JSON.parse(businessData?.settings || "[]") as {id: string, enabled: boolean}[]
     s.forEach((x)=>{
       let index: number = temp.findIndex((d)=>{return d.id === x.id});
       if(index > -1){

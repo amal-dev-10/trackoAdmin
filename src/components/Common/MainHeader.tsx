@@ -34,9 +34,9 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
       <View style={styles.mainHeaderText}>
         <TouchableOpacity style={styles.orgLogo} activeOpacity={0.7} onPress={()=>{openOverlay(8)}}>
           {
-            selectedBusiness.logoUrl ? 
+            selectedBusiness?.logoUrl ? 
             <Image
-              source={{uri: selectedBusiness.logoUrl}}
+              source={{uri: selectedBusiness?.logoUrl}}
               style={{height: 40, width: 40, borderRadius: 20}}
             />
             : <IconSet name='building' size={20} color={iconColor}/>
