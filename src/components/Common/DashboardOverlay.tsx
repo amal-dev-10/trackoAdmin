@@ -87,7 +87,7 @@ const DashboardOverlay = (props:overlayProps) => {
             let data: ibusiness = {
                 name: inputList[0].value,
                 location: inputList[1].value,
-                verified: false,
+                verified: true,
                 contactNumber: inputList[2].value,
                 countryCode: "+91"
             }

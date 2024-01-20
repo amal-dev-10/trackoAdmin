@@ -43,18 +43,24 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
   };
 
   const gotoDashboard = (businessData: ibusiness)=>{
-    let temp = settings;
-    let s = JSON.parse(businessData?.settings || "[]") as {id: string, enabled: boolean}[]
-    s.forEach((x)=>{
-      let index: number = temp.findIndex((d)=>{return d.id === x.id});
-      if(index > -1){
-        temp[index].enabled = x.enabled
-      }
-    });
-    updateSettings([...temp]);
-    setRoute("Home");
-    selectBusiness(businessData);
-    navigate("Bottom");
+    try{
+      let temp = settings;
+      let s = JSON.parse(businessData?.settings || "[]") as {id: string, enabled: boolean}[]
+      s?.forEach((x)=>{
+        let index: number = temp.findIndex((d)=>{return d.id === x.id});
+        if(index > -1){
+          temp[index].enabled = x.enabled
+        }
+      });
+      updateSettings([...temp]);
+      setRoute("Home");
+      console.log(businessData)
+      selectBusiness(businessData);
+      navigate("Bottom");
+    }
+    catch(err){
+      console.log(err)
+    }
   }
 
   const getMyBusiness = async ()=>{
