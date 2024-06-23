@@ -1,22 +1,25 @@
-import { StyleSheet, View, ScrollView, TouchableOpacity, Dimensions } from 'react-native'
+import { StyleSheet, View, ScrollView, TouchableOpacity, Dimensions, LayoutAnimation } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { connect } from 'react-redux'
-import { getRequests, setClientMode, setOverlayComponent } from '../redux/actions'
-import { container, setRoute, shadowGenerator } from '../utils/helper'
+import { getRequests, setClientMode, setOverlayComponent, setRequestsAction } from '../redux/actions'
+import { container, setRoute, shadowGenerator, showToast } from '../utils/helper'
 import RequestCard from '../components/Common/RequestCard'
-import { requestsProps } from '../interfaces/common'
+import { apiResponse, iJoinRequest, requestsProps } from '../interfaces/common'
 import { borderColor, cardColor, textColorPrimary } from '../styles/colors'
 import AntDesign from 'react-native-vector-icons/AntDesign'
 import NoData from '../components/Common/NoData'
+import { acceptRequest, getAllPendingRequests, widthdrawRequest } from '../services/apiCalls/serviceCalls'
+import { iClient } from '../interfaces/iClient'
 
 type props = {
-  allRequests: requestsProps[],
+  allRequests: iClient[],
   getRequestsData: any,
+  setRequests: any
   openOverlay: any,
   clientMode: any
 }
 
-const Requests = ({allRequests,getRequestsData, openOverlay, clientMode}: props) => {
+const Requests = ({allRequests,getRequestsData, setRequests, openOverlay, clientMode}: props) => {
   const [fetchFailed, setFetchFailed] = useState(true as boolean | undefined);
 
   const noDataButtonClicked = (button: string)=>{
@@ -26,9 +29,56 @@ const Requests = ({allRequests,getRequestsData, openOverlay, clientMode}: props)
     }
   }
 
+  const acceptRequestNow = async (requestData: iClient)=>{
+    let resp: apiResponse = await acceptRequest(requestData?.uid || "");
+    if(resp?.status === 200){
+      let t = allRequests;
+      let index = allRequests.findIndex((x)=>{return x.uid === requestData.uid});
+      if(index > -1){
+        t.splice(index, 1);
+      }
+      setRequests([...t]);
+      showToast("Request accepted successfully.")
+    }else{
+      showToast("Something went wrong.")
+    }
+  }
+
+  const widthdrawRequestNow = async (data: iClient)=>{
+    let resp: apiResponse = await widthdrawRequest(data?.uid || "");
+    if(resp.status === 200){
+      let temp = allRequests;
+      let index = allRequests.findIndex((x)=>{return x.uid === data.uid});
+      if(index > -1){
+        temp.splice(index, 1);
+      }
+      setRequests(temp);
+      showToast("Request withdrawn successfully.");
+    }else{
+        showToast("Something went wrong.")
+    }
+  }
+
+  const start = async ()=>{
+    let resp: apiResponse = await getAllPendingRequests();
+    if(resp?.status === 200){
+      LayoutAnimation.configureNext({
+        duration: 200, // Adjust the frame rate by changing the duration
+        update: {
+          type: LayoutAnimation.Types.linear,
+        },
+      });
+      setRequests(resp.data)
+      setFetchFailed(false)
+    }else if(resp?.status === 500 || resp?.status === undefined){
+      setFetchFailed(true);
+    }
+  }
+
   useEffect(()=>{
     setRoute("Requests")
     getRequestsData();
+    start()
   }, [])
   return (
     <View style={[container]}>
@@ -39,12 +89,17 @@ const Requests = ({allRequests,getRequestsData, openOverlay, clientMode}: props)
               {
                 allRequests.map((data, i:number)=>{
                   return (
-                    <RequestCard key={"requestCard"+i} requestData={data}/>
+                    <RequestCard 
+                      key={"requestCard"+i} 
+                      requestData={data}
+                      onAcceptRequest={(data: iClient)=>{acceptRequestNow(data)}}
+                      onDeclineRequest={(data: iClient)=>{widthdrawRequestNow(data)}}
+                    />
                   )
                 })
               }
             </View>
-          </ScrollView>
+          </ScrollView> 
         : <></>
       }
       {
@@ -58,7 +113,6 @@ const Requests = ({allRequests,getRequestsData, openOverlay, clientMode}: props)
           tryAgainClicked={()=>{}}
         />
       }
-
       <TouchableOpacity style={[styles.requestCard, shadowGenerator()]} onPress={()=>{clientMode("add"); openOverlay(6)}}>
         <AntDesign size={20} name='plus' color={textColorPrimary}/>
       </TouchableOpacity>
@@ -73,7 +127,8 @@ const mapStateToProps = (state: any)=>({
 const mapDispatchToProps = (dispatch: any)=>({
   getRequestsData: ()=>{dispatch(getRequests())},
   openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
-  clientMode: (mode: string)=>{dispatch(setClientMode(mode))}
+  clientMode: (mode: string)=>{dispatch(setClientMode(mode))},
+  setRequests: (data: iJoinRequest[])=> dispatch(setRequestsAction(data))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Requests) 

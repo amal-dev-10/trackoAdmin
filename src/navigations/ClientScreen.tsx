@@ -5,21 +5,16 @@ import BottomTab from '../components/Common/BottomTab';
 import { primaryColor } from '../styles/colors';
 import {overlayComponent, tabDataInterface } from '../interfaces/common';
 import { connect } from 'react-redux';
-import Home from '../screens/Home';
-import Clients from '../screens/Clients';
-import Requests from '../screens/Requests';
-import Insights from '../screens/Insights';
-import Packages from '../screens/Packages';
 import { setLoader } from '../redux/actions';
 import { useEffect, useState } from 'react';
-import MainLoader from '../components/Loader/MainLoader';
+import ClientHome from '../screens/ClientHome';
 
 type bottomTabPropsInt = {
   bottomTabData: tabDataInterface,
   showLoader: any
 }
 
-const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
+const ClientScreen = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
   let clickCount: number = 0
 
   useEffect(()=>{
@@ -44,19 +39,7 @@ const BottomNavigator = ({bottomTabData, showLoader}: bottomTabPropsInt) => {
       </View>
       <View style={styles.screenRenderView}>
         {
-          bottomTabData.activeComponentId === 0 && <Home/>
-        }
-        {
-          bottomTabData.activeComponentId === 1 && <Clients/>
-        }
-        {
-          bottomTabData.activeComponentId === 2 && <Requests/>
-        }
-        {
-          bottomTabData.activeComponentId === 3 && <Insights/>
-        }
-        {
-          bottomTabData.activeComponentId === 4 && <Packages/>
+          bottomTabData.activeComponentId === 0 && <ClientHome/>
         }
       </View>
       <View style={[styles.headerBottomView, styles.bottomHeight]}>
@@ -75,7 +58,7 @@ const mapDispatchToProps = (dispatch: any)=>({
   showLoader: (show: boolean)=>{dispatch(setLoader(show))}
 })
 
-export default connect(mapStateToProps, mapDispatchToProps)(BottomNavigator);
+export default connect(mapStateToProps, mapDispatchToProps)(ClientScreen);
 
 const styles = StyleSheet.create({
   main:{

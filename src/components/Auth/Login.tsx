@@ -1,7 +1,7 @@
 import { Dimensions, SafeAreaView, StyleSheet, Text, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
 import { container, valueBinder } from '../../utils/helper'
-import { cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
+import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import Input from '../Common/Input'
 import Button from '../Common/Button'
@@ -11,12 +11,16 @@ import { connect } from 'react-redux'
 import { signInWithPhoneNumber } from '../../redux/actions/authActions'
 import { Svg, Path, Defs, G } from 'react-native-svg';
 import IconSet from '../../styles/icons/Icons'
+import { setLoginModeAction } from '../../redux/actions'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type props = {
-  signInWithPhoneNumber: any
+  signInWithPhoneNumber: any,
+  loginMode: string | null,
+  setLoginMode: any
 }
 
-const Login = ({signInWithPhoneNumber}: props) => {
+const Login = ({signInWithPhoneNumber, loginMode, setLoginMode}: props) => {
   const [inputList, setInputList] = useState(
   [
     {
@@ -52,6 +56,11 @@ const Login = ({signInWithPhoneNumber}: props) => {
     }
   }
 
+  const modeClicked = async (mode: string)=>{
+    setLoginMode(mode);
+    await AsyncStorage.setItem("loginMode", mode);
+  }
+
   const sendOtpClicked = ()=>{
     if(allInputsValid){
       signInWithPhoneNumber(inputList[0].value);
@@ -84,42 +93,72 @@ const Login = ({signInWithPhoneNumber}: props) => {
           clients of your organization.
         </Text>
       </View>
-      <View style={[styles.loginCard]}>
-        <View style={styles.loginTextView}>
-          <Text style={styles.loginText}>Login</Text>
-          <Text  style={styles.secondPara}>Please sign in using your credentials</Text>
+      {
+        loginMode === null 
+        ? 
+        <View style={[styles.loginCard]}>
+          <View style={styles.loginTextView}>
+            <Text style={styles.loginText}>Login As</Text>
+            <Text  style={styles.secondPara}>Please select login mode</Text>
+          </View>       
+          <View style={[styles.buttonView, {flex: 1}]}>
+            <Button
+              text='Admin'
+              onTouch={()=>{modeClicked("admin")}}
+              width='100%'
+            />
+            <Text style={{color: borderColor}}>- Or -</Text>
+            <Button
+              text='Client'
+              onTouch={()=>{modeClicked("client")}}
+              width='100%'
+            />
+          </View>
         </View>
-        {
-          inputList. map((data)=>{
-            return (
-              <Input
-                placeHolder={data.placeHolder}
-                onInput={(id: number, e: string)=>{
-                  let temp = valueBinder(inputList, id, e) as inputProps[]; 
-                  setInputList([...temp]);
-                  validation();
-                }}
-                keyBoardType={data.keyBoardType as KeyboardType}
-                icon={data.icon}
-                valid={data.valid}
-                msg={data.msg}
-                id={data.id}
-                key={data.id}
-                value={data.value}
-                focus={data.focus}
-                editable={data.editable}
-              />
-            )
-          })
-        }
-        <View style={styles.buttonView}>
-          <Button
-            text='GET OTP'
-            onTouch={()=>{sendOtpClicked()}}
-            width='50%'
-          />
+        : 
+        <View style={[styles.loginCard]}>
+          <View style={styles.loginTextView}>
+            <Text style={styles.loginText}>{loginMode[0].toUpperCase()+loginMode.slice(1) + " Login"}</Text>
+            <Text  style={styles.secondPara}>Please sign in using your credentials</Text>
+          </View>
+          {
+            inputList. map((data)=>{
+              return (
+                <Input
+                  placeHolder={data.placeHolder}
+                  onInput={(id: number, e: string)=>{
+                    let temp = valueBinder(inputList, id, e) as inputProps[]; 
+                    setInputList([...temp]);
+                    validation();
+                  }}
+                  keyBoardType={data.keyBoardType as KeyboardType}
+                  icon={data.icon}
+                  valid={data.valid}
+                  msg={data.msg}
+                  id={data.id}
+                  key={data.id}
+                  value={data.value}
+                  focus={data.focus}
+                  editable={data.editable}
+                />
+              )
+            })
+          }
+          <View style={[styles.buttonView, {flexDirection: "row"}]}>
+            <Button
+              text='GET OTP'
+              onTouch={()=>{sendOtpClicked()}}
+              width='50%'
+            />
+            <Button
+              text='Back'
+              onTouch={()=>{setLoginMode(null)}}
+              width='50%'
+              borderLess={true}
+            />
+          </View>
         </View>
-      </View>
+      }
       <Svg
         width={Dimensions.get("window").width}
         height={400}
@@ -144,11 +183,16 @@ const Login = ({signInWithPhoneNumber}: props) => {
   )
 }
 
+const mapStateToProps = (state: any)=>({
+  loginMode: state.appState.loginMode
+})
+
 const mapDispatchToProps = (dispatch: any) => ({
   signInWithPhoneNumber: (phoneNumber: string) => dispatch(signInWithPhoneNumber(phoneNumber)),
+  setLoginMode: (mode: string | null)=> dispatch(setLoginModeAction(mode))
 });
 
-export default connect(null, mapDispatchToProps)(Login)
+export default connect(mapStateToProps, mapDispatchToProps)(Login)
 
 const styles = StyleSheet.create({
   loginView:{
@@ -209,6 +253,7 @@ const styles = StyleSheet.create({
   buttonView:{
     display: "flex",
     justifyContent: "center",
-    alignItems: "center"
+    alignItems: "center",
+    gap: 10
   }
 })

@@ -12,7 +12,9 @@ export type ibusiness = {
     rating?: string,
     settings?: string,
     contactNumber?: string,
-    countryCode?: string
+    countryCode?: string,
+    shareId?: string,
+    clientVerified?: boolean
 }
 
 export type mainStat = {
@@ -62,4 +64,15 @@ export type iBusinessSettings = {
     knowMore: string,
     enabled: boolean,
     id: string
-  }
+}
+
+export type iClientOrgs = {
+    name: string,
+    location: string,
+    logoUrl: string
+    shareId: string,
+    requested: boolean,
+    alreadyClient: boolean,
+    clientVerified: boolean
+    uid: string
+}

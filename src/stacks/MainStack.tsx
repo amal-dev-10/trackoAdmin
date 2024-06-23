@@ -1,20 +1,27 @@
 import {StackNavigationOptions, createStackNavigator} from '@react-navigation/stack'
 import DashBoard from '../screens/DashBoard';
-import BottomNavigator from '../navigations/BottomNavigator';
+import AdminScreen from '../navigations/AdminScreen'
 import { connect } from 'react-redux';
 import Overlay from '../screens/Overlay';
 import { overlayComponent } from '../interfaces/common';
 import MainLoader from '../components/Loader/MainLoader';
 import { useEffect } from 'react';
 import { BackHandler } from 'react-native';
+import ClientScreen from '../navigations/ClientScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import { setLoginModeAction, setNavTabsAction, setOrganizationSettingsAction } from '../redux/actions';
 
 const mainStack = createStackNavigator();
 
 type props = {
   allOverlays: overlayComponent[],
+  setLoginMode: any,
+  loginMode: string | null,
+  setNavigationTab: any,
+  setOrganizationSettings: any
 }
 
-const MainStack = ({allOverlays}: props) => {
+const MainStack = ({allOverlays, setLoginMode, loginMode, setNavigationTab, setOrganizationSettings}: props) => {
   let config: StackNavigationOptions = {
     headerShown: false,
     transitionSpec: {
@@ -47,7 +54,18 @@ const MainStack = ({allOverlays}: props) => {
     },
   }
 
+  const getLoginMode = async ()=>{
+    let mode = await AsyncStorage.getItem("loginMode");
+    setLoginMode(mode);
+  }
+
   useEffect(()=>{
+    setNavigationTab(loginMode);
+    setOrganizationSettings(loginMode)
+  }, [loginMode])
+
+  useEffect(()=>{
+    getLoginMode()
     const back = BackHandler.addEventListener("hardwareBackPress", ()=>{
         return true
     });
@@ -57,7 +75,8 @@ const MainStack = ({allOverlays}: props) => {
     <>
       <mainStack.Navigator initialRouteName='Dashboard' screenOptions={config}>
           <mainStack.Screen name='Dashboard' component={DashBoard}/>
-          <mainStack.Screen name='Bottom' component={BottomNavigator}/>
+          <mainStack.Screen name='AdminScreen' component={AdminScreen}/>
+          <mainStack.Screen name='ClientScreen' component={ClientScreen}/>
       </mainStack.Navigator>
       {
         allOverlays.map((data, i: number)=>{
@@ -71,8 +90,15 @@ const MainStack = ({allOverlays}: props) => {
   )
 }
 
+const mapDispatchToProps = (dispatch: any)=>({
+  setLoginMode: (mode: string | null)=> dispatch(setLoginModeAction(mode)),
+  setNavigationTab: (mode: string | null)=> {dispatch(setNavTabsAction(mode))},
+  setOrganizationSettings: (mode: string | null) => dispatch(setOrganizationSettingsAction(mode))
+})
+
 const mapStateToProps = (state: any)=>({
-  allOverlays: state.overlay.opendedComponents
+  allOverlays: state.overlay.opendedComponents,
+  loginMode: state.appState.loginMode
 });
 
-export default connect(mapStateToProps)(MainStack)
+export default connect(mapStateToProps, mapDispatchToProps)(MainStack)

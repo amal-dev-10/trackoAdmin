@@ -1,10 +1,10 @@
 // Bottom navigation actions
 
 import { iBusinessSettings, iFinanceInsight, iMembershipInsight, ibusiness, mainStat } from "../../interfaces/business";
-import { iApiCall, iTransactions, packagesProps } from "../../interfaces/common";
+import { iApiCall, iJoinRequest, iTransactions, packagesProps } from "../../interfaces/common";
 import { iFilters, iMembership, iMembershipDetails } from "../../interfaces/iClient";
 import { fomatFirstLetterCapital, setRoute } from "../../utils/helper";
-import store from "../store";
+import {store} from "../store";
 
 export const tabIconClicked = (payload: any = null)=>{
   return {
@@ -34,6 +34,13 @@ export const updateMembershipState = (payload: iMembershipDetails)=>{
 export const getRequests = (payload: any = null)=>{
   return {
     type: "GET_REQUESTS",
+    payload: payload
+  };
+}
+
+export const setRequestsAction = (payload: iJoinRequest[])=>{
+  return {
+    type: "SET_REQUESTS",
     payload: payload
   };
 }
@@ -338,5 +345,32 @@ export const resetSelectedBusinessAction = ()=>{
   }
 }
 
+export const setLoginModeAction = (payload: null | string)=>{
+  return {
+    type: "SET_LOGIN_MODE",
+    payload: payload
+  }
+}
+
+export const setNavTabsAction = (payload: null | string)=>{
+  return {
+    type: "SET_TABS",
+    payload: payload
+  }
+}
+
+export const setMembershipAction = (payload: iMembership)=>{
+  return {
+    type: "SET_MY_MEMBERSHIP",
+    payload: payload
+  }
+}
+
+export const setOrganizationSettingsAction = (payload: string | null)=>{
+  return {
+    type: "SET_ORGANIZATION_SETTINGS",
+    payload: payload
+  }
+}
 
 

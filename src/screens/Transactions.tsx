@@ -3,8 +3,8 @@ import React, { useEffect, useState } from 'react'
 import { amountColor, borderColor, cardColor, goldColor, textColorPrimary, textColorSecondary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
 import { connect } from 'react-redux'
-import { apiResponse, iTransactions } from '../interfaces/common'
-import { setTransactions } from '../redux/actions'
+import { apiResponse, iOwner, iTransactions } from '../interfaces/common'
+import { setIdTransactions, setTransactionMode, setTransactions } from '../redux/actions'
 import { getClientTransactions } from '../services/apiCalls/serviceCalls'
 import NoData from '../components/Common/NoData'
 
@@ -12,21 +12,23 @@ type props = {
     type?: string,
     setTransactions: any,
     transactions: iTransactions[], 
-    mode: string
+    mode: string,
+    loginMode: string | null,
+    setMode: any,
+    setTransactionId: any,
+    user: iOwner
 }
 
-const Transactions = ({type, setTransactions, transactions, mode}: props) => {
+const Transactions = ({type, setMode, setTransactions, transactions, mode, loginMode, setTransactionId, user}: props) => {
     const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
     const [reload, setReload] = useState(false as boolean);
 
     const getAllTransactions = async ()=>{
-        setTransactions([])
+        setTransactions([]);
+        let m = mode;
+        if(loginMode === "client") m = "client"
         let data: apiResponse | null = null;
-        if(mode === "client"){
-            data = await getClientTransactions("client");
-        }else if(mode === "all"){
-            data = await getClientTransactions("all");
-        }
+        data = await getClientTransactions(m);
         if(data && data?.status === 200){
             setTransactions(data.data);
             setFetchFailed(false);
@@ -47,6 +49,9 @@ const Transactions = ({type, setTransactions, transactions, mode}: props) => {
     }, [reload]);
 
     useEffect(()=>{
+        if(loginMode === "client"){
+            setTransactionId(user.uid)
+        }
         start();
     },[])
   return (
@@ -99,10 +104,14 @@ const Transactions = ({type, setTransactions, transactions, mode}: props) => {
 const mapStateToProps = (state: any)=>({
     transactions: state.transactions.transactions,
     mode: state.transactions.mode,
+    loginMode: state.appState.loginMode,
+    user: state.auth.user
 })
 
 const mapDispatchToProps = (dispatch: any)=>({
-    setTransactions: (data: iTransactions[])=>{dispatch(setTransactions(data))}
+    setTransactions: (data: iTransactions[])=>{dispatch(setTransactions(data))},
+    setMode: (mode: string)=> dispatch(setTransactionMode(mode)),
+    setTransactionId: (id: string)=> dispatch(setIdTransactions(id))
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Transactions)

@@ -1,6 +1,6 @@
 import createApiInstance from "../axios/axios";
 import { completeApiCallAction, setApiCallAction, setLoader } from "../../redux/actions";
-import store from "../../redux/store";
+import {store} from "../../redux/store";
 import { navigate } from "../../navigations/NavigationService";
     
 export const getData = async (url: string, byPassLoading: boolean = false) => {

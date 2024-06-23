@@ -1,5 +1,5 @@
-import { BackHandler, StyleSheet, View, LayoutAnimation, Animated, FlatList, RefreshControl } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import { BackHandler, StyleSheet, View, LayoutAnimation, Animated, FlatList, RefreshControl, Alert } from 'react-native'
+import React, { useEffect, useRef, useState } from 'react'
 import { container, setRoute, showToast } from '../utils/helper'
 import TitleComponent from '../components/Common/TitleComponent'
 import AntDesign from 'react-native-vector-icons/AntDesign'
@@ -8,30 +8,33 @@ import { TouchableOpacity } from 'react-native'
 import DashboardCard from '../components/Common/DashboardCard'
 import { apiResponse } from '../interfaces/common'
 import DashboardOverlay from '../components/Common/DashboardOverlay'
-import { ScrollView } from 'react-native-gesture-handler'
 import { resetStateAction } from '../redux/actions/authActions'
 import { connect } from 'react-redux'
-import { getAllBusiness } from '../services/apiCalls/serviceCalls'
-import { resetSelectedBusinessAction, setAllBusinesses, setOverlayComponent, setSelectedBusiness, updateBusinessSettingsAction } from '../redux/actions'
-import { iBusinessSettings, ibusiness } from '../interfaces/business'
+import { getAddedOrg, getAllBusiness, getClientBusinessSettings, sendRequest, widthdrawRequest } from '../services/apiCalls/serviceCalls'
+import { resetSelectedBusinessAction, setAllBusinesses, setLoader, setOverlayComponent, setSelectedBusiness, updateBusinessSettingsAction } from '../redux/actions'
+import { iBusinessSettings, iClientOrgs, ibusiness } from '../interfaces/business'
 import { navigate } from '../navigations/NavigationService'
 import IconSet from '../styles/icons/Icons'
 import NoData from '../components/Common/NoData'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { iBusinessClientSettings } from '../interfaces/iClient'
 
 type props = {
   resetAuthState: any,
-  allBusiness: ibusiness[],
+  allBusiness: (ibusiness | iClientOrgs)[],
   setAllBusiness: any,
   selectBusiness: any,
   openOverlay: any,
   updateSettings: any,
   selectedBusiness: ibusiness,
   settings: iBusinessSettings[],
-  resetSelectedBusiness: any
+  resetSelectedBusiness: any,
+  setLoading: any
 }
 
-const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBusiness, selectBusiness, openOverlay, selectedBusiness, updateSettings, settings}: props) => {
+const DashBoard = ({resetAuthState, setLoading, resetSelectedBusiness, allBusiness, setAllBusiness, selectBusiness, openOverlay, selectedBusiness, updateSettings, settings}: props) => {
   let clickCount: number = 0;
+  const loginMode = useRef<string | null>(null);
   const [showOverlay, setShowOverlay] = useState(false as boolean);
   const [fetchFailed, setFetchFailed] = useState(undefined as boolean | undefined);
   const [servieMsg, setServiceMsg] = useState("" as string);
@@ -42,10 +45,22 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
     setShowOverlay(!showOverlay);
   };
 
-  const gotoDashboard = (businessData: ibusiness)=>{
+  const gotoDashboard = async (businessData: any)=>{
+    setLoading(true);
     try{
+      let tempBusinessData = businessData;
       let temp = settings;
-      let s = JSON.parse(businessData?.settings || "[]") as {id: string, enabled: boolean}[]
+      let s = [] as {id: string, enabled: boolean}[]
+      if(loginMode.current === "admin"){
+        s = JSON.parse(businessData?.settings || "[]")
+      }else if(loginMode.current === "client"){
+        let res: apiResponse = await getClientBusinessSettings(businessData?.uid || "");
+        let d = res.data as iBusinessClientSettings
+        if(res?.status === 200){
+          s = JSON.parse(d?.settings || "[]");
+          tempBusinessData.clientVerified = d.phoneVerified;
+        }
+      }
       s?.forEach((x)=>{
         let index: number = temp.findIndex((d)=>{return d.id === x.id});
         if(index > -1){
@@ -53,30 +68,75 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
         }
       });
       updateSettings([...temp]);
-      setRoute("Home");
-      console.log(businessData)
-      selectBusiness(businessData);
-      navigate("Bottom");
+      selectBusiness(tempBusinessData);
+      if(loginMode.current?.toLowerCase() === "admin"){
+        setRoute("Home");
+        navigate("AdminScreen");
+      }else if(loginMode.current?.toLowerCase() === "client"){
+        setRoute("Home");
+        navigate("ClientScreen");
+      }
     }
     catch(err){
       console.log(err)
     }
+    setLoading(false);
   }
 
   const getMyBusiness = async ()=>{
     setAllBusiness([]);
-    let resp: apiResponse | null = await getAllBusiness();
-    setServiceMsg(resp?.message || "");
-    if(resp?.status === 200){
-      LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-      setAllBusiness([...resp.data]);
-      setFetchFailed(false)
-    }else if(resp?.status === 500 || resp?.status === undefined){
-      setFetchFailed(true)
+    let resp: apiResponse | null = null;
+    if(loginMode.current === "admin"){
+      resp = await getAllBusiness();
+    }else if(loginMode.current === "client"){
+      resp = await getAddedOrg();
+    }
+    if(resp){
+      setServiceMsg(resp?.message || "");
+      if(resp?.status === 200){
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setAllBusiness([...resp?.data]);
+        setFetchFailed(false)
+      }else if(resp?.status === 500 || resp?.status === undefined){
+        setFetchFailed(true)
+      }
+    }else{
+      showToast("Something went wrong.")
     }
   }
 
-  const start = ()=>{
+  const sendRequestNow = async (data: iClientOrgs)=>{
+    let resp: apiResponse = await sendRequest(data?.uid || "");
+    if(resp.status === 200){
+        let temp = allBusiness as iClientOrgs[]
+        let index = allBusiness.findIndex((x)=>{return x.uid === data.uid});
+        if(index > -1){
+          temp[index].requested = resp.data?.requested
+        }
+        setAllBusiness(temp);
+        showToast("Request send successfully.");
+    }else{
+        showToast("Something went wrong.")
+    }
+  }
+
+  const widthdrawRequestNow = async (data: iClientOrgs)=>{
+    let resp: apiResponse = await widthdrawRequest(data?.uid || "");
+    if(resp.status === 200){
+      let temp = allBusiness as iClientOrgs[]
+      let index = allBusiness.findIndex((x)=>{return x.uid === data.uid});
+      if(index > -1){
+        temp.splice(index, 1);
+      }
+      setAllBusiness(temp);
+      showToast("Request withdrawn successfully.");
+    }else{
+        showToast("Something went wrong.")
+    }
+  }
+
+  const start = async ()=>{
+    await getLoginMode();
     setFetchFailed(undefined);
     resetSelectedBusiness();
     getMyBusiness();
@@ -95,9 +155,14 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
       setReload(false);
     }
   }, [reload]);
+  
+  const getLoginMode = async ()=>{
+    let m = await AsyncStorage.getItem("loginMode");
+    loginMode.current = m;
+  }
 
   useEffect(()=>{
-    setRoute("Dashboard")
+    setRoute("Dashboard");
     const backAction = ()=>{
       clickCount = clickCount + 1;
       if(clickCount === 2){
@@ -121,7 +186,7 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
       <View style={styles.titleRow}>
         <TitleComponent
           title='Dashboard'
-          subTitle='Hear you can find all your organizations'
+          subTitle={`Hear you can find all ${loginMode.current?.toLowerCase() === "admin" ? 'your organizations' : loginMode.current?.toLowerCase() === "client" ? 'organizations you added' : ''}`}
         />
         <View style={styles.rightBtnView}>
           <TouchableOpacity onPress={()=>{toggleOverlay()}}>
@@ -132,26 +197,6 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
           </TouchableOpacity>
         </View>
       </View>
-        {/* {
-          allBusiness.length ?
-          <ScrollView contentContainerStyle={styles.cardView} showsVerticalScrollIndicator={false}>
-            {
-              allBusiness.map((data: ibusiness, i:number)=>{
-                return(
-                  <DashboardCard
-                    // icon={"building"}
-                    // location={data?.location || ""}
-                    // logo={data?.logoUrl || ""}
-                    // orgName={data.name}
-                    data={data}
-                    onPress={()=>{gotoDashboard(data)}}
-                    key={i}
-                  />
-                )
-              })
-            }
-          </ScrollView> : <></>
-        } */}
         {
           allBusiness.length ?
             <View style={{flex:1, width: "100%"}}>
@@ -163,6 +208,9 @@ const DashBoard = ({resetAuthState, resetSelectedBusiness, allBusiness, setAllBu
                     data={item}
                     onPress={()=>{gotoDashboard(item)}}
                     key={item.uid}
+                    loginMode={loginMode.current}
+                    onSendRequest={(data: iClientOrgs)=>{sendRequestNow(data)}}
+                    onWithdrawRequest={(data: iClientOrgs)=>{widthdrawRequestNow(data)}}
                   />                
                 )}
                 refreshControl={
@@ -208,7 +256,8 @@ const mapDispatchToProps = (dispatch: any)=>({
   selectBusiness: (businessData: any)=>{dispatch(setSelectedBusiness(businessData))},
   openOverlay: (id: number)=>{dispatch(setOverlayComponent(id))},
   updateSettings: (data: iBusinessSettings)=>{dispatch(updateBusinessSettingsAction(data))},
-  resetSelectedBusiness: ()=>{dispatch(resetSelectedBusinessAction())}
+  resetSelectedBusiness: ()=>{dispatch(resetSelectedBusinessAction())},
+  setLoading: (loading: boolean)=> dispatch(setLoader(loading))
 });
 
 const mapStateToProps = (state: any)=>({

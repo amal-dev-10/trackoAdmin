@@ -1,5 +1,5 @@
 import { Dimensions, LayoutChangeEvent, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
-import React, { useRef, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { borderColor, goldColor, iconColor, memberShipTextColor, verifyIconColor } from '../../styles/colors'
 import { fontSize } from '../../styles/fonts'
 import { iMembership } from '../../interfaces/iClient';
@@ -21,7 +21,7 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
 
     const card: ViewRef = useRef<TouchableOpacity>(null);
     const [cardDimension, setCardDimension] = useState({width:0, height: 0} as {width: number, height: number})
-
+    const [data, setData] = useState<iMembership>(membershipData);
     const onLayout = (event: LayoutChangeEvent) => {
         const { width, height } = event.nativeEvent.layout;
         setCardDimension({width: width, height: height});
@@ -31,6 +31,10 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
         setSelectedClient(membershipData);
         openOverlay(7);
     }
+
+    useEffect(()=>{
+        setData(membershipData)
+    }, [membershipData])
 
   return (
     <TouchableOpacity 
@@ -45,7 +49,7 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
                 <View style={styles.topLeftView}>
                     <Text style={[styles.text, {fontSize: fontSize.small}]}>MEMBERSHIP CARD</Text>
                     {
-                        membershipData.phoneVerified ? 
+                        data?.phoneVerified ? 
                             <View style={styles.verifiedView}>
                                 <Text style={styles.verifyText}>Verified</Text>
                                 <IconSet name='ok-circle' color={verifyIconColor} size={12}/>
@@ -55,43 +59,43 @@ const MembershipCard = ({membershipData, openOverlay, setSelectedClient}: cardPa
                 </View>
                 <View style={{display: "flex", flexDirection: "row", alignItems: "center", gap: 5}}>
                     <Text style={[styles.phoneNumber, {fontSize: fontSize.small}]}>{
-                        membershipData.phoneNumber.slice(0, 6) + "\n" + membershipData.phoneNumber.slice(6) 
+                        (data?.phoneNumber?.slice(0, 6) || "") + "\n" + (data?.phoneNumber?.slice(6) || "")
                     }</Text>
                     <View style={{width: 1, height: 25, backgroundColor: iconColor, borderRadius: 10}}></View>
                 </View>
             </View>
             <View style={styles.packView}>
                 {
-                    membershipData?.memberShipDetails?.tier && !membershipData.memberShipDetails.expired ? 
+                    data?.memberShipDetails?.tier && !data?.memberShipDetails?.expired ? 
                         <View style={styles.packImage}>
-                            {/* <IconSet name={`${membershipData?.memberShipDetails?.tier?.toLowerCase()+"pack"}`} size={65} color={goldColor}/> */}
+                            {/* <IconSet name={`${data?.memberShipDetails?.tier?.toLowerCase()+"pack"}`} size={65} color={goldColor}/> */}
                             <Text style={styles.planText}
                                 numberOfLines={1}
                                 ellipsizeMode='tail'
-                            >{membershipData.memberShipDetails.tier.toUpperCase()}</Text>
+                            >{data?.memberShipDetails.tier.toUpperCase()}</Text>
                             {/* <View style={styles.divider}></View> */}
                             {/* <Text style={styles.orgName} numberOfLines={1} ellipsizeMode='tail'>IGNITE FITNESS</Text> */}
                         </View>
-                    : <Text style={styles.tierName}>{membershipData.memberShipDetails?.expired ? "EXPIRED" : "NO MEMBERSHIP"}</Text>
+                    : <Text style={styles.tierName}>{data?.memberShipDetails?.expired ? "EXPIRED" : "NO MEMBERSHIP"}</Text>
                 }
             </View>
             <View style={styles.stripe}>
                 <View style={[styles.stripeLeftRight, styles.left, {maxWidth: "35%"}]}>
                     <Text style={styles.stripeKey}>Membership Holder</Text>
                     <Text style={[styles.stripeValue, {width: "100%"}]} numberOfLines={1} ellipsizeMode='tail'>{
-                        fomatFirstLetterCapital(membershipData.name.toUpperCase())
+                        fomatFirstLetterCapital(data?.name?.toUpperCase())
                     }</Text>
                 </View>
                 <View style={[styles.stripeLeftRight, styles.left, {maxWidth: "30%"}]}>
                     <Text style={styles.stripeKey}>Valid From</Text>
                     <Text style={[styles.stripeValue, {width: "100%"}]} numberOfLines={1} ellipsizeMode='tail'>{
-                        membershipData.memberShipDetails?.validFromString ? membershipData.memberShipDetails?.validFromString : "NA"
+                        data?.memberShipDetails?.validFromString ? data?.memberShipDetails?.validFromString : "NA"
                     }</Text>
                 </View>
                 <View style={[styles.stripeLeftRight, styles.right, {maxWidth: "30%"}]}>
                     <Text style={styles.stripeKey}>Valid Till</Text>
                     <Text style={[styles.stripeValue, {width: "100%"}]} numberOfLines={1} ellipsizeMode='tail'>{
-                        membershipData.memberShipDetails?.validThruString ? membershipData.memberShipDetails?.validThruString : "NA"
+                        data?.memberShipDetails?.validThruString ? data?.memberShipDetails?.validThruString : "NA"
                     }</Text>
                 </View>
             </View>

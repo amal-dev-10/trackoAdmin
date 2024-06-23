@@ -18,6 +18,7 @@ const BottomTab = ({tabData, tabIconClicked, cancelApi}: bottomTabProp) => {
     let urls: {[key: number]: string[]} = {
       0: ["client/expiredMembership", "client/transactions", "business/homeStats/"],
       1: ["client/filterCount", "client/getAllClients"],
+      2: ["client/getRequests"],
       3: ["business/insights"],
       4: ["business/packages"]
     };

@@ -1,8 +1,8 @@
-import { actionInterface, tabDataInterface } from "../../interfaces/common"
+import { actionInterface, bottomTabProps, tabDataInterface } from "../../interfaces/common"
 
 let initialState: tabDataInterface = {
     activeComponentId: 0,
-    allTabs: [
+    adminTabs: [    
         {
             active: true,
             icon: "home-1",
@@ -33,11 +33,37 @@ let initialState: tabDataInterface = {
             id: 4,
             name: "Packages"
         }
-    ]
+    ],
+    clientTabs: [ 
+        {
+            active: true,
+            icon: "home-1",
+            id: 0,
+            name: "Home"
+        },
+        {
+            active: false,
+            icon: "users",
+            id: 1,
+            name: "Clients"
+        }
+    ],
+    allTabs: []
 }
 
 export const bottomTabReducer = (state = initialState, action: actionInterface)=>{
     switch(action.type){
+        case "SET_TABS":
+            let temp = [] as bottomTabProps[]
+            if(action.payload === "admin"){
+                temp = state.adminTabs;
+            }else if(action.payload === "client"){
+                temp = state.clientTabs
+            }
+            return {
+                ...state,
+                allTabs: temp
+            }
         case "TAB_ICON_CLICKED":
             let tabId = parseInt(action.payload);
             let selectedComponentId: number = 0;

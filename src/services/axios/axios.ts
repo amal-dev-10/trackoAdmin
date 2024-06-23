@@ -1,14 +1,13 @@
 import axios, { AxiosInstance } from 'axios';
-import store from '../../redux/store';
+import { store } from '../../redux/store';
 import Config from 'react-native-config';
-
 
 const createApiInstance = ()=>{
   let s = store.getState();
   const token = (<any>s.auth).data.token;
   let source = axios.CancelToken.source();
   const api: AxiosInstance = axios.create({
-      baseURL: 'http://trackoapi-env.eba-esdsr73m.us-east-1.elasticbeanstalk.com/api',
+      baseURL: 'http://192.168.1.6:3000/api',
       headers: {
         'Content-Type': 'application/json',
         "Authorization": `Bearer ${token || ""}`

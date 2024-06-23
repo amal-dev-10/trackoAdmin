@@ -1,6 +1,6 @@
 import { LayoutAnimation, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React, { useEffect, useState } from 'react'
-import { shadowGenerator } from '../utils/helper'
+import { fomatFirstLetterCapital, shadowGenerator } from '../utils/helper'
 import IconSet from '../styles/icons/Icons'
 import { borderColor, cardColor, goldColor, iconColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
@@ -9,7 +9,7 @@ import { iOwner, profileButtonProps } from '../interfaces/common'
 import { resetReducerAction, setIdTransactions, setOverlayComponent, setTransactionMode, toggleSubButton } from '../redux/actions'
 import { logout } from '../redux/actions/authActions'
 import packageJson from '../../package.json';
-import store from '../redux/store'
+import {store} from '../redux/store'
 
 type props = {
     profileBtnList: profileButtonProps[],
@@ -33,7 +33,7 @@ const Profile = ({profileBtnList, openOverlay, toggleButton, signOut, mode, setI
     <View style={styles.profileView}>
         <View style={[styles.profileCard, shadowGenerator()]}>
             <View style={styles.details}>
-                <Text style={styles.textName}>{ownerDetail?.name}</Text>
+                <Text style={styles.textName}>{fomatFirstLetterCapital(ownerDetail?.name)}</Text>
                 <Text style={styles.phoneNumberText}>{ownerDetail?.phoneNumber}</Text>
                 <TouchableOpacity style={styles.editBtn} activeOpacity={0.7}>
                     <IconSet name='pencil' size={15} color={iconColor}/>

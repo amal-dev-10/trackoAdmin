@@ -31,7 +31,8 @@ const MainLoader = ({showLoader, overlays, routeName}: props) => {
         "clientDetails",
         "businessProfile",
         "Dashboard",
-        "Insights"
+        "Insights",
+        "ClientHome"
     ]
     Animated.loop(
         Animated.sequence([
@@ -73,7 +74,8 @@ const MainLoader = ({showLoader, overlays, routeName}: props) => {
                             routeName != "Home" &&
                             routeName != "Clients" &&
                             routeName != "Packages" &&
-                            routeName != "Insights"
+                            routeName != "Insights" &&
+                            routeName != "ClientHome"
                         ) && <QuoteLoader/>
                     }
                     {

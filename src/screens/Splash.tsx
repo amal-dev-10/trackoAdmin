@@ -10,11 +10,12 @@ import { textColorPrimary } from '../styles/colors'
 import { apiResponse, iOwner } from '../interfaces/common'
 import { getOwnerById } from '../services/apiCalls/serviceCalls'
 import { Timestamp } from 'firebase/firestore'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 
 type props = {
   setIsAuthenticated: any,
   setToken: any,
-  setOwner: any
+  setOwner: any,
 }
 
 const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
@@ -30,7 +31,10 @@ const Splash = ({setIsAuthenticated, setToken, setOwner}: props) => {
           if(res?.status === 200){
             setOwner(res.data);
             navigate("MainStack");
-          }else{
+          }else if(res === undefined){
+            showToast("Cannot connect.")
+          }
+          else{
             setOwner({
               name: "",
               createdDate: Timestamp.now(),

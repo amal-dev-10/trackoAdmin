@@ -2,10 +2,11 @@
 import auth, { FirebaseAuthTypes } from '@react-native-firebase/auth'
 import { navigate, resetNavigation } from '../../navigations/NavigationService';
 import { apiResponse, iOwner } from '../../interfaces/common';
-import { getOwnerById } from '../../services/apiCalls/serviceCalls';
+import { getOwnerById, saveOwner } from '../../services/apiCalls/serviceCalls';
 import { showToast } from '../../utils/helper';
-import { closeOverlayComponent, resetReducerAction } from '.';
+import { closeOverlayComponent, resetReducerAction, setLoginModeAction, setNavTabsAction } from '.';
 import { Timestamp } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export const isAuthenticatedAction = (is: boolean)=>({
     type: "SETISAUTHENTICATED",
@@ -52,6 +53,7 @@ export const signInWithPhoneNumber = (phoneNumber: string)=>{
             const confirmation = await auth().signInWithPhoneNumber("+91"+phoneNumber);
             if(confirmation.verificationId){
                 navigate("Otp");
+                dispatch(setLoginModeAction(null))
                 dispatch(phoneCodeSuccess(confirmation));
                 showToast("OTP send to your device")
             }else{
@@ -86,6 +88,11 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
                     }));
                     navigate("Signup");
                 }else if(res.status === 200){
+                    if(!res.data?.phoneVerified){
+                        await saveOwner({phoneVerified: true});
+                    }
+                    let mode = await AsyncStorage.getItem("loginMode");
+                    dispatch(setNavTabsAction(mode));
                     dispatch(phoneAuthSuccess(res.data));
                     navigate("MainStack");
                 }else{
@@ -107,6 +114,7 @@ export const verfyOtpCode = (code: string, confirm: FirebaseAuthTypes.Confirmati
 export const logout = ()=>{
     return async (dispatch: any)=>{
         await auth().signOut();
+        await AsyncStorage.setItem("loginMode", "");
         resetNavigation(0);
         dispatch(logoutAction());
         dispatch(resetReducerAction("authReducer"))

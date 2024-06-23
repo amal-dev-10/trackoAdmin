@@ -1,27 +1,48 @@
 import { StyleSheet, Text, View, Image } from 'react-native'
-import React from 'react'
-import { orgProps } from '../../interfaces/common';
+import React, { useEffect, useRef, useState } from 'react'
+import { apiResponse, orgProps } from '../../interfaces/common';
 import Icon from 'react-native-vector-icons/FontAwesome'
 import { borderColor, cardColor, iconColor, textColorPrimary, textColorSecondary, verifyIconColor } from '../../styles/colors';
 import { fontSize } from '../../styles/fonts';
 import { TouchableOpacity } from 'react-native';
 import IconSet from '../../styles/icons/Icons';
 import { showToast } from '../../utils/helper';
+import Button from './Button';
+import { iClientOrgs, ibusiness } from '../../interfaces/business';
+import { sendRequest, widthdrawRequest } from '../../services/apiCalls/serviceCalls';
 
 const DashboardCard = (props: orgProps) => {
+  const [data, setData] = useState<any>();
   const cardClicked = ()=>{
-    if(props.data.verified){
-      props.onPress()
+    if(props.loginMode === "admin"){
+      if(data?.verified){
+        props.onPress()
+      }else{
+        showToast("Buiness account not verified yet.")
+      }
     }else{
-      showToast("Buiness account not verified yet.")
+      let d = data as iClientOrgs;
+      if(d.requested){
+        showToast("Approval pending.")
+      }else{
+        props.onPress();
+      }
     }
   }
+
+  useEffect(()=>{
+    if(props.loginMode === "admin"){
+      setData(props.data as ibusiness)
+    }else{
+      setData(props.data as iClientOrgs)
+    }
+  })
   return (
     <TouchableOpacity style={[styles.card]} onPress={()=>{cardClicked()}} activeOpacity={0.7}>
         {
-            props.data.logoUrl ? 
+            data?.logoUrl ? 
             <Image
-              source={{uri: props.data.logoUrl}}
+              source={{uri: data?.logoUrl}}
               style={{height: 50, width: 50, borderRadius: 25}}
             />
           : 
@@ -30,21 +51,37 @@ const DashboardCard = (props: orgProps) => {
         <View style={styles.details}>
             {
               <View style={styles.orgNameView}>
-                <Text style={styles.cardTitle}>{props.data.name?.toUpperCase()}</Text>
+                <Text style={styles.cardTitle}>{data?.name?.toUpperCase()}</Text>
                 {
-                  props.data.verified ? 
+                  data?.verified ? 
                       <IconSet name='ok-circle' color={verifyIconColor} size={15}/>
                   : <></>
                 }
               </View>
             }
-            <Text style={styles.id}>{props.data.location.toLocaleLowerCase()}</Text>
-            {
-              !props.data.verified ? 
+            <Text style={styles.id}>{data?.location?.toLocaleLowerCase()}</Text>
+            {(
+              !data?.verified && props.loginMode === "admin") ? 
                 <Text style={styles.status}>{`Status: Pending verification`}</Text>
               : <></>
             }
         </View>
+        {
+          !data?.alreadyClient && !data?.requested && props.loginMode === "client" ?
+          <Button
+              onTouch={()=>{props.onSendRequest(data)}}
+              text='Request'
+              width='35%'
+          />
+          :
+          (data?.requested && !data?.alreadyClient) && props.loginMode === "client" ? 
+          <Button
+              onTouch={()=>{props.onWithdrawRequest(data)}}
+              text='Requested'
+              width='35%'
+          />
+          : <></>
+        }
     </TouchableOpacity>
   )
 }

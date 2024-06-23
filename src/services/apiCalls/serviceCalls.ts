@@ -1,8 +1,9 @@
 
+import AsyncStorage from "@react-native-async-storage/async-storage";
 import { ibusiness } from "../../interfaces/business";
-import { apiResponse } from "../../interfaces/common";
+import { apiResponse, iJoinRequest } from "../../interfaces/common";
 import { iClient, iFilterQuery, iMembershipDetails } from "../../interfaces/iClient";
-import store from "../../redux/store";
+import {store} from "../../redux/store";
 import { deleteData, getData, patchData, postData } from "../service/serviceHandler";
 import storage from '@react-native-firebase/storage';
 
@@ -10,7 +11,12 @@ import storage from '@react-native-firebase/storage';
 export const getOwnerById = async (id: string)=>{
     let res = null;
     try{
-        res = await getData(`owner/owner/${id}`);
+        let mode = await AsyncStorage.getItem("loginMode");
+        if(mode === "admin"){
+            res = await getData(`owner/owner/${id}`);
+        }else if(mode === "client"){
+            res = await getData(`client/client/${id}`);
+        }
     }
     catch(err){
         console.log(err);
@@ -21,7 +27,12 @@ export const getOwnerById = async (id: string)=>{
 export const saveOwner = async (data: any = null)=>{
     let res = null;
     try{
-        res = await postData("owner/owner", data);
+        let mode = await AsyncStorage.getItem("loginMode");
+        if(mode === "admin"){
+            res = await postData("owner/owner", data);
+        }else if(mode === "client"){
+            res = await postData("client/client", data);
+        }
     }
     catch(err){
         console.log(err)
@@ -33,6 +44,17 @@ export const getAllBusiness = async ()=>{
     let res = null;
     try{
         res = await getData("business/business"); 
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getAddedOrg = async ()=>{
+    let res = null;
+    try{
+        res = await getData("client/addedBusiness"); 
     }
     catch(err){
         console.log(err)
@@ -328,6 +350,88 @@ export const uploadClientProfileImage = async (uri: string)=>{
             status: 200,
             message: ""
         } as apiResponse
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getOrgById = async(orgId: string)=>{
+    let res = null;
+    try{
+        res = await getData(`business/business/shareId/${orgId}`);
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const sendRequest = async(businessId: string)=>{
+    let res = null;
+    try{
+        res = await postData(`client/sendRequest`, {businessId: businessId});
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const widthdrawRequest = async(businessId: string)=>{
+    let res = null;
+    try{
+        res = await postData(`client/withdrawRequest`, {businessId: businessId});
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getAllPendingRequests = async()=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await getData(`client/requests/${st.dashboard.selectedBusiness?.uid}`);
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const acceptRequest = async(requestMadeBy: string)=>{
+    let res = null;
+    try{
+        let st = store.getState();
+        res = await postData(`client/acceptRequest`, {
+            businessId: st.dashboard.selectedBusiness?.uid,
+            requestMadeBy: requestMadeBy
+        });
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getMyMembership = async()=>{
+    let res = null;
+    try{
+        res = await getData(`client/membership`, true);
+    }
+    catch(err){
+        console.log(err)
+    }
+    return res
+}
+
+export const getClientBusinessSettings = async(businessId: string)=>{
+    let res = null;
+    try{
+        res = await getData(`business/clientSettings/${businessId}`, true);
     }
     catch(err){
         console.log(err)

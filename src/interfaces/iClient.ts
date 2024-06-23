@@ -9,7 +9,8 @@ export type iClient = {
     createdDate?: Timestamp,
     dobDate?: Date,
     uid?: string,
-    profileImageUrl?: string
+    profileImageUrl?: string,
+    age?: string
 }
 
 export type iMembership = {
@@ -85,4 +86,11 @@ export type updatableClient = {
     name?: string,
     dateOfBirth?: Timestamp,
     phoneVerified?: boolean,
+}
+
+export type iBusinessClientSettings = {
+    createdAt: Timestamp,
+    uid: string,
+    phoneVerified: boolean,
+    settings: string
 }

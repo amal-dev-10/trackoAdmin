@@ -2,7 +2,7 @@ import { actionInterface, authProps, iOwner } from "../../interfaces/common"
 
 type props = {
     data: authProps,
-    user: iOwner
+    user: iOwner,
 }
 
 let initialState: props = {

@@ -1,7 +1,7 @@
 import { FirebaseAuthTypes } from "@react-native-firebase/auth"
 import { CancelTokenSource } from "axios"
 import { Timestamp } from "firebase/firestore"
-import { ibusiness } from "./business"
+import { iClientOrgs, ibusiness } from "./business"
 
 export type inputProps = {
     value: string,
@@ -23,7 +23,10 @@ export type orgProps = {
     // location: string,
     onPress: any,
     // logo: string,
-    data: ibusiness
+    data: ibusiness | iClientOrgs,
+    loginMode: string | null,
+    onSendRequest?: any,
+    onWithdrawRequest?: any
 }
 
 export type bottomTabProps = {
@@ -35,7 +38,9 @@ export type bottomTabProps = {
 
 export type tabDataInterface = {
     activeComponentId: number,
-    allTabs: bottomTabProps[]
+    allTabs: bottomTabProps[],
+    adminTabs: bottomTabProps[],
+    clientTabs: bottomTabProps[]
 }
 
 export type actionInterface = {
@@ -150,4 +155,11 @@ export type confirmationModal = {
 export type iApiCall = {
     url: string, 
     axios: CancelTokenSource
+}
+
+export type iJoinRequest = {
+    requestMadeBy: string,
+    timeStamp: Timestamp,
+    requestId: string,
+    businessId: string
 }

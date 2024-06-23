@@ -19,7 +19,7 @@ type props = {
   verifyOtp: any,
   confirmation: FirebaseAuthTypes.ConfirmationResult,
   sendOTP: any,
-  phoneNumber: string
+  phoneNumber: string,
 }
 
 const Otp = ({verifyOtp, confirmation, sendOTP, phoneNumber}: props) => {
@@ -153,7 +153,7 @@ const mapDispatchToProps = (dispatch: any)=>({
 
 const mapStateToProps = (state: any)=>({
   confirmation: state.auth.data.confirmation,
-  phoneNumber: state.auth.data.phoneNumber
+  phoneNumber: state.auth.data.phoneNumber,
 })
 
 export default connect(mapStateToProps, mapDispatchToProps)(Otp)

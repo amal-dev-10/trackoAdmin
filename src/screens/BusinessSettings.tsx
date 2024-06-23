@@ -2,7 +2,7 @@ import { Modal, StyleSheet, Switch, Text, TouchableOpacity, View } from 'react-n
 import React, { useEffect, useState } from 'react'
 import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../styles/colors'
 import { fontSize } from '../styles/fonts'
-import { updateBusinessSettingsAction } from '../redux/actions'
+import { setSelectedBusiness, updateBusinessSettingsAction } from '../redux/actions'
 import { connect } from 'react-redux'
 import { iBusinessSettings, ibusiness } from '../interfaces/business'
 import Button from '../components/Common/Button'
@@ -13,10 +13,12 @@ import { showToast } from '../utils/helper'
 type props = {
   settings: iBusinessSettings[],
   updateSettings: any,
-  selectedBusiness: ibusiness
+  selectedBusiness: ibusiness,
+  setSelBusiness: any,
+  loginMode: string | null
 }
 
-const BusinessSettings = ({settings, updateSettings, selectedBusiness}: props) => {
+const BusinessSettings = ({settings, updateSettings, selectedBusiness, setSelBusiness, loginMode}: props) => {
 
   const [timeId, setTimeId] = useState(0 as number);
   const [knowMore, setKnowMore] = useState("" as string);
@@ -49,9 +51,12 @@ const BusinessSettings = ({settings, updateSettings, selectedBusiness}: props) =
       delete x.knowMore;
       delete x.name;
       return x
-    });
+    }) as iBusinessSettings[];
     let resp: apiResponse = await updateBusinessSettings(n);
     if(resp.status === 200){
+      if(loginMode === "client"){
+        setSelBusiness({...selectedBusiness, clientVerified: n[0].enabled} as ibusiness)
+      }
     }else{
       showToast("Something went wrong.");
     }
@@ -98,12 +103,14 @@ const BusinessSettings = ({settings, updateSettings, selectedBusiness}: props) =
 }
 
 const mapDispatchToProps = (dispatch: any)=>({
-  updateSettings: (data: iBusinessSettings)=>{dispatch(updateBusinessSettingsAction(data))}
+  updateSettings: (data: iBusinessSettings)=>{dispatch(updateBusinessSettingsAction(data))},
+  setSelBusiness: (data: ibusiness)=> dispatch(setSelectedBusiness(data))
 });
 
 const mapStateToProps = (state: any)=>({
   settings: state.businessSettings.settings,
   selectedBusiness: state.dashboard.selectedBusiness,
+  loginMode: state.appState.loginMode
 });
 
 const KnowMore = ({msg, show, closeClicked}: {msg: string, show: boolean, closeClicked: any})=>{

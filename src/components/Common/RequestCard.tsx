@@ -1,27 +1,38 @@
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native'
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native'
 import React from 'react'
-import { requestsProps } from '../../interfaces/common'
+import { apiResponse, requestsProps } from '../../interfaces/common'
 import { borderColor, cardColor, iconColor, primaryColor, textColorPrimary } from '../../styles/colors'
-import { shadowGenerator } from '../../utils/helper'
+import { fomatFirstLetterCapital, shadowGenerator, showToast } from '../../utils/helper'
 import { key } from '../../styles/constants'
 import { fontSize } from '../../styles/fonts'
 import IconSet from '../../styles/icons/Icons'
+import { iClient } from '../../interfaces/iClient'
+import { acceptRequest } from '../../services/apiCalls/serviceCalls'
 
 type props = {
-  requestData: requestsProps
+  requestData: iClient,
+  onAcceptRequest: any,
+  onDeclineRequest: any
 }
 
-const RequestCard = ({requestData}: props) => {
-
+const RequestCard = ({requestData, onAcceptRequest, onDeclineRequest}: props) => {
   return (
     <View style={[styles.requestCard, shadowGenerator(2,2)]}>
-      <IconSet name='user-o' color={iconColor} size={50}/>
+      {
+          requestData?.profileImageUrl ? 
+          <Image
+            source={{uri: requestData?.profileImageUrl}}
+            style={{height: 50, width: 50, borderRadius: 25}}
+          />
+          : 
+          <IconSet name='user-o' color={iconColor} size={50}/>
+        }
       <View style={styles.spacer}></View>
       <View style={styles.detailView}>
         <View style={[styles.section, styles.left]}>
           <View style={[styles.single, styles.singleLeft]}>
             <Text style={key}>Name</Text>
-            <Text style={styles.value}>{requestData.name}</Text>
+            <Text style={styles.value}>{fomatFirstLetterCapital(requestData.name)}</Text>
           </View>
           <View style={[styles.single, styles.singleLeft]}>
             <Text style={key}>Phone Number</Text>
@@ -36,10 +47,10 @@ const RequestCard = ({requestData}: props) => {
         </View>
       </View>
       <View style={styles.btnView}>
-        <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{}} activeOpacity={0.7}>
+        <TouchableOpacity style={[styles.btn, styles.withBorder]} onPress={()=>{onAcceptRequest(requestData)}} activeOpacity={0.7}>
           <Text style={styles.btnText}>Accept</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.btn]} onPress={()=>{}} activeOpacity={0.7}>
+        <TouchableOpacity style={[styles.btn]} onPress={()=>{onDeclineRequest(requestData)}} activeOpacity={0.7}>
           <Text style={styles.btnText}>Decline</Text>
         </TouchableOpacity>
       </View>

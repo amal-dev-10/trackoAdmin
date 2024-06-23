@@ -1,18 +1,18 @@
 import {StyleSheet, Text, View } from 'react-native'
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { container, showToast, valueBinder } from '../../utils/helper'
-import { fontSize } from '../../styles/fonts'
-import { iconColor, textColorSecondary } from '../../styles/colors'
 import Button from '../Common/Button'
 import { apiResponse, iOwner, inputProps } from '../../interfaces/common'
 import Input from '../Common/Input'
 import { KeyboardType } from 'react-native'
 import TitleComponent from '../Common/TitleComponent'
 import { connect } from 'react-redux'
-import { FirebaseAuthTypes } from '@react-native-firebase/auth'
+import DateTimePicker from '@react-native-community/datetimepicker';
 import { navigate } from '../../navigations/NavigationService'
 import { getOwnerById, saveOwner } from '../../services/apiCalls/serviceCalls'
 import { phoneAuthSuccess } from '../../redux/actions/authActions'
+import AsyncStorage from '@react-native-async-storage/async-storage'
+import { Timestamp } from 'firebase/firestore'
 
 type props = {
   user: iOwner,
@@ -20,6 +20,9 @@ type props = {
 }
 
 const SignUp = ({user, setOwner}: props) => {
+  const loginMode = useRef<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState("" as any);
+  const [showCalender, setShowCalender] = useState(false);
   const [inputList, setInputList] = useState(
     [
       {
@@ -67,17 +70,40 @@ const SignUp = ({user, setOwner}: props) => {
       });
       setInputList([...temp]);
       let check: boolean = temp.every((x)=>{return x.valid})
-      setAllInputTrue(check);
+      if(loginMode.current === "admin"){
+        setAllInputTrue(check);
+      }else if(loginMode.current === "client"){
+        setAllInputTrue(check && selectedDate);
+      }
+    }
+
+    const handleDateChange = (event: any, date:any)=>{
+      setShowCalender(false)
+      if (date) {
+        setSelectedDate(date);
+      }
     }
 
     const signUpClicked = async ()=>{
       if(allInputTrue){
         if(user?.phoneNumber){
-          let data = {
-            phoneNumber: user.phoneNumber,
-            uid: user.uid,
-            name: inputList[1].value,
-            phoneVerified: true
+          let data = {}
+          if(loginMode.current === "admin"){
+            data = {
+              phoneNumber: user.phoneNumber,
+              uid: user.uid,
+              name: inputList[1].value,
+              phoneVerified: true
+            }
+          }else if(loginMode.current === "client"){
+            data = {
+              countryCode: "+91",
+              name: inputList[1].value,
+              phoneNumber: user.phoneNumber,
+              phoneVerified: true,
+              dateOfBirth: selectedDate ? Timestamp.fromDate(selectedDate) : Timestamp.fromDate(new Date()),
+              profileImageUrl: ""
+            }
           }
           let res: apiResponse | null = await saveOwner(data);
           if(res?.status === 200){
@@ -94,7 +120,13 @@ const SignUp = ({user, setOwner}: props) => {
       }
     }
 
+    const getLoginMode = async ()=>{
+      let mode = await AsyncStorage.getItem("loginMode");
+      loginMode.current = mode;
+    }
+
     useEffect(()=>{
+      getLoginMode()
       let temp = inputList;
       temp[0].value = user?.phoneNumber || "";
       setInputList([...temp])
@@ -106,7 +138,7 @@ const SignUp = ({user, setOwner}: props) => {
         subTitle='Please enter your details'
       />
       <View style={styles.inputViews}>
-      {
+        {
           inputList. map((data)=>{
             return (
               <Input
@@ -128,6 +160,16 @@ const SignUp = ({user, setOwner}: props) => {
               />
             )
           })
+        }
+        {
+          loginMode.current === "client" &&
+          <DateTimePicker
+              value={selectedDate ? selectedDate : new Date()}
+              mode="date"
+              display="calendar"
+              onChange={handleDateChange}
+              onTouchCancel={()=>{setShowCalender(false)}}
+          />
         }
       </View>
       <View style={styles.buttonView}>

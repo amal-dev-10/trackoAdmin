@@ -11,7 +11,8 @@ import { setOverlayComponent, setTransactionMode } from '../redux/actions'
 type props = {
   business: ibusiness,
   openOverlay: any,
-  mode: any
+  mode: any,
+  loginMode: string | null
 }
 
 type sectionProp = {
@@ -19,7 +20,7 @@ type sectionProp = {
   buttons: {name: string, icon: string}[]
 }
 
-const BusinessProfile = ({business, openOverlay, mode}:props) => {
+const BusinessProfile = ({business, openOverlay, mode, loginMode}:props) => {
   const [section, setSection] = useState([
     {
       buttons: [
@@ -86,7 +87,7 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
   return (
     <ScrollView showsVerticalScrollIndicator={false}>
       <View style={styles.businessProfileScreen}>
-        <Text style={styles.title}>BUSINESS PROFILE</Text>
+        <Text style={styles.title}>{loginMode === "admin" ? "BUSINESS PROFILE" : loginMode === "client" ? "PROFILE" : ""}</Text>
         <View style={[styles.row,styles.spaceBetween, styles.profileCard]}>
           <View style={[styles.column, styles.left, {flex: 1}]}>
             <View style={[styles.row, {width: "100%"}]}>
@@ -123,10 +124,13 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
           </View>
         </View>
         <View style={[styles.row, styles.secondRow]}>
-          <TouchableOpacity style={[styles.profileBtn, styles.row]} activeOpacity={0.7} onPress={()=>{openOverlay(12)}}>
-            <IconSet name='pencil' size={14} color={iconColor}/>
-            <Text style={styles.roundBtnText}>EDIT</Text>
-          </TouchableOpacity>
+          {
+            loginMode === "admin" &&
+            <TouchableOpacity style={[styles.profileBtn, styles.row]} activeOpacity={0.7} onPress={()=>{openOverlay(12)}}>
+              <IconSet name='pencil' size={14} color={iconColor}/>
+              <Text style={styles.roundBtnText}>EDIT</Text>
+            </TouchableOpacity>
+          }
         </View>
         <>
           {
@@ -163,7 +167,8 @@ const BusinessProfile = ({business, openOverlay, mode}:props) => {
 }
 
 const mapStateToProps = (state: any)=>({
-  business: state.dashboard.selectedBusiness
+  business: state.dashboard.selectedBusiness,
+  loginMode: state.appState.loginMode
 })
 
 const mapDispatchToProps = (dispatch: any)=>({

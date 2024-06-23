@@ -7,7 +7,7 @@ import { resetReducerAction, setOverlayComponent } from '../../redux/actions'
 import { connect } from 'react-redux'
 import { navigate } from '../../navigations/NavigationService'
 import { ibusiness } from '../../interfaces/business'
-import store from '../../redux/store'
+import {store} from '../../redux/store'
 import { bottomTabProps } from '../../interfaces/common'
 import { setRoute } from '../../utils/helper'
 
@@ -44,15 +44,15 @@ const mainHeader: React.FC<props> = ({openOverlay, selectedBusiness, allTabs, se
         </TouchableOpacity>
         <TouchableOpacity style={[styles.orgDropDown]} onPress={()=>{gotoDashboard()}} activeOpacity={0.7}>
           <View style={styles.businessNameView}>
-            <Text style={styles.orgName} numberOfLines={1} ellipsizeMode="tail">{selectedBusiness.name.toUpperCase()}</Text>
-            <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{selectedBusiness.location.toLowerCase()}</Text>
+            <Text style={styles.orgName} numberOfLines={1} ellipsizeMode="tail">{selectedBusiness?.name?.toUpperCase()}</Text>
+            <Text style={styles.location} numberOfLines={1} ellipsizeMode="tail">{selectedBusiness?.location.toLowerCase()}</Text>
           </View>
           <IconSet name='angle-left' color={iconColor} size={25} style={{transform:[{rotate: "180deg"}]}}/>
         </TouchableOpacity>
       </View>
       {/* <View style={styles.userView}>
       </View> */}
-      <Text style={styles.tabName}>{allTabs[selectedTab].name.toUpperCase()}</Text>
+      <Text style={styles.tabName}>{allTabs[selectedTab]?.name?.toUpperCase()}</Text>
     </View>
   )
 }
@@ -62,7 +62,7 @@ const mapDispatchToProps = (dispatch: any)=>({
 })
 
 const mapStateToProps = (state:any)=>({
-  selectedBusiness: state.dashboard.selectedBusiness,
+  selectedBusiness: state.dashboard?.selectedBusiness,
   allTabs: state.bottomTab.allTabs,
   selectedTab: state.bottomTab.activeComponentId
 })
@@ -103,7 +103,7 @@ const styles = StyleSheet.create({
   orgName:{
     width: "90%",
     fontSize: fontSize.xmedium,
-    color: iconColor
+    color: iconColor,
   },
   location:{
     fontSize: fontSize.small,
@@ -115,6 +115,7 @@ const styles = StyleSheet.create({
     flexDirection: "column",
     justifyContent: "flex-start",
     alignItems: 'baseline',
+    flex: 1
   },
   tabName:{
     fontSize: fontSize.small,
